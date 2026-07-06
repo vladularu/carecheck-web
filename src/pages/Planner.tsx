@@ -3,6 +3,7 @@ import ShiftForm from "../components/ShiftForm";
 import ShiftList from "../components/ShiftList";
 import type { Shift } from "../types/index";
 import { loadShifts, saveShifts } from "../services/storage/shiftStorage";
+import { calculateTotalNetHours } from "../services/calculation/workingTimeCalculator";
 
 export default function Planner() {
   const [shifts, setShifts] = useState<Shift[]>(() => loadShifts());
@@ -23,6 +24,8 @@ export default function Planner() {
     setShifts((current) => current.filter((shift) => shift.id !== id));
   }
 
+  const totalNetHours = calculateTotalNetHours(shifts);
+
   return (
     <section className="page">
       <h1>Dienstplan</h1>
@@ -33,6 +36,7 @@ export default function Planner() {
       <div className="summary-card">
         <strong>Gespeicherte Dienste</strong>
         <p>{shifts.length} Dienst(e) erfasst.</p>
+        <p>Nettoarbeitszeit gesamt: {totalNetHours} h</p>
       </div>
 
       <ShiftList shifts={shifts} onDeleteShift={deleteShift} />

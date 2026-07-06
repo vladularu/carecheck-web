@@ -1,4 +1,5 @@
 import type { Shift, ShiftType } from "../types/index";
+import { calculateNetHours } from "../services/calculation/workingTimeCalculator";
 
 const shiftLabels: Record<ShiftType, string> = {
   EARLY: "Frühdienst",
@@ -32,6 +33,7 @@ export default function ShiftList({ shifts, onDeleteShift }: ShiftListProps) {
               {shift.date} · {shift.startTime}–{shift.endTime} · Pause{" "}
               {shift.breakMinutes} Min.
             </p>
+            <small>Nettoarbeitszeit: {calculateNetHours(shift)} h</small>
             {shift.note && <small>{shift.note}</small>}
           </div>
 
