@@ -1,82 +1,39 @@
-:root {
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #0f172a;
-  background: #eef3f8;
+.form-grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
 }
 
-* {
-  box-sizing: border-box;
+.field {
+  display: grid;
+  gap: 7px;
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 32rem),
-    #eef3f8;
-}
-
-.app-shell {
-  width: min(100%, 520px);
-  margin: 0 auto;
-  padding: 18px 14px 96px;
-}
-
-.page {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(203, 213, 225, 0.9);
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
-  border-radius: 28px;
-  padding: 24px;
-  min-height: 420px;
-}
-
-.page h1 {
-  margin: 0 0 8px;
-  font-size: 34px;
-  letter-spacing: -0.04em;
-}
-
-.page p {
-  margin: 0;
+.field span {
   color: #64748b;
-  line-height: 1.5;
-}
-
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 10px 12px 18px;
-  background: rgba(255, 255, 255, 0.92);
-  border-top: 1px solid rgba(203, 213, 225, 0.9);
-  backdrop-filter: blur(18px);
-  display: flex;
-  justify-content: center;
-}
-
-.bottom-nav {
-  gap: 6px;
-}
-
-.bottom-nav-link {
-  text-decoration: none;
-  color: #64748b;
-  padding: 10px 11px;
-  border-radius: 16px;
   font-size: 13px;
   font-weight: 700;
 }
 
-.bottom-nav-link.active {
-  background: #dbeafe;
-  color: #1d4ed8;
+.field input,
+.field select {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
 }
 
-@media (min-width: 760px) {
-  .app-shell {
-    width: min(100%, 900px);
-  }
+.summary-card {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 20px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.summary-card p {
+  margin-top: 6px;
 }
