@@ -37,3 +37,54 @@
 .summary-card p {
   margin-top: 6px;
 }
+.primary-button,
+.danger-button {
+  border: none;
+  border-radius: 16px;
+  padding: 12px 14px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primary-button {
+  background: #2563eb;
+  color: white;
+}
+
+.danger-button {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.empty-state {
+  margin-top: 18px;
+  color: #64748b;
+}
+
+.shift-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.shift-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 20px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.shift-card p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.shift-card small {
+  display: block;
+  margin-top: 6px;
+  color: #2563eb;
+}
