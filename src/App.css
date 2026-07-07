@@ -347,3 +347,15 @@
   background: #eff6ff;
   border-color: #bfdbfe;
 }
+.card-label {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.status-title {
+  display: block;
+  font-size: 20px;
+}

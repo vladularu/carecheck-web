@@ -1,6 +1,9 @@
-import { calculateMonthlyHours } from "../services/calculation/monthlyHoursCalculator";
+import DashboardHero from "../components/dashboard/DashboardHero";
+import ShiftSummary from "../components/dashboard/ShiftSummary";
+import StatusCard from "../components/dashboard/StatusCard";
+import WorkSummary from "../components/dashboard/WorkSummary";
 import { useAppContext } from "../context/AppContext";
-import type { ShiftType } from "../types/index";
+import { calculateMonthlyHours } from "../services/calculation/monthlyHoursCalculator";
 
 const monthNames = [
   "Januar",
@@ -16,18 +19,6 @@ const monthNames = [
   "November",
   "Dezember",
 ];
-
-const shiftLabels: Record<ShiftType, string> = {
-  EARLY: "Frühdienst",
-  LATE: "Spätdienst",
-  NIGHT: "Nachtdienst",
-  DAY: "Tagdienst",
-  TRAINING: "Fortbildung",
-  VACATION: "Urlaub",
-  SICK: "Krank",
-  FREE: "Frei",
-  CUSTOM: "Individuell",
-};
 
 export default function Dashboard() {
   const { profile, shifts } = useAppContext();
@@ -46,7 +37,9 @@ export default function Dashboard() {
     monthlyHours.targetHours > 0
       ? Math.min(
           100,
-          Math.round((monthlyHours.actualHours / monthlyHours.targetHours) * 100),
+          Math.round(
+            (monthlyHours.actualHours / monthlyHours.targetHours) * 100,
+          ),
         )
       : 0;
 
@@ -58,73 +51,26 @@ export default function Dashboard() {
 
   return (
     <section className="dashboard-page">
-      <div className="dashboard-hero">
-        <div>
-          <span className="eyebrow">CareCheck TVöD</span>
-          <h1>
-            {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}
-          </h1>
-          <p>
-            {profile.federalState} · {profile.weeklyHours} h/Woche ·{" "}
-            {profile.payGroup} Stufe {profile.payLevel}
-          </p>
-        </div>
-      </div>
+      <DashboardHero
+        monthLabel={`${monthNames[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`}
+        profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel}`}
+      />
 
-      <div className="work-card">
-        <div className="work-card-header">
-          <div>
-            <span>Arbeitszeitkonto</span>
-            <strong>
-              {monthlyHours.actualHours} / {monthlyHours.targetHours} h
-            </strong>
-          </div>
-          <div className="progress-number">{progress}%</div>
-        </div>
+      <WorkSummary
+        actualHours={monthlyHours.actualHours}
+        targetHours={monthlyHours.targetHours}
+        balanceHours={monthlyHours.balanceHours}
+        remainingHours={remainingHours}
+        overtimeHours={monthlyHours.overtimeHours}
+        progress={progress}
+      />
 
-        <div className="progress-track">
-          <div className="progress-fill" style={{ width: `${progress}%` }} />
-        </div>
+      <StatusCard />
 
-        <div className="work-grid">
-          <div>
-            <span>Differenz</span>
-            <strong>{monthlyHours.balanceHours} h</strong>
-          </div>
-          <div>
-            <span>Fehlend</span>
-            <strong>{remainingHours} h</strong>
-          </div>
-          <div>
-            <span>Überstunden</span>
-            <strong>{monthlyHours.overtimeHours} h</strong>
-          </div>
-        </div>
-      </div>
-
-      <div className="status-card">
-        <span>Prüfstatus</span>
-        <strong>🟢 Keine Prüfung aktiv</strong>
-        <p>Arbeitszeitgesetz und TVöD-Regeln werden in späteren Releases ergänzt.</p>
-      </div>
-
-      <div className="summary-card">
-        <strong>Dienste im Monat</strong>
-        <p>{monthlyHours.shiftCount} Dienst(e) erfasst.</p>
-
-        {monthlyHours.shiftTypeCounts.length === 0 ? (
-          <p>Noch keine Dienste in diesem Monat.</p>
-        ) : (
-          <div className="shift-type-list">
-            {monthlyHours.shiftTypeCounts.map((item) => (
-              <div className="shift-type-row" key={item.type}>
-                <span>{shiftLabels[item.type]}</span>
-                <strong>{item.count}</strong>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <ShiftSummary
+        shiftCount={monthlyHours.shiftCount}
+        shiftTypeCounts={monthlyHours.shiftTypeCounts}
+      />
     </section>
   );
 }
