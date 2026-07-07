@@ -1,51 +1,56 @@
-import { useEffect, useState } from "react";
 import type {
   FederalState,
   PayGroup,
   PayLevel,
   UserProfile,
 } from "../types/index";
-import {
-  loadProfile,
-  saveProfile,
-} from "../services/storage/profileStorage";
+import { useAppContext } from "../context/AppContext";
 
 const federalStates: FederalState[] = [
-  "BW", "BY", "BE", "BB", "HB", "HH", "HE", "MV",
-  "NI", "NW", "RP", "SL", "SN", "ST", "SH", "TH",
+  "BW",
+  "BY",
+  "BE",
+  "BB",
+  "HB",
+  "HH",
+  "HE",
+  "MV",
+  "NI",
+  "NW",
+  "RP",
+  "SL",
+  "SN",
+  "ST",
+  "SH",
+  "TH",
 ];
 
 const payGroups: PayGroup[] = [
-  "P7", "P8", "P9", "P10", "P11",
-  "P12", "P13", "P14", "P15", "P16",
+  "P7",
+  "P8",
+  "P9",
+  "P10",
+  "P11",
+  "P12",
+  "P13",
+  "P14",
+  "P15",
+  "P16",
 ];
 
 const payLevels: PayLevel[] = [1, 2, 3, 4, 5, 6];
 
-const defaultProfile: UserProfile = {
-  federalState: "HE",
-  weeklyHours: 38.5,
-  payGroup: "P8",
-  payLevel: 4,
-};
-
 export default function Profile() {
-  const [profile, setProfile] = useState<UserProfile>(
-    () => loadProfile() ?? defaultProfile
-  );
-
-  useEffect(() => {
-    saveProfile(profile);
-  }, [profile]);
+  const { profile, setProfile } = useAppContext();
 
   function updateProfile<K extends keyof UserProfile>(
     key: K,
     value: UserProfile[K],
   ) {
-    setProfile((current) => ({
-      ...current,
+    setProfile({
+      ...profile,
       [key]: value,
-    }));
+    });
   }
 
   return (

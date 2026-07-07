@@ -1,7 +1,5 @@
-import { demoProfile } from "../data/demoData";
 import { calculateMonthlyHours } from "../services/calculation/monthlyHoursCalculator";
-import { loadProfile } from "../services/storage/profileStorage";
-import { loadShifts } from "../services/storage/shiftStorage";
+import { useAppContext } from "../context/AppContext";
 import type { ShiftType } from "../types/index";
 
 const monthNames = [
@@ -32,8 +30,7 @@ const shiftLabels: Record<ShiftType, string> = {
 };
 
 export default function Dashboard() {
-  const profile = loadProfile() ?? demoProfile;
-  const shifts = loadShifts();
+  const { profile, shifts } = useAppContext();
 
   const selectedDate =
     shifts.length > 0 ? new Date(`${shifts[0].date}T00:00:00`) : new Date();
@@ -47,12 +44,16 @@ export default function Dashboard() {
 
   const progress =
     monthlyHours.targetHours > 0
-      ? Math.min(100, Math.round((monthlyHours.actualHours / monthlyHours.targetHours) * 100))
+      ? Math.min(
+          100,
+          Math.round((monthlyHours.actualHours / monthlyHours.targetHours) * 100),
+        )
       : 0;
 
   const remainingHours = Math.max(
     0,
-    Math.round((monthlyHours.targetHours - monthlyHours.actualHours) * 100) / 100,
+    Math.round((monthlyHours.targetHours - monthlyHours.actualHours) * 100) /
+      100,
   );
 
   return (
@@ -60,7 +61,9 @@ export default function Dashboard() {
       <div className="dashboard-hero">
         <div>
           <span className="eyebrow">CareCheck TVöD</span>
-          <h1>{monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}</h1>
+          <h1>
+            {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}
+          </h1>
           <p>
             {profile.federalState} · {profile.weeklyHours} h/Woche ·{" "}
             {profile.payGroup} Stufe {profile.payLevel}
@@ -72,7 +75,9 @@ export default function Dashboard() {
         <div className="work-card-header">
           <div>
             <span>Arbeitszeitkonto</span>
-            <strong>{monthlyHours.actualHours} / {monthlyHours.targetHours} h</strong>
+            <strong>
+              {monthlyHours.actualHours} / {monthlyHours.targetHours} h
+            </strong>
           </div>
           <div className="progress-number">{progress}%</div>
         </div>

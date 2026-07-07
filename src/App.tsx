@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import BottomNavigation from "./components/Navigation/BottomNavigation";
+import { AppProvider } from "./context/AppContext";
 import Dashboard from "./pages/Dashboard";
 import Planner from "./pages/Planner";
 import Salary from "./pages/Salary";
@@ -9,18 +10,20 @@ import "./App.css";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <main className="app-shell">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/plan" element={<Planner />} />
-          <Route path="/gehalt" element={<Salary />} />
-          <Route path="/pruefung" element={<Compliance />} />
-          <Route path="/profil" element={<Profile />} />
-        </Routes>
-      </main>
+    <AppProvider>
+      <BrowserRouter>
+        <main className="app-shell">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/plan" element={<Planner />} />
+            <Route path="/gehalt" element={<Salary />} />
+            <Route path="/pruefung" element={<Compliance />} />
+            <Route path="/profil" element={<Profile />} />
+          </Routes>
+        </main>
 
-      <BottomNavigation />
-    </BrowserRouter>
+        <BottomNavigation />
+      </BrowserRouter>
+    </AppProvider>
   );
 }
