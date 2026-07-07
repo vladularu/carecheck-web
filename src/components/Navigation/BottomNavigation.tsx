@@ -6,6 +6,7 @@ const items = [
   { to: "/gehalt", label: "Gehalt" },
   { to: "/pruefung", label: "Prüfung" },
   { to: "/profil", label: "Profil" },
+  { to: "/kalender", label: "Kalender" },
 ];
 
 export default function BottomNavigation() {

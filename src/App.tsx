@@ -6,6 +6,7 @@ import Planner from "./pages/Planner";
 import Salary from "./pages/Salary";
 import Compliance from "./pages/Compliance";
 import Profile from "./pages/Profile";
+import Calendar from "./pages/Calendar";
 import "./App.css";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/gehalt" element={<Salary />} />
             <Route path="/pruefung" element={<Compliance />} />
             <Route path="/profil" element={<Profile />} />
+            <Route path="/kalender" element={<Calendar />} />
           </Routes>
         </main>
 
