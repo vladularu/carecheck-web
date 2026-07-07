@@ -359,3 +359,62 @@
   display: block;
   font-size: 20px;
 }
+.calendar-header {
+  margin-bottom: 18px;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.04em;
+}
+
+.calendar {
+  display: grid;
+  gap: 10px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  min-height: 74px;
+  border-radius: 18px;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.calendar-day span {
+  display: block;
+  font-weight: 900;
+}
+
+.calendar-day.outside-month {
+  opacity: 0.35;
+}
+
+.calendar-day.weekend {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.calendar-day.current-month {
+  color: #0f172a;
+}

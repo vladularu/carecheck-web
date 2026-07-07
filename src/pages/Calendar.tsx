@@ -1,14 +1,32 @@
+import CalendarGrid from "../components/calendar/CalendarGrid";
+import CalendarHeader from "../components/calendar/CalendarHeader";
 import { createCalendar } from "../services/calendar/calendarService";
 
-export default function Calendar() {
-  const weeks = createCalendar(2026, 6);
+const monthNames = [
+  "Januar",
+  "Februar",
+  "März",
+  "April",
+  "Mai",
+  "Juni",
+  "Juli",
+  "August",
+  "September",
+  "Oktober",
+  "November",
+  "Dezember",
+];
 
-  console.log("Calendar weeks:", weeks);
+export default function Calendar() {
+  const year = 2026;
+  const month = 6;
+
+  const weeks = createCalendar(year, month);
 
   return (
     <section className="page">
-      <h1>Kalender</h1>
-      <p>Kalender-Engine läuft. Öffne die Browser-Konsole mit F12.</p>
+      <CalendarHeader monthLabel={`${monthNames[month]} ${year}`} />
+      <CalendarGrid weeks={weeks} />
     </section>
   );
 }
