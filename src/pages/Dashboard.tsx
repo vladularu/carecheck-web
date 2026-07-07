@@ -45,65 +45,68 @@ export default function Dashboard() {
     selectedDate.getMonth(),
   );
 
+  const progress =
+    monthlyHours.targetHours > 0
+      ? Math.min(100, Math.round((monthlyHours.actualHours / monthlyHours.targetHours) * 100))
+      : 0;
+
+  const remainingHours = Math.max(
+    0,
+    Math.round((monthlyHours.targetHours - monthlyHours.actualHours) * 100) / 100,
+  );
+
   return (
-    <section className="page">
-      <h1>Dashboard</h1>
-      <p>
-        Arbeitszeitkonto für {monthNames[selectedDate.getMonth()]}{" "}
-        {selectedDate.getFullYear()}.
-      </p>
+    <section className="dashboard-page">
+      <div className="dashboard-hero">
+        <div>
+          <span className="eyebrow">CareCheck TVöD</span>
+          <h1>{monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}</h1>
+          <p>
+            {profile.federalState} · {profile.weeklyHours} h/Woche ·{" "}
+            {profile.payGroup} Stufe {profile.payLevel}
+          </p>
+        </div>
+      </div>
 
-      <div className="dashboard-grid">
-        <article className="dashboard-card">
-          <span>Bundesland</span>
-          <strong>{profile.federalState}</strong>
-        </article>
+      <div className="work-card">
+        <div className="work-card-header">
+          <div>
+            <span>Arbeitszeitkonto</span>
+            <strong>{monthlyHours.actualHours} / {monthlyHours.targetHours} h</strong>
+          </div>
+          <div className="progress-number">{progress}%</div>
+        </div>
 
-        <article className="dashboard-card">
-          <span>Wochenarbeitszeit</span>
-          <strong>{profile.weeklyHours} h</strong>
-        </article>
+        <div className="progress-track">
+          <div className="progress-fill" style={{ width: `${progress}%` }} />
+        </div>
 
-        <article className="dashboard-card">
-          <span>TVöD-P</span>
-          <strong>
-            {profile.payGroup} · Stufe {profile.payLevel}
-          </strong>
-        </article>
+        <div className="work-grid">
+          <div>
+            <span>Differenz</span>
+            <strong>{monthlyHours.balanceHours} h</strong>
+          </div>
+          <div>
+            <span>Fehlend</span>
+            <strong>{remainingHours} h</strong>
+          </div>
+          <div>
+            <span>Überstunden</span>
+            <strong>{monthlyHours.overtimeHours} h</strong>
+          </div>
+        </div>
+      </div>
 
-        <article className="dashboard-card">
-          <span>Dienste im Monat</span>
-          <strong>{monthlyHours.shiftCount}</strong>
-        </article>
-
-        <article className="dashboard-card">
-          <span>Sollstunden</span>
-          <strong>{monthlyHours.targetHours} h</strong>
-        </article>
-
-        <article className="dashboard-card">
-          <span>Iststunden</span>
-          <strong>{monthlyHours.actualHours} h</strong>
-        </article>
-
-        <article className="dashboard-card highlight">
-          <span>Differenz</span>
-          <strong>{monthlyHours.balanceHours} h</strong>
-        </article>
-
-        <article className="dashboard-card">
-          <span>Überstunden</span>
-          <strong>{monthlyHours.overtimeHours} h</strong>
-        </article>
-
-        <article className="dashboard-card">
-          <span>Unterstunden</span>
-          <strong>{monthlyHours.undertimeHours} h</strong>
-        </article>
+      <div className="status-card">
+        <span>Prüfstatus</span>
+        <strong>🟢 Keine Prüfung aktiv</strong>
+        <p>Arbeitszeitgesetz und TVöD-Regeln werden in späteren Releases ergänzt.</p>
       </div>
 
       <div className="summary-card">
-        <strong>Dienstarten</strong>
+        <strong>Dienste im Monat</strong>
+        <p>{monthlyHours.shiftCount} Dienst(e) erfasst.</p>
+
         {monthlyHours.shiftTypeCounts.length === 0 ? (
           <p>Noch keine Dienste in diesem Monat.</p>
         ) : (
