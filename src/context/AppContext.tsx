@@ -7,19 +7,32 @@ import { loadShifts, saveShifts } from "../services/storage/shiftStorage";
 interface AppContextValue {
   profile: UserProfile;
   shifts: Shift[];
+
+  selectedYear: number;
+  selectedMonth: number;
+
   setProfile: (profile: UserProfile) => void;
   addShift: (shift: Shift) => void;
   deleteShift: (id: string) => void;
+
+  previousMonth: () => void;
+  nextMonth: () => void;
+  setSelectedMonth: (year: number, month: number) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  const today = new Date();
+
   const [profile, setProfileState] = useState<UserProfile>(
     () => loadProfile() ?? demoProfile,
   );
 
   const [shifts, setShifts] = useState<Shift[]>(() => loadShifts());
+
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  const [selectedMonth, setSelectedMonthState] = useState(today.getMonth());
 
   useEffect(() => {
     saveProfile(profile);
@@ -45,15 +58,47 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setShifts((current) => current.filter((shift) => shift.id !== id));
   }
 
+  function previousMonth() {
+    setSelectedMonthState((currentMonth) => {
+      if (currentMonth === 0) {
+        setSelectedYear((currentYear) => currentYear - 1);
+        return 11;
+      }
+
+      return currentMonth - 1;
+    });
+  }
+
+  function nextMonth() {
+    setSelectedMonthState((currentMonth) => {
+      if (currentMonth === 11) {
+        setSelectedYear((currentYear) => currentYear + 1);
+        return 0;
+      }
+
+      return currentMonth + 1;
+    });
+  }
+
+  function setSelectedMonth(year: number, month: number) {
+    setSelectedYear(year);
+    setSelectedMonthState(month);
+  }
+
   const value = useMemo(
     () => ({
       profile,
       shifts,
+      selectedYear,
+      selectedMonth,
       setProfile,
       addShift,
       deleteShift,
+      previousMonth,
+      nextMonth,
+      setSelectedMonth,
     }),
-    [profile, shifts],
+    [profile, shifts, selectedYear, selectedMonth],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

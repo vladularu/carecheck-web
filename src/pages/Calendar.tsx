@@ -1,5 +1,6 @@
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import CalendarHeader from "../components/calendar/CalendarHeader";
+import { useAppContext } from "../context/AppContext";
 import { createCalendar } from "../services/calendar/calendarService";
 
 const monthNames = [
@@ -18,14 +19,19 @@ const monthNames = [
 ];
 
 export default function Calendar() {
-  const year = 2026;
-  const month = 6;
+  const { selectedYear, selectedMonth, previousMonth, nextMonth } =
+    useAppContext();
 
-  const weeks = createCalendar(year, month);
+  const weeks = createCalendar(selectedYear, selectedMonth);
 
   return (
     <section className="page">
-      <CalendarHeader monthLabel={`${monthNames[month]} ${year}`} />
+      <CalendarHeader
+        monthLabel={`${monthNames[selectedMonth]} ${selectedYear}`}
+        onPrevious={previousMonth}
+        onNext={nextMonth}
+      />
+
       <CalendarGrid weeks={weeks} />
     </section>
   );

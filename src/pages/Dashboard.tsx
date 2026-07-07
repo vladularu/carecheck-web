@@ -21,16 +21,13 @@ const monthNames = [
 ];
 
 export default function Dashboard() {
-  const { profile, shifts } = useAppContext();
-
-  const selectedDate =
-    shifts.length > 0 ? new Date(`${shifts[0].date}T00:00:00`) : new Date();
+  const { profile, shifts, selectedYear, selectedMonth } = useAppContext();
 
   const monthlyHours = calculateMonthlyHours(
     shifts,
     profile,
-    selectedDate.getFullYear(),
-    selectedDate.getMonth(),
+    selectedYear,
+    selectedMonth,
   );
 
   const progress =
@@ -52,7 +49,7 @@ export default function Dashboard() {
   return (
     <section className="dashboard-page">
       <DashboardHero
-        monthLabel={`${monthNames[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`}
+        monthLabel={`${monthNames[selectedMonth]} ${selectedYear}`}
         profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel}`}
       />
 
