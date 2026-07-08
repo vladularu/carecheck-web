@@ -6,6 +6,8 @@ import type { Shift, ShiftType } from "../../types/index";
 interface CalendarDayProps {
   day: CalendarDayModel;
   shifts: Shift[];
+  selected: boolean;
+  onSelect: (dateKey: string) => void;
 }
 
 const shiftLabels: Record<ShiftType, string> = {
@@ -27,23 +29,33 @@ const shiftIcons: Record<ShiftType, string> = {
   DAY: "☀️",
   TRAINING: "📘",
   VACATION: "🏖️",
-  SICK: "🤒",
-  FREE: "frei",
+  SICK: "Krank",
+  FREE: "Frei",
   CUSTOM: "•",
 };
 
-export default function CalendarDay({ day, shifts }: CalendarDayProps) {
+export default function CalendarDay({
+  day,
+  shifts,
+  selected,
+  onSelect,
+}: CalendarDayProps) {
   const classNames = [
     "calendar-day",
     day.currentMonth ? "current-month" : "outside-month",
     day.weekend ? "weekend" : "",
     shifts.length > 0 ? "has-shift" : "",
+    selected ? "selected" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <div className={classNames}>
+    <button
+      className={classNames}
+      type="button"
+      onClick={() => onSelect(day.dateKey)}
+    >
       <div className="calendar-day-number">{day.dayNumber}</div>
 
       <div className="calendar-shifts">
@@ -55,9 +67,7 @@ export default function CalendarDay({ day, shifts }: CalendarDayProps) {
 
             {shift.type !== "FREE" && (
               <>
-                <span>
-                  {formatTimeRange24(shift.startTime, shift.endTime)}
-                </span>
+                <span>{formatTimeRange24(shift.startTime, shift.endTime)}</span>
                 <span>{calculateNetHours(shift)} h</span>
               </>
             )}
@@ -65,11 +75,9 @@ export default function CalendarDay({ day, shifts }: CalendarDayProps) {
         ))}
 
         {shifts.length > 2 && (
-          <span className="calendar-more">
-            +{shifts.length - 2} weitere
-          </span>
+          <span className="calendar-more">+{shifts.length - 2} weitere</span>
         )}
       </div>
-    </div>
+    </button>
   );
 }
