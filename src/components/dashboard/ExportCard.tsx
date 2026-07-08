@@ -3,11 +3,13 @@ import Card from "../ui/Card";
 
 interface ExportCardProps {
   onExportCsv: () => void;
+  onExportXlsx: () => void;
   onOpenReport: () => void;
 }
 
 export default function ExportCard({
   onExportCsv,
+  onExportXlsx,
   onOpenReport,
 }: ExportCardProps) {
   return (
@@ -16,13 +18,17 @@ export default function ExportCard({
       <strong className="status-title">Monatsbericht</strong>
 
       <p>
-        Exportiert den ausgewählten Monat als CSV für Excel oder öffnet eine
-        druckbare PDF-Ansicht.
+        Exportiert den ausgewählten Monat als Excel-Datei, CSV-Datei oder öffnet
+        eine druckbare PDF-Ansicht.
       </p>
 
       <div className="export-actions">
-        <Button type="button" onClick={onExportCsv}>
-          CSV für Excel exportieren
+        <Button type="button" onClick={onExportXlsx}>
+          Excel-Datei exportieren
+        </Button>
+
+        <Button type="button" variant="secondary" onClick={onExportCsv}>
+          CSV exportieren
         </Button>
 
         <Button type="button" variant="secondary" onClick={onOpenReport}>

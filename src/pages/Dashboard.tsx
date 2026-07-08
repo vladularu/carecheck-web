@@ -6,6 +6,7 @@ import StatusCard from "../components/dashboard/StatusCard";
 import WorkSummary from "../components/dashboard/WorkSummary";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
+import { downloadMonthlyReportXlsx } from "../services/export/monthlyReportXlsxService";
 import {
   calculateMonthlyHours,
   filterShiftsByMonth,
@@ -87,16 +88,27 @@ export default function Dashboard() {
       100,
   );
 
-  function handleExportCsv() {
-    downloadMonthlyReportCsv({
-      monthLabel,
-      profile,
-      shifts: shiftsInSelectedMonth,
-      monthlyHours,
-      monthlyPremiums,
-      complianceIssues,
-    });
-  }
+function handleExportCsv() {
+  downloadMonthlyReportCsv({
+    monthLabel,
+    profile,
+    shifts: shiftsInSelectedMonth,
+    monthlyHours,
+    monthlyPremiums,
+    complianceIssues,
+  });
+}
+
+function handleExportXlsx() {
+  downloadMonthlyReportXlsx({
+    monthLabel,
+    profile,
+    shifts: shiftsInSelectedMonth,
+    monthlyHours,
+    monthlyPremiums,
+    complianceIssues,
+  });
+}
 
   return (
     <section className="dashboard-page">
@@ -130,8 +142,9 @@ export default function Dashboard() {
         hasHourlyRate={premiumHourlyRate > 0}
       />
 
-      <ExportCard
+<ExportCard
   onExportCsv={handleExportCsv}
+  onExportXlsx={handleExportXlsx}
   onOpenReport={() => navigate("/bericht")}
 />
 
