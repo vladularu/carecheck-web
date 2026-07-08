@@ -4,6 +4,11 @@ import { demoProfile } from "../data/demoData";
 import { loadProfile, saveProfile } from "../services/storage/profileStorage";
 import { loadShifts, saveShifts } from "../services/storage/shiftStorage";
 
+interface SelectedMonth {
+  year: number;
+  month: number;
+}
+
 interface AppContextValue {
   profile: UserProfile;
   shifts: Shift[];
@@ -31,8 +36,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const [shifts, setShifts] = useState<Shift[]>(() => loadShifts());
 
-  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
-  const [selectedMonth, setSelectedMonthState] = useState(today.getMonth());
+  const [selectedMonthState, setSelectedMonthState] =
+    useState<SelectedMonth>({
+      year: today.getFullYear(),
+      month: today.getMonth(),
+    });
 
   useEffect(() => {
     saveProfile(profile);
@@ -59,38 +67,50 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function previousMonth() {
-    setSelectedMonthState((currentMonth) => {
-      if (currentMonth === 0) {
-        setSelectedYear((currentYear) => currentYear - 1);
-        return 11;
+    setSelectedMonthState((current) => {
+      if (current.month === 0) {
+        return {
+          year: current.year - 1,
+          month: 11,
+        };
       }
 
-      return currentMonth - 1;
+      return {
+        year: current.year,
+        month: current.month - 1,
+      };
     });
   }
 
   function nextMonth() {
-    setSelectedMonthState((currentMonth) => {
-      if (currentMonth === 11) {
-        setSelectedYear((currentYear) => currentYear + 1);
-        return 0;
+    setSelectedMonthState((current) => {
+      if (current.month === 11) {
+        return {
+          year: current.year + 1,
+          month: 0,
+        };
       }
 
-      return currentMonth + 1;
+      return {
+        year: current.year,
+        month: current.month + 1,
+      };
     });
   }
 
   function setSelectedMonth(year: number, month: number) {
-    setSelectedYear(year);
-    setSelectedMonthState(month);
+    setSelectedMonthState({
+      year,
+      month,
+    });
   }
 
   const value = useMemo(
     () => ({
       profile,
       shifts,
-      selectedYear,
-      selectedMonth,
+      selectedYear: selectedMonthState.year,
+      selectedMonth: selectedMonthState.month,
       setProfile,
       addShift,
       deleteShift,
@@ -98,7 +118,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       nextMonth,
       setSelectedMonth,
     }),
-    [profile, shifts, selectedYear, selectedMonth],
+    [profile, shifts, selectedMonthState],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
