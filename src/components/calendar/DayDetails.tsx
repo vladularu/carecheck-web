@@ -7,11 +7,13 @@ import {
   formatDateGerman,
   formatTimeRange24,
 } from "../../services/format/dateTimeFormat";
+import type { Holiday } from "../../services/holiday/holidayService";
 import type { Shift, ShiftType } from "../../types/index";
 
 interface DayDetailsProps {
   dateKey: string;
   shifts: Shift[];
+  holiday: Holiday | null;
   onAddShift: (shift: Shift) => void;
   onUpdateShift: (shift: Shift) => void;
   onDeleteShift: (id: string) => void;
@@ -32,6 +34,7 @@ const shiftLabels: Record<ShiftType, string> = {
 export default function DayDetails({
   dateKey,
   shifts,
+  holiday,
   onAddShift,
   onUpdateShift,
   onDeleteShift,
@@ -44,6 +47,7 @@ export default function DayDetails({
       <div className="day-details-header">
         <span>Tagesdetails</span>
         <strong>{formatDateGerman(dateKey)}</strong>
+        {holiday && <p className="day-details-holiday">Feiertag: {holiday.name}</p>}
       </div>
 
       {shifts.length === 0 ? (

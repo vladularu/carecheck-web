@@ -1,11 +1,13 @@
 import type { CalendarDay as CalendarDayModel } from "../../services/calendar/calendarService";
 import { calculateNetHours } from "../../services/calculation/workingTimeCalculator";
 import { formatTimeRange24 } from "../../services/format/dateTimeFormat";
+import type { Holiday } from "../../services/holiday/holidayService";
 import type { Shift, ShiftType } from "../../types/index";
 
 interface CalendarDayProps {
   day: CalendarDayModel;
   shifts: Shift[];
+  holiday: Holiday | null;
   selected: boolean;
   onSelect: (dateKey: string) => void;
 }
@@ -37,6 +39,7 @@ const shiftIcons: Record<ShiftType, string> = {
 export default function CalendarDay({
   day,
   shifts,
+  holiday,
   selected,
   onSelect,
 }: CalendarDayProps) {
@@ -44,6 +47,7 @@ export default function CalendarDay({
     "calendar-day",
     day.currentMonth ? "current-month" : "outside-month",
     day.weekend ? "weekend" : "",
+    holiday ? "holiday" : "",
     shifts.length > 0 ? "has-shift" : "",
     selected ? "selected" : "",
   ]
@@ -56,7 +60,12 @@ export default function CalendarDay({
       type="button"
       onClick={() => onSelect(day.dateKey)}
     >
-      <div className="calendar-day-number">{day.dayNumber}</div>
+      <div className="calendar-day-top">
+        <div className="calendar-day-number">{day.dayNumber}</div>
+        {holiday && <span className="calendar-holiday-badge">FT</span>}
+      </div>
+
+      {holiday && <div className="calendar-holiday-name">{holiday.name}</div>}
 
       <div className="calendar-shifts">
         {shifts.slice(0, 2).map((shift) => (
