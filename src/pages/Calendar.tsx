@@ -43,6 +43,7 @@ export default function Calendar() {
   const {
     shifts,
     addShift,
+    deleteShift,
     selectedYear,
     selectedMonth,
     previousMonth,
@@ -79,6 +80,7 @@ export default function Calendar() {
           dateKey={selectedDateKey}
           shifts={selectedShifts}
           onAddShift={addShift}
+          onDeleteShift={deleteShift}
         />
       )}
     </section>

@@ -590,7 +590,9 @@ a {
 
 .day-details-shift {
   display: grid;
-  gap: 4px;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
   border-radius: 16px;
   padding: 12px;
   background: #f8fafc;
@@ -671,4 +673,12 @@ a {
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid #e2e8f0;
+}
+
+.day-details-shift {
+  grid-template-columns: 1fr;
+}
+
+.day-details-shift .ui-button {
+  width: 100%;
 }

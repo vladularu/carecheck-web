@@ -13,6 +13,7 @@ interface DayDetailsProps {
   dateKey: string;
   shifts: Shift[];
   onAddShift: (shift: Shift) => void;
+  onDeleteShift: (id: string) => void;
 }
 
 const shiftLabels: Record<ShiftType, string> = {
@@ -31,6 +32,7 @@ export default function DayDetails({
   dateKey,
   shifts,
   onAddShift,
+  onDeleteShift,
 }: DayDetailsProps) {
   const [showForm, setShowForm] = useState(false);
 
@@ -47,16 +49,28 @@ export default function DayDetails({
         <div className="day-details-list">
           {shifts.map((shift) => (
             <article className="day-details-shift" key={shift.id}>
-              <strong>{shiftLabels[shift.type]}</strong>
+              <div>
+                <strong>{shiftLabels[shift.type]}</strong>
 
-              {shift.type !== "FREE" && (
-                <>
-                  <span>{formatTimeRange24(shift.startTime, shift.endTime)}</span>
-                  <span>{calculateNetHours(shift)} h netto</span>
-                </>
-              )}
+                {shift.type !== "FREE" && (
+                  <>
+                    <span>
+                      {formatTimeRange24(shift.startTime, shift.endTime)}
+                    </span>
+                    <span>{calculateNetHours(shift)} h netto</span>
+                  </>
+                )}
 
-              {shift.note && <p>{shift.note}</p>}
+                {shift.note && <p>{shift.note}</p>}
+              </div>
+
+              <Button
+                type="button"
+                variant="danger"
+                onClick={() => onDeleteShift(shift.id)}
+              >
+                Löschen
+              </Button>
             </article>
           ))}
         </div>
