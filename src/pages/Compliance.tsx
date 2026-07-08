@@ -77,11 +77,12 @@ export default function Compliance() {
           </div>
         </div>
 
-        <p className="compliance-note">
-          Es werden nur Dienste aus dem aktuell ausgewählten Monat geprüft:{" "}
-          <strong>{selectedMonthLabel}</strong>. Den Monat änderst du über die
-          Kalender- oder Dashboard-Navigation.
-        </p>
+<p className="compliance-note">
+  Es werden nur Dienste aus dem aktuell ausgewählten Monat geprüft:{" "}
+  <strong>{selectedMonthLabel}</strong>. Geprüft werden Ruhezeit, Pausen,
+  Tagesarbeitszeit und Wochenendfolge. Den Monat änderst du über die Kalender-
+  oder Dashboard-Navigation.
+</p>
       </Card>
 
       {issues.length === 0 ? (

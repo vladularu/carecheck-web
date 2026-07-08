@@ -32,6 +32,13 @@ function hoursBetween(start: Date, end: Date): number {
   return roundToTwoDecimals(diff / 1000 / 60 / 60);
 }
 
+function formatDateKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0",
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 function formatDateGerman(dateKey: string): string {
   const [year, month, day] = dateKey.split("-");
 
@@ -63,8 +70,12 @@ function createIssue(
   };
 }
 
+function isWorkedShift(shift: Shift): boolean {
+  return shift.type !== "FREE" && shift.type !== "VACATION" && shift.type !== "SICK";
+}
+
 function checkDailyWorkingTime(shift: Shift): ComplianceIssue[] {
-  if (shift.type === "FREE") {
+  if (!isWorkedShift(shift)) {
     return [];
   }
 
@@ -99,7 +110,7 @@ function checkDailyWorkingTime(shift: Shift): ComplianceIssue[] {
 }
 
 function checkBreakRequirement(shift: Shift): ComplianceIssue[] {
-  if (shift.type === "FREE") {
+  if (!isWorkedShift(shift)) {
     return [];
   }
 
@@ -129,7 +140,7 @@ function checkBreakRequirement(shift: Shift): ComplianceIssue[] {
 }
 
 function checkRestTimes(shifts: Shift[]): ComplianceIssue[] {
-  const sorted = sortShifts(shifts).filter((shift) => shift.type !== "FREE");
+  const sorted = sortShifts(shifts).filter(isWorkedShift);
   const issues: ComplianceIssue[] = [];
 
   for (let index = 0; index < sorted.length - 1; index++) {
@@ -168,6 +179,108 @@ function checkRestTimes(shifts: Shift[]): ComplianceIssue[] {
   return issues;
 }
 
+function startOfDay(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function addDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+function getWeekendStartDate(date: Date): Date | null {
+  const day = date.getDay();
+
+  if (day === 6) {
+    return startOfDay(date);
+  }
+
+  if (day === 0) {
+    return addDays(startOfDay(date), -1);
+  }
+
+  return null;
+}
+
+function getWeekendKeysForShift(shift: Shift): string[] {
+  const start = getShiftStart(shift);
+  const end = getShiftEnd(shift);
+  const weekendKeys = new Set<string>();
+
+  let cursor = startOfDay(start);
+
+  while (cursor < end) {
+    const nextDay = addDays(cursor, 1);
+
+    const overlapsDay = start < nextDay && end > cursor;
+
+    if (overlapsDay) {
+      const weekendStart = getWeekendStartDate(cursor);
+
+      if (weekendStart) {
+        weekendKeys.add(formatDateKey(weekendStart));
+      }
+    }
+
+    cursor = nextDay;
+  }
+
+  return Array.from(weekendKeys);
+}
+
+function daysBetween(a: Date, b: Date): number {
+  return Math.round((b.getTime() - a.getTime()) / 1000 / 60 / 60 / 24);
+}
+
+function dateFromDateKey(dateKey: string): Date {
+  const [year, month, day] = dateKey.split("-").map(Number);
+
+  return new Date(year, month - 1, day);
+}
+
+function checkConsecutiveWeekends(shifts: Shift[]): ComplianceIssue[] {
+  const workedShifts = sortShifts(shifts).filter(isWorkedShift);
+  const weekendShifts = new Map<string, Shift[]>();
+  const issues: ComplianceIssue[] = [];
+
+  for (const shift of workedShifts) {
+    const weekendKeys = getWeekendKeysForShift(shift);
+
+    for (const weekendKey of weekendKeys) {
+      const current = weekendShifts.get(weekendKey) ?? [];
+      weekendShifts.set(weekendKey, [...current, shift]);
+    }
+  }
+
+  const weekendKeys = Array.from(weekendShifts.keys()).sort();
+
+  for (let index = 0; index < weekendKeys.length - 1; index++) {
+    const currentWeekendKey = weekendKeys[index];
+    const nextWeekendKey = weekendKeys[index + 1];
+
+    const currentDate = dateFromDateKey(currentWeekendKey);
+    const nextDate = dateFromDateKey(nextWeekendKey);
+
+    if (daysBetween(currentDate, nextDate) !== 7) {
+      continue;
+    }
+
+    const relatedShift = weekendShifts.get(nextWeekendKey)?.[0];
+
+    issues.push(
+      createIssue(
+        "warning",
+        "Zwei Wochenenden in Folge gearbeitet",
+        `Es wurden zwei aufeinanderfolgende Wochenenden gearbeitet: Wochenende ab ${formatDateGerman(currentWeekendKey)} und Wochenende ab ${formatDateGerman(nextWeekendKey)}. Prüfen, ob nach der Dienstplanregel jedes zweite Wochenende frei sein sollte.`,
+        relatedShift?.id,
+      ),
+    );
+  }
+
+  return issues;
+}
+
 export function checkCompliance(shifts: Shift[]): ComplianceIssue[] {
   const issues: ComplianceIssue[] = [];
 
@@ -177,6 +290,7 @@ export function checkCompliance(shifts: Shift[]): ComplianceIssue[] {
   }
 
   issues.push(...checkRestTimes(shifts));
+  issues.push(...checkConsecutiveWeekends(shifts));
 
   return issues;
 }
