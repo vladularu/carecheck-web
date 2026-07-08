@@ -40,8 +40,14 @@ function createDateKey(year: number, month: number, day: number): string {
 }
 
 export default function Calendar() {
-  const { shifts, selectedYear, selectedMonth, previousMonth, nextMonth } =
-    useAppContext();
+  const {
+    shifts,
+    addShift,
+    selectedYear,
+    selectedMonth,
+    previousMonth,
+    nextMonth,
+  } = useAppContext();
 
   const [selectedDateKey, setSelectedDateKey] = useState(() =>
     createDateKey(selectedYear, selectedMonth, 1),
@@ -69,7 +75,11 @@ export default function Calendar() {
       />
 
       {selectedDateKey && (
-        <DayDetails dateKey={selectedDateKey} shifts={selectedShifts} />
+        <DayDetails
+          dateKey={selectedDateKey}
+          shifts={selectedShifts}
+          onAddShift={addShift}
+        />
       )}
     </section>
   );

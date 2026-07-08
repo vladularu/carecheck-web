@@ -1,3 +1,6 @@
+import { useState } from "react";
+import ShiftForm from "../ShiftForm";
+import Button from "../ui/Button";
 import Card from "../ui/Card";
 import { calculateNetHours } from "../../services/calculation/workingTimeCalculator";
 import {
@@ -9,6 +12,7 @@ import type { Shift, ShiftType } from "../../types/index";
 interface DayDetailsProps {
   dateKey: string;
   shifts: Shift[];
+  onAddShift: (shift: Shift) => void;
 }
 
 const shiftLabels: Record<ShiftType, string> = {
@@ -23,7 +27,13 @@ const shiftLabels: Record<ShiftType, string> = {
   CUSTOM: "Individuell",
 };
 
-export default function DayDetails({ dateKey, shifts }: DayDetailsProps) {
+export default function DayDetails({
+  dateKey,
+  shifts,
+  onAddShift,
+}: DayDetailsProps) {
+  const [showForm, setShowForm] = useState(false);
+
   return (
     <Card className="day-details">
       <div className="day-details-header">
@@ -49,6 +59,22 @@ export default function DayDetails({ dateKey, shifts }: DayDetailsProps) {
               {shift.note && <p>{shift.note}</p>}
             </article>
           ))}
+        </div>
+      )}
+
+      <div className="day-details-actions">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => setShowForm((current) => !current)}
+        >
+          {showForm ? "Formular schließen" : "Dienst für diesen Tag hinzufügen"}
+        </Button>
+      </div>
+
+      {showForm && (
+        <div className="day-details-form">
+          <ShiftForm onAddShift={onAddShift} initialDate={dateKey} />
         </div>
       )}
     </Card>

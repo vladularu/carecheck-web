@@ -663,3 +663,12 @@ a {
     font-size: 10px;
   }
 }
+.day-details-actions {
+  margin-top: 16px;
+}
+
+.day-details-form {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}

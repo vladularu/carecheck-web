@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Shift, ShiftType } from "../types/index";
 
 interface ShiftFormProps {
   onAddShift: (shift: Shift) => void;
+  initialDate?: string;
 }
 
 const shiftOptions: { value: ShiftType; label: string }[] = [
@@ -17,13 +18,19 @@ const shiftOptions: { value: ShiftType; label: string }[] = [
   { value: "CUSTOM", label: "Individuell" },
 ];
 
-export default function ShiftForm({ onAddShift }: ShiftFormProps) {
-  const [date, setDate] = useState("");
+export default function ShiftForm({ onAddShift, initialDate }: ShiftFormProps) {
+  const [date, setDate] = useState(initialDate ?? "");
   const [startTime, setStartTime] = useState("06:00");
   const [endTime, setEndTime] = useState("14:12");
   const [breakMinutes, setBreakMinutes] = useState(30);
   const [type, setType] = useState<ShiftType>("EARLY");
   const [note, setNote] = useState("");
+
+  useEffect(() => {
+    if (initialDate) {
+      setDate(initialDate);
+    }
+  }, [initialDate]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,7 +51,7 @@ export default function ShiftForm({ onAddShift }: ShiftFormProps) {
 
     onAddShift(newShift);
 
-    setDate("");
+    setDate(initialDate ?? "");
     setStartTime("06:00");
     setEndTime("14:12");
     setBreakMinutes(30);
