@@ -803,3 +803,11 @@ a {
   display: grid;
   gap: 2px;
 }
+
+.shift-premium-note {
+  margin: 0;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
+}

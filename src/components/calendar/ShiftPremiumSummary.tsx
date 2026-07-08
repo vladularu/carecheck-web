@@ -1,3 +1,4 @@
+import { calculatePremiumLines } from "../../services/calculation/premiumAmountCalculator";
 import type { ShiftPremiumHours } from "../../services/calculation/shiftPremiumCalculator";
 
 interface ShiftPremiumSummaryProps {
@@ -11,26 +12,11 @@ function formatHours(value: number): string {
 export default function ShiftPremiumSummary({
   premium,
 }: ShiftPremiumSummaryProps) {
-  const rows = [
-    {
-      label: "Nacht",
-      value: premium.nightHours,
-    },
-    {
-      label: "Sonntag",
-      value: premium.sundayHours,
-    },
-    {
-      label: "Feiertag",
-      value: premium.holidayHours,
-    },
-    {
-      label: "Samstag 13–21",
-      value: premium.saturdayAfternoonHours,
-    },
-  ].filter((row) => row.value > 0);
+  const result = calculatePremiumLines(premium, {
+    holidayMode: "WITH_TIME_OFF",
+  });
 
-  if (rows.length === 0) {
+  if (result.lines.length === 0) {
     return null;
   }
 
@@ -41,10 +27,12 @@ export default function ShiftPremiumSummary({
       </strong>
 
       <div className="shift-premium-summary-grid">
-        {rows.map((row) => (
-          <div className="shift-premium-row" key={row.label}>
-            <span>{row.label}</span>
-            <strong>{formatHours(row.value)}</strong>
+        {result.lines.map((line) => (
+          <div className="shift-premium-row" key={line.key}>
+            <span>{line.label}</span>
+            <strong>
+              {formatHours(line.hours)} × {line.percentage} %
+            </strong>
           </div>
         ))}
       </div>
@@ -52,6 +40,10 @@ export default function ShiftPremiumSummary({
       {premium.holidayNames.length > 0 && (
         <p>Feiertag: {premium.holidayNames.join(", ")}</p>
       )}
+
+      <p className="shift-premium-note">
+        Euro-Beträge folgen, sobald der TVöD-Stundenwert hinterlegt ist.
+      </p>
     </div>
   );
 }
