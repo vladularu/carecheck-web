@@ -1,9 +1,11 @@
 import DashboardHero from "../components/dashboard/DashboardHero";
+import MonthlyPremiumSummary from "../components/dashboard/MonthlyPremiumSummary";
 import ShiftSummary from "../components/dashboard/ShiftSummary";
 import StatusCard from "../components/dashboard/StatusCard";
 import WorkSummary from "../components/dashboard/WorkSummary";
 import { useAppContext } from "../context/AppContext";
 import { calculateMonthlyHours } from "../services/calculation/monthlyHoursCalculator";
+import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
 
 const monthNames = [
   "Januar",
@@ -28,6 +30,17 @@ export default function Dashboard() {
     profile,
     selectedYear,
     selectedMonth,
+  );
+
+  const monthlyPremiums = calculateMonthlyPremiums(
+    shifts,
+    selectedYear,
+    selectedMonth,
+    {
+      federalState: profile.federalState,
+      baseHourlyRate: profile.premiumHourlyRate,
+      holidayMode: "WITH_TIME_OFF",
+    },
   );
 
   const progress =
@@ -64,6 +77,11 @@ export default function Dashboard() {
         publicHolidayCount={monthlyHours.publicHolidayCount}
         holidayReductionHours={monthlyHours.holidayReductionHours}
         averageDailyHours={monthlyHours.averageDailyHours}
+      />
+
+      <MonthlyPremiumSummary
+        monthlyPremiums={monthlyPremiums}
+        hasHourlyRate={Boolean(profile.premiumHourlyRate)}
       />
 
       <StatusCard />

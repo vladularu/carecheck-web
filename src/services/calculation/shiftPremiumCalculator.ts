@@ -19,6 +19,20 @@ function roundToTwoDecimals(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
+function emptyPremium(shiftId: string): ShiftPremiumHours {
+  return {
+    shiftId,
+    grossHours: 0,
+    netHours: 0,
+    nightHours: 0,
+    sundayHours: 0,
+    holidayHours: 0,
+    saturdayHours: 0,
+    saturdayAfternoonHours: 0,
+    holidayNames: [],
+  };
+}
+
 function createDateTime(dateKey: string, time: string): Date {
   const [year, month, day] = dateKey.split("-").map(Number);
   const [hour, minute] = time.split(":").map(Number);
@@ -96,6 +110,10 @@ export function calculateShiftPremiumHours(
   shift: Shift,
   federalState: FederalState,
 ): ShiftPremiumHours {
+  if (shift.type === "FREE") {
+    return emptyPremium(shift.id);
+  }
+
   const start = getShiftStart(shift);
   const end = getShiftEnd(shift);
 
@@ -103,6 +121,10 @@ export function calculateShiftPremiumHours(
     0,
     Math.round((end.getTime() - start.getTime()) / 1000 / 60),
   );
+
+  if (grossMinutes <= 0) {
+    return emptyPremium(shift.id);
+  }
 
   let workedMinutes = 0;
   let nightMinutes = 0;
