@@ -8,6 +8,11 @@ interface WorkSummaryProps {
   remainingHours: number;
   overtimeHours: number;
   progress: number;
+
+  workingDayCount: number;
+  publicHolidayCount: number;
+  holidayReductionHours: number;
+  averageDailyHours: number;
 }
 
 export default function WorkSummary({
@@ -17,6 +22,10 @@ export default function WorkSummary({
   remainingHours,
   overtimeHours,
   progress,
+  workingDayCount,
+  publicHolidayCount,
+  holidayReductionHours,
+  averageDailyHours,
 }: WorkSummaryProps) {
   return (
     <Card>
@@ -38,6 +47,16 @@ export default function WorkSummary({
         <StatCard label="Differenz" value={`${balanceHours} h`} />
         <StatCard label="Fehlend" value={`${remainingHours} h`} />
         <StatCard label="Überstunden" value={`${overtimeHours} h`} />
+      </div>
+
+      <div className="work-grid">
+        <StatCard label="Arbeitstage" value={workingDayCount} />
+        <StatCard label="Feiertage" value={publicHolidayCount} />
+        <StatCard
+          label="Feiertagsabzug"
+          value={`${holidayReductionHours} h`}
+          helper={`${averageDailyHours} h je Arbeitstag`}
+        />
       </div>
     </Card>
   );

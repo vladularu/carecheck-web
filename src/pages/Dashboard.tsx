@@ -60,6 +60,10 @@ export default function Dashboard() {
         remainingHours={remainingHours}
         overtimeHours={monthlyHours.overtimeHours}
         progress={progress}
+        workingDayCount={monthlyHours.workingDayCount}
+        publicHolidayCount={monthlyHours.publicHolidayCount}
+        holidayReductionHours={monthlyHours.holidayReductionHours}
+        averageDailyHours={monthlyHours.averageDailyHours}
       />
 
       <StatusCard />
