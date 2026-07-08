@@ -107,6 +107,7 @@ export default function Calendar() {
           dateKey={selectedDateKey}
           shifts={selectedShifts}
           holiday={selectedHoliday}
+          federalState={profile.federalState}
           onAddShift={addShift}
           onUpdateShift={updateShift}
           onDeleteShift={deleteShift}

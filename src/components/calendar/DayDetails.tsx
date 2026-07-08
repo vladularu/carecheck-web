@@ -3,17 +3,20 @@ import ShiftForm from "../ShiftForm";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import { calculateNetHours } from "../../services/calculation/workingTimeCalculator";
+import { calculateShiftPremiumHours } from "../../services/calculation/shiftPremiumCalculator";
 import {
   formatDateGerman,
   formatTimeRange24,
 } from "../../services/format/dateTimeFormat";
 import type { Holiday } from "../../services/holiday/holidayService";
-import type { Shift, ShiftType } from "../../types/index";
+import type { FederalState, Shift, ShiftType } from "../../types/index";
+import ShiftPremiumSummary from "./ShiftPremiumSummary";
 
 interface DayDetailsProps {
   dateKey: string;
   shifts: Shift[];
   holiday: Holiday | null;
+  federalState: FederalState;
   onAddShift: (shift: Shift) => void;
   onUpdateShift: (shift: Shift) => void;
   onDeleteShift: (id: string) => void;
@@ -35,6 +38,7 @@ export default function DayDetails({
   dateKey,
   shifts,
   holiday,
+  federalState,
   onAddShift,
   onUpdateShift,
   onDeleteShift,
@@ -47,7 +51,9 @@ export default function DayDetails({
       <div className="day-details-header">
         <span>Tagesdetails</span>
         <strong>{formatDateGerman(dateKey)}</strong>
-        {holiday && <p className="day-details-holiday">Feiertag: {holiday.name}</p>}
+        {holiday && (
+          <p className="day-details-holiday">Feiertag: {holiday.name}</p>
+        )}
       </div>
 
       {shifts.length === 0 ? (
@@ -56,6 +62,7 @@ export default function DayDetails({
         <div className="day-details-list">
           {shifts.map((shift) => {
             const isEditing = editingShiftId === shift.id;
+            const premium = calculateShiftPremiumHours(shift, federalState);
 
             return (
               <article className="day-details-shift" key={shift.id}>
@@ -77,23 +84,22 @@ export default function DayDetails({
                   </div>
                 ) : (
                   <>
-                    <div>
-                      <strong>{shiftLabels[shift.type]}</strong>
+                   <div className="day-details-shift-main">
+  <strong>{shiftLabels[shift.type]}</strong>
 
-                      {shift.type !== "FREE" && (
-                        <>
-                          <span>
-                            {formatTimeRange24(
-                              shift.startTime,
-                              shift.endTime,
-                            )}
-                          </span>
-                          <span>{calculateNetHours(shift)} h netto</span>
-                        </>
-                      )}
+  {shift.type !== "FREE" && (
+    <>
+      <div className="day-details-shift-meta">
+        <span>{formatTimeRange24(shift.startTime, shift.endTime)}</span>
+        <span>{calculateNetHours(shift)} h netto</span>
+      </div>
 
-                      {shift.note && <p>{shift.note}</p>}
-                    </div>
+      <ShiftPremiumSummary premium={premium} />
+    </>
+  )}
+
+  {shift.note && <p>{shift.note}</p>}
+</div>
 
                     <div className="day-details-shift-actions">
                       <Button

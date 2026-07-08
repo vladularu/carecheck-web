@@ -740,3 +740,66 @@ a {
   color: #991b1b;
   font-weight: 900;
 }
+
+.shift-premium-summary {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.shift-premium-summary-title {
+  color: #9a3412;
+  font-size: 13px;
+}
+
+.shift-premium-summary-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.shift-premium-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.shift-premium-row span {
+  color: #9a3412;
+  font-weight: 800;
+}
+
+.shift-premium-row strong {
+  color: #7c2d12;
+}
+
+.shift-premium-summary p {
+  margin: 0;
+  color: #9a3412;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.day-details-shift-main {
+  display: grid;
+  gap: 5px;
+}
+
+.day-details-shift-main strong {
+  display: block;
+  font-size: 16px;
+}
+
+.day-details-shift-main span {
+  display: block;
+  color: #475569;
+}
+
+.day-details-shift-meta {
+  display: grid;
+  gap: 2px;
+}
