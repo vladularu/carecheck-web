@@ -17,6 +17,7 @@ interface DayDetailsProps {
   shifts: Shift[];
   holiday: Holiday | null;
   federalState: FederalState;
+  baseHourlyRate?: number;
   onAddShift: (shift: Shift) => void;
   onUpdateShift: (shift: Shift) => void;
   onDeleteShift: (id: string) => void;
@@ -39,6 +40,7 @@ export default function DayDetails({
   shifts,
   holiday,
   federalState,
+  baseHourlyRate,
   onAddShift,
   onUpdateShift,
   onDeleteShift,
@@ -84,22 +86,30 @@ export default function DayDetails({
                   </div>
                 ) : (
                   <>
-                   <div className="day-details-shift-main">
-  <strong>{shiftLabels[shift.type]}</strong>
+                    <div className="day-details-shift-main">
+                      <strong>{shiftLabels[shift.type]}</strong>
 
-  {shift.type !== "FREE" && (
-    <>
-      <div className="day-details-shift-meta">
-        <span>{formatTimeRange24(shift.startTime, shift.endTime)}</span>
-        <span>{calculateNetHours(shift)} h netto</span>
-      </div>
+                      {shift.type !== "FREE" && (
+                        <>
+                          <div className="day-details-shift-meta">
+                            <span>
+                              {formatTimeRange24(
+                                shift.startTime,
+                                shift.endTime,
+                              )}
+                            </span>
+                            <span>{calculateNetHours(shift)} h netto</span>
+                          </div>
 
-      <ShiftPremiumSummary premium={premium} />
-    </>
-  )}
+                          <ShiftPremiumSummary
+                            premium={premium}
+                            baseHourlyRate={baseHourlyRate}
+                          />
+                        </>
+                      )}
 
-  {shift.note && <p>{shift.note}</p>}
-</div>
+                      {shift.note && <p>{shift.note}</p>}
+                    </div>
 
                     <div className="day-details-shift-actions">
                       <Button

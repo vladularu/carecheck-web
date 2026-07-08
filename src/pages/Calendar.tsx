@@ -103,15 +103,16 @@ export default function Calendar() {
       />
 
       {selectedDateKey && (
-        <DayDetails
-          dateKey={selectedDateKey}
-          shifts={selectedShifts}
-          holiday={selectedHoliday}
-          federalState={profile.federalState}
-          onAddShift={addShift}
-          onUpdateShift={updateShift}
-          onDeleteShift={deleteShift}
-        />
+<DayDetails
+  dateKey={selectedDateKey}
+  shifts={selectedShifts}
+  holiday={selectedHoliday}
+  federalState={profile.federalState}
+  baseHourlyRate={profile.premiumHourlyRate}
+  onAddShift={addShift}
+  onUpdateShift={updateShift}
+  onDeleteShift={deleteShift}
+/>
       )}
     </section>
   );
