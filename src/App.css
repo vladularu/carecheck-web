@@ -1197,3 +1197,7 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+.export-actions {
+  margin-top: 14px;
+}

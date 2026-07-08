@@ -1,4 +1,5 @@
 import DashboardHero from "../components/dashboard/DashboardHero";
+import ExportCard from "../components/dashboard/ExportCard";
 import MonthlyPremiumSummary from "../components/dashboard/MonthlyPremiumSummary";
 import ShiftSummary from "../components/dashboard/ShiftSummary";
 import StatusCard from "../components/dashboard/StatusCard";
@@ -10,6 +11,7 @@ import {
 } from "../services/calculation/monthlyHoursCalculator";
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
 import { checkCompliance } from "../services/compliance/complianceService";
+import { downloadMonthlyReportCsv } from "../services/export/monthlyReportCsvService";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
 
 const monthNames = [
@@ -30,6 +32,7 @@ const monthNames = [
 export default function Dashboard() {
   const { profile, shifts, selectedYear, selectedMonth } = useAppContext();
 
+  const monthLabel = `${monthNames[selectedMonth]} ${selectedYear}`;
   const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
 
   const shiftsInSelectedMonth = filterShiftsByMonth(
@@ -82,10 +85,21 @@ export default function Dashboard() {
       100,
   );
 
+  function handleExportCsv() {
+    downloadMonthlyReportCsv({
+      monthLabel,
+      profile,
+      shifts: shiftsInSelectedMonth,
+      monthlyHours,
+      monthlyPremiums,
+      complianceIssues,
+    });
+  }
+
   return (
     <section className="dashboard-page">
       <DashboardHero
-        monthLabel={`${monthNames[selectedMonth]} ${selectedYear}`}
+        monthLabel={monthLabel}
         profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel} · Zuschlagsbasis ${premiumHourlyRate} €/h`}
       />
 
@@ -113,6 +127,8 @@ export default function Dashboard() {
         monthlyPremiums={monthlyPremiums}
         hasHourlyRate={premiumHourlyRate > 0}
       />
+
+      <ExportCard onExportCsv={handleExportCsv} />
 
       <ShiftSummary
         shiftCount={monthlyHours.shiftCount}
