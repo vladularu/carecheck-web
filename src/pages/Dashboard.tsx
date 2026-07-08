@@ -4,8 +4,12 @@ import ShiftSummary from "../components/dashboard/ShiftSummary";
 import StatusCard from "../components/dashboard/StatusCard";
 import WorkSummary from "../components/dashboard/WorkSummary";
 import { useAppContext } from "../context/AppContext";
-import { calculateMonthlyHours } from "../services/calculation/monthlyHoursCalculator";
+import {
+  calculateMonthlyHours,
+  filterShiftsByMonth,
+} from "../services/calculation/monthlyHoursCalculator";
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
+import { checkCompliance } from "../services/compliance/complianceService";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
 
 const monthNames = [
@@ -27,6 +31,22 @@ export default function Dashboard() {
   const { profile, shifts, selectedYear, selectedMonth } = useAppContext();
 
   const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
+
+  const shiftsInSelectedMonth = filterShiftsByMonth(
+    shifts,
+    selectedYear,
+    selectedMonth,
+  );
+
+  const complianceIssues = checkCompliance(shiftsInSelectedMonth);
+
+  const criticalCount = complianceIssues.filter(
+    (issue) => issue.severity === "critical",
+  ).length;
+
+  const warningCount = complianceIssues.filter(
+    (issue) => issue.severity === "warning",
+  ).length;
 
   const monthlyHours = calculateMonthlyHours(
     shifts,
@@ -82,12 +102,17 @@ export default function Dashboard() {
         averageDailyHours={monthlyHours.averageDailyHours}
       />
 
+      <StatusCard
+        criticalCount={criticalCount}
+        warningCount={warningCount}
+        issueCount={complianceIssues.length}
+        checkedShiftCount={shiftsInSelectedMonth.length}
+      />
+
       <MonthlyPremiumSummary
         monthlyPremiums={monthlyPremiums}
         hasHourlyRate={premiumHourlyRate > 0}
       />
-
-      <StatusCard />
 
       <ShiftSummary
         shiftCount={monthlyHours.shiftCount}
