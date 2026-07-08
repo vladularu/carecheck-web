@@ -908,3 +908,50 @@ a {
   font-size: 13px;
   font-weight: 800;
 }
+
+.tariff-box {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.tariff-box > span {
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tariff-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.tariff-row p {
+  margin: 0;
+  color: #475569;
+  font-weight: 800;
+}
+
+.tariff-row strong {
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.tariff-row.highlight {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.tariff-row.highlight strong {
+  color: #1d4ed8;
+}

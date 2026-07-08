@@ -6,6 +6,7 @@ import WorkSummary from "../components/dashboard/WorkSummary";
 import { useAppContext } from "../context/AppContext";
 import { calculateMonthlyHours } from "../services/calculation/monthlyHoursCalculator";
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
+import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
 
 const monthNames = [
   "Januar",
@@ -25,6 +26,8 @@ const monthNames = [
 export default function Dashboard() {
   const { profile, shifts, selectedYear, selectedMonth } = useAppContext();
 
+  const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
+
   const monthlyHours = calculateMonthlyHours(
     shifts,
     profile,
@@ -38,7 +41,7 @@ export default function Dashboard() {
     selectedMonth,
     {
       federalState: profile.federalState,
-      baseHourlyRate: profile.premiumHourlyRate,
+      baseHourlyRate: premiumHourlyRate,
       holidayMode: "WITH_TIME_OFF",
     },
   );
@@ -63,7 +66,7 @@ export default function Dashboard() {
     <section className="dashboard-page">
       <DashboardHero
         monthLabel={`${monthNames[selectedMonth]} ${selectedYear}`}
-        profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel}`}
+        profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel} · Zuschlagsbasis ${premiumHourlyRate} €/h`}
       />
 
       <WorkSummary
@@ -81,7 +84,7 @@ export default function Dashboard() {
 
       <MonthlyPremiumSummary
         monthlyPremiums={monthlyPremiums}
-        hasHourlyRate={Boolean(profile.premiumHourlyRate)}
+        hasHourlyRate={premiumHourlyRate > 0}
       />
 
       <StatusCard />

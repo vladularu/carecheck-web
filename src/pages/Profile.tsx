@@ -2,6 +2,12 @@ import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import { useAppContext } from "../context/AppContext";
+import {
+  getTvoedPHourlyRate,
+  getTvoedPMonthlySalary,
+  getTvoedPPremiumHourlyRate,
+  getTvoedPTariffLabel,
+} from "../services/tariff/tvoedPTariffService";
 import type { FederalState, PayGroup, PayLevel } from "../types/index";
 
 const federalStates: { value: FederalState; label: string }[] = [
@@ -38,8 +44,31 @@ const payGroups: PayGroup[] = [
 
 const payLevels: PayLevel[] = [1, 2, 3, 4, 5, 6];
 
+function formatEuro(value: number | null): string {
+  if (value === null) {
+    return "nicht verfügbar";
+  }
+
+  return new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+  }).format(value);
+}
+
 export default function Profile() {
   const { profile, setProfile } = useAppContext();
+
+  const monthlySalary = getTvoedPMonthlySalary(
+    profile.payGroup,
+    profile.payLevel,
+  );
+
+  const individualHourlyRate = getTvoedPHourlyRate(
+    profile.payGroup,
+    profile.payLevel,
+  );
+
+  const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
 
   return (
     <section className="page">
@@ -124,31 +153,35 @@ export default function Profile() {
             </select>
           </label>
 
-          <label className="field">
-            <span>Zuschlags-Stundenwert in €</span>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="z. B. 25.00"
-              value={profile.premiumHourlyRate ?? ""}
-              onChange={(event) =>
-                setProfile({
-                  ...profile,
-                  premiumHourlyRate:
-                    event.target.value === ""
-                      ? undefined
-                      : Number(event.target.value),
-                })
-              }
-            />
-          </label>
+          <div className="tariff-box">
+            <span>Automatische TVöD-P Werte</span>
 
-          <p className="profile-helper">
-            Der Zuschlags-Stundenwert wird vorerst manuell eingetragen. Später
-            kann CareCheck ihn automatisch aus TVöD-Gruppe, Stufe und
-            Tabellenentgelt berechnen.
-          </p>
+            <div className="tariff-row">
+              <p>Tarifstand</p>
+              <strong>{getTvoedPTariffLabel()}</strong>
+            </div>
+
+            <div className="tariff-row">
+              <p>Monatsentgelt laut Gruppe/Stufe</p>
+              <strong>{formatEuro(monthlySalary)}</strong>
+            </div>
+
+            <div className="tariff-row">
+              <p>Individueller Stundenwert</p>
+              <strong>{formatEuro(individualHourlyRate)}</strong>
+            </div>
+
+            <div className="tariff-row highlight">
+              <p>Zuschlags-Stundenwert</p>
+              <strong>{formatEuro(premiumHourlyRate)}</strong>
+            </div>
+
+            <p className="profile-helper">
+              Für TVöD-Zeitzuschläge verwendet CareCheck automatisch Stufe 3 der
+              jeweiligen Entgeltgruppe. Bei {profile.payGroup} ist das{" "}
+              {formatEuro(premiumHourlyRate)}.
+            </p>
+          </div>
 
           <Button type="button" variant="secondary">
             Profil wird automatisch gespeichert

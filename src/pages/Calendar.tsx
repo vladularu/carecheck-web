@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import CalendarHeader from "../components/calendar/CalendarHeader";
 import DayDetails from "../components/calendar/DayDetails";
@@ -85,6 +86,7 @@ export default function Calendar() {
   const selectedHoliday = selectedDateKey
     ? getHolidayByDate(selectedDateKey, profile.federalState)
     : null;
+    const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
 
   return (
     <section className="page">
@@ -108,7 +110,7 @@ export default function Calendar() {
   shifts={selectedShifts}
   holiday={selectedHoliday}
   federalState={profile.federalState}
-  baseHourlyRate={profile.premiumHourlyRate}
+  baseHourlyRate={premiumHourlyRate}
   onAddShift={addShift}
   onUpdateShift={updateShift}
   onDeleteShift={deleteShift}
