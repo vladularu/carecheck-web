@@ -8,7 +8,13 @@ import {
   getTvoedPPremiumHourlyRate,
   getTvoedPTariffLabel,
 } from "../services/tariff/tvoedPTariffService";
-import type { FederalState, PayGroup, PayLevel } from "../types/index";
+import type {
+  FederalState,
+  PayGroup,
+  PayLevel,
+  ShiftTemplate,
+  ShiftType,
+} from "../types/index";
 
 const federalStates: { value: FederalState; label: string }[] = [
   { value: "BW", label: "Baden-Württemberg" },
@@ -44,6 +50,18 @@ const payGroups: PayGroup[] = [
 
 const payLevels: PayLevel[] = [1, 2, 3, 4, 5, 6];
 
+const templateLabels: { type: ShiftType; label: string }[] = [
+  { type: "EARLY", label: "Frühdienst" },
+  { type: "LATE", label: "Spätdienst" },
+  { type: "NIGHT", label: "Nachtdienst" },
+  { type: "DAY", label: "Tagdienst" },
+  { type: "TRAINING", label: "Fortbildung" },
+  { type: "VACATION", label: "Urlaub" },
+  { type: "SICK", label: "Krank" },
+  { type: "FREE", label: "Frei" },
+  { type: "CUSTOM", label: "Individuell" },
+];
+
 function formatEuro(value: number | null): string {
   if (value === null) {
     return "nicht verfügbar";
@@ -56,7 +74,13 @@ function formatEuro(value: number | null): string {
 }
 
 export default function Profile() {
-  const { profile, setProfile } = useAppContext();
+  const {
+    profile,
+    setProfile,
+    shiftTemplates,
+    updateShiftTemplate,
+    resetShiftTemplates,
+  } = useAppContext();
 
   const monthlySalary = getTvoedPMonthlySalary(
     profile.payGroup,
@@ -70,12 +94,25 @@ export default function Profile() {
 
   const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
 
+  function handleTemplateChange(
+    type: ShiftType,
+    field: keyof ShiftTemplate,
+    value: string,
+  ) {
+    const current = shiftTemplates[type];
+
+    updateShiftTemplate(type, {
+      ...current,
+      [field]: field === "breakMinutes" ? Number(value) : value,
+    });
+  }
+
   return (
     <section className="page">
       <PageHeader
         eyebrow="Einstellungen"
         title="Profil"
-        description="Grunddaten für Dienstplan, Feiertage, Sollstunden und Zuschläge."
+        description="Grunddaten für Dienstplan, Feiertage, Sollstunden, Zuschläge und Dienstvorlagen."
       />
 
       <Card>
@@ -181,6 +218,87 @@ export default function Profile() {
               jeweiligen Entgeltgruppe. Bei {profile.payGroup} ist das{" "}
               {formatEuro(premiumHourlyRate)}.
             </p>
+          </div>
+
+          <div className="template-settings">
+            <div className="template-settings-header">
+              <div>
+                <span className="card-label">Dienstvorlagen</span>
+                <strong>Standardzeiten</strong>
+              </div>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={resetShiftTemplates}
+              >
+                Zurücksetzen
+              </Button>
+            </div>
+
+            <p className="profile-helper">
+              Diese Zeiten werden automatisch übernommen, wenn du im Dienstplan
+              eine Dienstart auswählst. Du kannst sie pro Dienst weiterhin
+              manuell ändern.
+            </p>
+
+            <div className="template-grid">
+              {templateLabels.map((item) => {
+                const template = shiftTemplates[item.type];
+
+                return (
+                  <div className="template-card" key={item.type}>
+                    <strong>{item.label}</strong>
+
+                    <label className="field">
+                      <span>Beginn</span>
+                      <input
+                        type="time"
+                        value={template.startTime}
+                        onChange={(event) =>
+                          handleTemplateChange(
+                            item.type,
+                            "startTime",
+                            event.target.value,
+                          )
+                        }
+                      />
+                    </label>
+
+                    <label className="field">
+                      <span>Ende</span>
+                      <input
+                        type="time"
+                        value={template.endTime}
+                        onChange={(event) =>
+                          handleTemplateChange(
+                            item.type,
+                            "endTime",
+                            event.target.value,
+                          )
+                        }
+                      />
+                    </label>
+
+                    <label className="field">
+                      <span>Pause Minuten</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={template.breakMinutes}
+                        onChange={(event) =>
+                          handleTemplateChange(
+                            item.type,
+                            "breakMinutes",
+                            event.target.value,
+                          )
+                        }
+                      />
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           <Button type="button" variant="secondary">

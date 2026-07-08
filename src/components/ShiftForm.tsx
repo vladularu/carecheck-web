@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAppContext } from "../context/AppContext";
 import type { Shift, ShiftType } from "../types/index";
 
 interface ShiftFormProps {
@@ -7,12 +8,6 @@ interface ShiftFormProps {
   initialDate?: string;
   initialShift?: Shift;
   onDone?: () => void;
-}
-
-interface ShiftTemplate {
-  startTime: string;
-  endTime: string;
-  breakMinutes: number;
 }
 
 const shiftOptions: { value: ShiftType; label: string }[] = [
@@ -27,54 +22,6 @@ const shiftOptions: { value: ShiftType; label: string }[] = [
   { value: "CUSTOM", label: "Individuell" },
 ];
 
-const shiftTemplates: Record<ShiftType, ShiftTemplate> = {
-  EARLY: {
-    startTime: "06:00",
-    endTime: "14:12",
-    breakMinutes: 30,
-  },
-  LATE: {
-    startTime: "13:18",
-    endTime: "21:30",
-    breakMinutes: 30,
-  },
-  NIGHT: {
-    startTime: "21:00",
-    endTime: "07:30",
-    breakMinutes: 60,
-  },
-  DAY: {
-    startTime: "08:00",
-    endTime: "16:12",
-    breakMinutes: 30,
-  },
-  TRAINING: {
-    startTime: "08:00",
-    endTime: "16:12",
-    breakMinutes: 30,
-  },
-  VACATION: {
-    startTime: "08:00",
-    endTime: "16:12",
-    breakMinutes: 30,
-  },
-  SICK: {
-    startTime: "08:00",
-    endTime: "16:12",
-    breakMinutes: 30,
-  },
-  FREE: {
-    startTime: "00:00",
-    endTime: "00:00",
-    breakMinutes: 0,
-  },
-  CUSTOM: {
-    startTime: "08:00",
-    endTime: "16:12",
-    breakMinutes: 30,
-  },
-};
-
 export default function ShiftForm({
   onAddShift,
   onUpdateShift,
@@ -82,6 +29,7 @@ export default function ShiftForm({
   initialShift,
   onDone,
 }: ShiftFormProps) {
+  const { shiftTemplates } = useAppContext();
   const isEditing = Boolean(initialShift);
 
   const initialTemplate = shiftTemplates[initialShift?.type ?? "EARLY"];

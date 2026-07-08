@@ -1329,3 +1329,61 @@ a {
     break-inside: avoid;
   }
 }
+
+.template-settings {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.template-settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.template-settings-header strong {
+  display: block;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.template-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.template-card > strong {
+  font-size: 16px;
+}
+
+@media (max-width: 900px) {
+  .template-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .template-settings-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .template-grid {
+    grid-template-columns: 1fr;
+  }
+}

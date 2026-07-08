@@ -24,13 +24,16 @@ export interface UserProfile {
   weeklyHours: number;
   payGroup: PayGroup;
   payLevel: PayLevel;
-
-  /**
-   * Stundenwert für Zuschlagsberechnung.
-   * Wird vorerst manuell im Profil gepflegt.
-   */
   premiumHourlyRate?: number;
 }
+
+export interface ShiftTemplate {
+  startTime: string;
+  endTime: string;
+  breakMinutes: number;
+}
+
+export type ShiftTemplates = Record<ShiftType, ShiftTemplate>;
 
 export interface Shift {
   id: string;

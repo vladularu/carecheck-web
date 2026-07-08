@@ -1,8 +1,19 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { Shift, UserProfile } from "../types/index";
+import type {
+  Shift,
+  ShiftTemplate,
+  ShiftTemplates,
+  ShiftType,
+  UserProfile,
+} from "../types/index";
 import { demoProfile } from "../data/demoData";
+import { defaultShiftTemplates } from "../data/defaultShiftTemplates";
 import { loadProfile, saveProfile } from "../services/storage/profileStorage";
 import { loadShifts, saveShifts } from "../services/storage/shiftStorage";
+import {
+  loadShiftTemplates,
+  saveShiftTemplates,
+} from "../services/storage/shiftTemplateStorage";
 
 interface SelectedMonth {
   year: number;
@@ -12,6 +23,7 @@ interface SelectedMonth {
 interface AppContextValue {
   profile: UserProfile;
   shifts: Shift[];
+  shiftTemplates: ShiftTemplates;
 
   selectedYear: number;
   selectedMonth: number;
@@ -20,6 +32,9 @@ interface AppContextValue {
   addShift: (shift: Shift) => void;
   updateShift: (shift: Shift) => void;
   deleteShift: (id: string) => void;
+
+  updateShiftTemplate: (type: ShiftType, template: ShiftTemplate) => void;
+  resetShiftTemplates: () => void;
 
   previousMonth: () => void;
   nextMonth: () => void;
@@ -37,6 +52,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const [shifts, setShifts] = useState<Shift[]>(() => loadShifts());
 
+  const [shiftTemplates, setShiftTemplates] = useState<ShiftTemplates>(() =>
+    loadShiftTemplates(),
+  );
+
   const [selectedMonthState, setSelectedMonthState] =
     useState<SelectedMonth>({
       year: today.getFullYear(),
@@ -50,6 +69,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     saveShifts(shifts);
   }, [shifts]);
+
+  useEffect(() => {
+    saveShiftTemplates(shiftTemplates);
+  }, [shiftTemplates]);
 
   function sortShifts(shiftsToSort: Shift[]): Shift[] {
     return [...shiftsToSort].sort((a, b) =>
@@ -77,6 +100,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   function deleteShift(id: string) {
     setShifts((current) => current.filter((shift) => shift.id !== id));
+  }
+
+  function updateShiftTemplate(type: ShiftType, template: ShiftTemplate) {
+    setShiftTemplates((current) => ({
+      ...current,
+      [type]: template,
+    }));
+  }
+
+  function resetShiftTemplates() {
+    setShiftTemplates(defaultShiftTemplates);
   }
 
   function previousMonth() {
@@ -122,17 +156,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     () => ({
       profile,
       shifts,
+      shiftTemplates,
       selectedYear: selectedMonthState.year,
       selectedMonth: selectedMonthState.month,
       setProfile,
       addShift,
       updateShift,
       deleteShift,
+      updateShiftTemplate,
+      resetShiftTemplates,
       previousMonth,
       nextMonth,
       setSelectedMonth,
     }),
-    [profile, shifts, selectedMonthState],
+    [profile, shifts, shiftTemplates, selectedMonthState],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
