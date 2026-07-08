@@ -1,5 +1,6 @@
 import type { CalendarDay as CalendarDayModel } from "../../services/calendar/calendarService";
 import { calculateNetHours } from "../../services/calculation/workingTimeCalculator";
+import { formatTimeRange24 } from "../../services/format/dateTimeFormat";
 import type { Shift, ShiftType } from "../../types/index";
 
 interface CalendarDayProps {
@@ -55,7 +56,7 @@ export default function CalendarDay({ day, shifts }: CalendarDayProps) {
             {shift.type !== "FREE" && (
               <>
                 <span>
-                  {shift.startTime}–{shift.endTime}
+                  {formatTimeRange24(shift.startTime, shift.endTime)}
                 </span>
                 <span>{calculateNetHours(shift)} h</span>
               </>
@@ -64,7 +65,9 @@ export default function CalendarDay({ day, shifts }: CalendarDayProps) {
         ))}
 
         {shifts.length > 2 && (
-          <span className="calendar-more">+{shifts.length - 2} weitere</span>
+          <span className="calendar-more">
+            +{shifts.length - 2} weitere
+          </span>
         )}
       </div>
     </div>

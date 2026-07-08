@@ -1,5 +1,14 @@
-import type { Shift, ShiftType } from "../types/index";
 import { calculateNetHours } from "../services/calculation/workingTimeCalculator";
+import {
+  formatDateGerman,
+  formatTimeRange24,
+} from "../services/format/dateTimeFormat";
+import type { Shift, ShiftType } from "../types/index";
+
+interface ShiftListProps {
+  shifts: Shift[];
+  onDelete: (id: string) => void;
+}
 
 const shiftLabels: Record<ShiftType, string> = {
   EARLY: "Frühdienst",
@@ -13,14 +22,9 @@ const shiftLabels: Record<ShiftType, string> = {
   CUSTOM: "Individuell",
 };
 
-interface ShiftListProps {
-  shifts: Shift[];
-  onDeleteShift: (id: string) => void;
-}
-
-export default function ShiftList({ shifts, onDeleteShift }: ShiftListProps) {
+export default function ShiftList({ shifts, onDelete }: ShiftListProps) {
   if (shifts.length === 0) {
-    return <p className="empty-state">Noch keine Dienste angelegt.</p>;
+    return <p>Noch keine Dienste erfasst.</p>;
   }
 
   return (
@@ -30,14 +34,18 @@ export default function ShiftList({ shifts, onDeleteShift }: ShiftListProps) {
           <div>
             <strong>{shiftLabels[shift.type]}</strong>
             <p>
-              {shift.date} · {shift.startTime}–{shift.endTime} · Pause{" "}
-              {shift.breakMinutes} Min.
+              {formatDateGerman(shift.date)} ·{" "}
+              {formatTimeRange24(shift.startTime, shift.endTime)}
             </p>
-            <small>Nettoarbeitszeit: {calculateNetHours(shift)} h</small>
-            {shift.note && <small>{shift.note}</small>}
+            <p>{calculateNetHours(shift)} h netto</p>
+            {shift.note && <p>{shift.note}</p>}
           </div>
 
-          <button className="danger-button" onClick={() => onDeleteShift(shift.id)}>
+          <button
+            className="danger-button"
+            type="button"
+            onClick={() => onDelete(shift.id)}
+          >
             Löschen
           </button>
         </article>

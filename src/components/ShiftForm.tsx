@@ -1,33 +1,25 @@
 import { useState } from "react";
+import {
+  isValidTime24,
+  parseGermanDateToDateKey,
+} from "../services/format/dateTimeFormat";
 import type { Shift, ShiftType } from "../types/index";
-
-const shiftTypes: ShiftType[] = [
-  "EARLY",
-  "LATE",
-  "NIGHT",
-  "DAY",
-  "TRAINING",
-  "VACATION",
-  "SICK",
-  "FREE",
-  "CUSTOM",
-];
-
-const shiftLabels: Record<ShiftType, string> = {
-  EARLY: "Frühdienst",
-  LATE: "Spätdienst",
-  NIGHT: "Nachtdienst",
-  DAY: "Tagdienst",
-  TRAINING: "Fortbildung",
-  VACATION: "Urlaub",
-  SICK: "Krank",
-  FREE: "Frei",
-  CUSTOM: "Individuell",
-};
 
 interface ShiftFormProps {
   onAddShift: (shift: Shift) => void;
 }
+
+const shiftOptions: { value: ShiftType; label: string }[] = [
+  { value: "EARLY", label: "Frühdienst" },
+  { value: "LATE", label: "Spätdienst" },
+  { value: "NIGHT", label: "Nachtdienst" },
+  { value: "DAY", label: "Tagdienst" },
+  { value: "TRAINING", label: "Fortbildung" },
+  { value: "VACATION", label: "Urlaub" },
+  { value: "SICK", label: "Krank" },
+  { value: "FREE", label: "Frei" },
+  { value: "CUSTOM", label: "Individuell" },
+];
 
 export default function ShiftForm({ onAddShift }: ShiftFormProps) {
   const [date, setDate] = useState("");
@@ -36,25 +28,46 @@ export default function ShiftForm({ onAddShift }: ShiftFormProps) {
   const [breakMinutes, setBreakMinutes] = useState(30);
   const [type, setType] = useState<ShiftType>("EARLY");
   const [note, setNote] = useState("");
+  const [error, setError] = useState("");
 
-  function handleSubmit(event: React.FormEvent) {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!date) {
-      alert("Bitte Datum auswählen.");
+    const dateKey = parseGermanDateToDateKey(date);
+
+    if (!dateKey) {
+      setError("Bitte Datum im Format TT.MM.JJJJ eingeben, z. B. 15.07.2026.");
       return;
     }
 
-    onAddShift({
+    if (!isValidTime24(startTime)) {
+      setError("Bitte Beginn im 24-Stunden-Format eingeben, z. B. 06:00.");
+      return;
+    }
+
+    if (!isValidTime24(endTime)) {
+      setError("Bitte Ende im 24-Stunden-Format eingeben, z. B. 14:12.");
+      return;
+    }
+
+    const newShift: Shift = {
       id: crypto.randomUUID(),
-      date,
+      date: dateKey,
       startTime,
       endTime,
       breakMinutes,
       type,
-      note,
-    });
+      note: note.trim() || undefined,
+    };
 
+    onAddShift(newShift);
+
+    setError("");
+    setDate("");
+    setStartTime("06:00");
+    setEndTime("14:12");
+    setBreakMinutes(30);
+    setType("EARLY");
     setNote("");
   }
 
@@ -62,35 +75,53 @@ export default function ShiftForm({ onAddShift }: ShiftFormProps) {
     <form className="form-grid" onSubmit={handleSubmit}>
       <label className="field">
         <span>Datum</span>
-        <input value={date} onChange={(e) => setDate(e.target.value)} type="date" />
+        <input
+          inputMode="numeric"
+          placeholder="TT.MM.JJJJ"
+          value={date}
+          onChange={(event) => setDate(event.target.value)}
+        />
       </label>
 
       <label className="field">
         <span>Beginn</span>
-        <input value={startTime} onChange={(e) => setStartTime(e.target.value)} type="time" />
+        <input
+          inputMode="numeric"
+          placeholder="06:00"
+          value={startTime}
+          onChange={(event) => setStartTime(event.target.value)}
+        />
       </label>
 
       <label className="field">
         <span>Ende</span>
-        <input value={endTime} onChange={(e) => setEndTime(e.target.value)} type="time" />
+        <input
+          inputMode="numeric"
+          placeholder="14:12"
+          value={endTime}
+          onChange={(event) => setEndTime(event.target.value)}
+        />
       </label>
 
       <label className="field">
         <span>Pause Minuten</span>
         <input
-          value={breakMinutes}
-          onChange={(e) => setBreakMinutes(Number(e.target.value))}
           type="number"
           min="0"
+          value={breakMinutes}
+          onChange={(event) => setBreakMinutes(Number(event.target.value))}
         />
       </label>
 
       <label className="field">
         <span>Dienstart</span>
-        <select value={type} onChange={(e) => setType(e.target.value as ShiftType)}>
-          {shiftTypes.map((shiftType) => (
-            <option key={shiftType} value={shiftType}>
-              {shiftLabels[shiftType]}
+        <select
+          value={type}
+          onChange={(event) => setType(event.target.value as ShiftType)}
+        >
+          {shiftOptions.map((option) => (
+            <option value={option.value} key={option.value}>
+              {option.label}
             </option>
           ))}
         </select>
@@ -98,8 +129,14 @@ export default function ShiftForm({ onAddShift }: ShiftFormProps) {
 
       <label className="field">
         <span>Notiz</span>
-        <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="optional" />
+        <input
+          placeholder="Optional"
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+        />
       </label>
+
+      {error && <p className="form-error">{error}</p>}
 
       <button className="primary-button" type="submit">
         Dienst speichern

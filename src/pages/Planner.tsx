@@ -21,7 +21,7 @@ export default function Planner() {
         <p>Nettoarbeitszeit gesamt: {totalNetHours} h</p>
       </div>
 
-      <ShiftList shifts={shifts} onDeleteShift={deleteShift} />
+      <ShiftList shifts={shifts} onDelete={deleteShift} />
     </section>
   );
 }
