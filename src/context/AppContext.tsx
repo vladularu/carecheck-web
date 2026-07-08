@@ -18,6 +18,7 @@ interface AppContextValue {
 
   setProfile: (profile: UserProfile) => void;
   addShift: (shift: Shift) => void;
+  updateShift: (shift: Shift) => void;
   deleteShift: (id: string) => void;
 
   previousMonth: () => void;
@@ -50,14 +51,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     saveShifts(shifts);
   }, [shifts]);
 
+  function sortShifts(shiftsToSort: Shift[]): Shift[] {
+    return [...shiftsToSort].sort((a, b) =>
+      `${a.date}${a.startTime}`.localeCompare(`${b.date}${b.startTime}`),
+    );
+  }
+
   function setProfile(profile: UserProfile) {
     setProfileState(profile);
   }
 
   function addShift(shift: Shift) {
+    setShifts((current) => sortShifts([...current, shift]));
+  }
+
+  function updateShift(updatedShift: Shift) {
     setShifts((current) =>
-      [...current, shift].sort((a, b) =>
-        `${a.date}${a.startTime}`.localeCompare(`${b.date}${b.startTime}`),
+      sortShifts(
+        current.map((shift) =>
+          shift.id === updatedShift.id ? updatedShift : shift,
+        ),
       ),
     );
   }
@@ -113,6 +126,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       selectedMonth: selectedMonthState.month,
       setProfile,
       addShift,
+      updateShift,
       deleteShift,
       previousMonth,
       nextMonth,

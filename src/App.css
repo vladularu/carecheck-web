@@ -609,6 +609,18 @@ a {
   color: #475569;
 }
 
+.day-details-shift-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.day-details-edit-form {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 12px;
+}
+
 /* Mobile Optimierung */
 
 @media (max-width: 760px) {
@@ -680,5 +692,13 @@ a {
 }
 
 .day-details-shift .ui-button {
+  width: 100%;
+}
+
+.day-details-shift-actions {
+  display: grid;
+}
+
+.day-details-shift-actions .ui-button {
   width: 100%;
 }

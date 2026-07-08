@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import type { Shift, ShiftType } from "../types/index";
 
 interface ShiftFormProps {
-  onAddShift: (shift: Shift) => void;
+  onAddShift?: (shift: Shift) => void;
+  onUpdateShift?: (shift: Shift) => void;
   initialDate?: string;
+  initialShift?: Shift;
+  onDone?: () => void;
 }
 
 const shiftOptions: { value: ShiftType; label: string }[] = [
@@ -18,19 +21,48 @@ const shiftOptions: { value: ShiftType; label: string }[] = [
   { value: "CUSTOM", label: "Individuell" },
 ];
 
-export default function ShiftForm({ onAddShift, initialDate }: ShiftFormProps) {
-  const [date, setDate] = useState(initialDate ?? "");
-  const [startTime, setStartTime] = useState("06:00");
-  const [endTime, setEndTime] = useState("14:12");
-  const [breakMinutes, setBreakMinutes] = useState(30);
-  const [type, setType] = useState<ShiftType>("EARLY");
-  const [note, setNote] = useState("");
+export default function ShiftForm({
+  onAddShift,
+  onUpdateShift,
+  initialDate,
+  initialShift,
+  onDone,
+}: ShiftFormProps) {
+  const isEditing = Boolean(initialShift);
+
+  const [date, setDate] = useState(initialShift?.date ?? initialDate ?? "");
+  const [startTime, setStartTime] = useState(initialShift?.startTime ?? "06:00");
+  const [endTime, setEndTime] = useState(initialShift?.endTime ?? "14:12");
+  const [breakMinutes, setBreakMinutes] = useState(
+    initialShift?.breakMinutes ?? 30,
+  );
+  const [type, setType] = useState<ShiftType>(initialShift?.type ?? "EARLY");
+  const [note, setNote] = useState(initialShift?.note ?? "");
 
   useEffect(() => {
+    if (initialShift) {
+      setDate(initialShift.date);
+      setStartTime(initialShift.startTime);
+      setEndTime(initialShift.endTime);
+      setBreakMinutes(initialShift.breakMinutes);
+      setType(initialShift.type);
+      setNote(initialShift.note ?? "");
+      return;
+    }
+
     if (initialDate) {
       setDate(initialDate);
     }
-  }, [initialDate]);
+  }, [initialDate, initialShift]);
+
+  function resetAddForm() {
+    setDate(initialDate ?? "");
+    setStartTime("06:00");
+    setEndTime("14:12");
+    setBreakMinutes(30);
+    setType("EARLY");
+    setNote("");
+  }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -39,24 +71,35 @@ export default function ShiftForm({ onAddShift, initialDate }: ShiftFormProps) {
       return;
     }
 
-    const newShift: Shift = {
-      id: crypto.randomUUID(),
-      date,
-      startTime,
-      endTime,
-      breakMinutes,
-      type,
-      note: note.trim() || undefined,
-    };
+    if (initialShift && onUpdateShift) {
+      onUpdateShift({
+        ...initialShift,
+        date,
+        startTime,
+        endTime,
+        breakMinutes,
+        type,
+        note: note.trim() || undefined,
+      });
 
-    onAddShift(newShift);
+      onDone?.();
+      return;
+    }
 
-    setDate(initialDate ?? "");
-    setStartTime("06:00");
-    setEndTime("14:12");
-    setBreakMinutes(30);
-    setType("EARLY");
-    setNote("");
+    if (onAddShift) {
+      onAddShift({
+        id: crypto.randomUUID(),
+        date,
+        startTime,
+        endTime,
+        breakMinutes,
+        type,
+        note: note.trim() || undefined,
+      });
+
+      resetAddForm();
+      onDone?.();
+    }
   }
 
   return (
@@ -130,7 +173,7 @@ export default function ShiftForm({ onAddShift, initialDate }: ShiftFormProps) {
       </label>
 
       <button className="primary-button" type="submit">
-        Dienst speichern
+        {isEditing ? "Änderung speichern" : "Dienst speichern"}
       </button>
     </form>
   );

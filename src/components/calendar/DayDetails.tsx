@@ -13,6 +13,7 @@ interface DayDetailsProps {
   dateKey: string;
   shifts: Shift[];
   onAddShift: (shift: Shift) => void;
+  onUpdateShift: (shift: Shift) => void;
   onDeleteShift: (id: string) => void;
 }
 
@@ -32,9 +33,11 @@ export default function DayDetails({
   dateKey,
   shifts,
   onAddShift,
+  onUpdateShift,
   onDeleteShift,
 }: DayDetailsProps) {
   const [showForm, setShowForm] = useState(false);
+  const [editingShiftId, setEditingShiftId] = useState<string | null>(null);
 
   return (
     <Card className="day-details">
@@ -47,32 +50,72 @@ export default function DayDetails({
         <p>Für diesen Tag ist noch kein Dienst erfasst.</p>
       ) : (
         <div className="day-details-list">
-          {shifts.map((shift) => (
-            <article className="day-details-shift" key={shift.id}>
-              <div>
-                <strong>{shiftLabels[shift.type]}</strong>
+          {shifts.map((shift) => {
+            const isEditing = editingShiftId === shift.id;
 
-                {shift.type !== "FREE" && (
+            return (
+              <article className="day-details-shift" key={shift.id}>
+                {isEditing ? (
+                  <div className="day-details-edit-form">
+                    <ShiftForm
+                      initialShift={shift}
+                      onUpdateShift={onUpdateShift}
+                      onDone={() => setEditingShiftId(null)}
+                    />
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setEditingShiftId(null)}
+                    >
+                      Abbrechen
+                    </Button>
+                  </div>
+                ) : (
                   <>
-                    <span>
-                      {formatTimeRange24(shift.startTime, shift.endTime)}
-                    </span>
-                    <span>{calculateNetHours(shift)} h netto</span>
+                    <div>
+                      <strong>{shiftLabels[shift.type]}</strong>
+
+                      {shift.type !== "FREE" && (
+                        <>
+                          <span>
+                            {formatTimeRange24(
+                              shift.startTime,
+                              shift.endTime,
+                            )}
+                          </span>
+                          <span>{calculateNetHours(shift)} h netto</span>
+                        </>
+                      )}
+
+                      {shift.note && <p>{shift.note}</p>}
+                    </div>
+
+                    <div className="day-details-shift-actions">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => {
+                          setShowForm(false);
+                          setEditingShiftId(shift.id);
+                        }}
+                      >
+                        Bearbeiten
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="danger"
+                        onClick={() => onDeleteShift(shift.id)}
+                      >
+                        Löschen
+                      </Button>
+                    </div>
                   </>
                 )}
-
-                {shift.note && <p>{shift.note}</p>}
-              </div>
-
-              <Button
-                type="button"
-                variant="danger"
-                onClick={() => onDeleteShift(shift.id)}
-              >
-                Löschen
-              </Button>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       )}
 
@@ -80,7 +123,10 @@ export default function DayDetails({
         <Button
           type="button"
           variant="secondary"
-          onClick={() => setShowForm((current) => !current)}
+          onClick={() => {
+            setEditingShiftId(null);
+            setShowForm((current) => !current);
+          }}
         >
           {showForm ? "Formular schließen" : "Dienst für diesen Tag hinzufügen"}
         </Button>
@@ -88,7 +134,11 @@ export default function DayDetails({
 
       {showForm && (
         <div className="day-details-form">
-          <ShiftForm onAddShift={onAddShift} initialDate={dateKey} />
+          <ShiftForm
+            onAddShift={onAddShift}
+            initialDate={dateKey}
+            onDone={() => setShowForm(false)}
+          />
         </div>
       )}
     </Card>
