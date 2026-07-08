@@ -14,7 +14,15 @@ function roundToTwoDecimals(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
+function isZeroHourShift(shift: Shift): boolean {
+  return shift.type === "FREE";
+}
+
 export function calculateGrossHours(shift: Shift): number {
+  if (isZeroHourShift(shift)) {
+    return 0;
+  }
+
   const start = toDateTime(shift.date, shift.startTime);
   const end = toDateTime(shift.date, shift.endTime);
 
@@ -29,6 +37,10 @@ export function calculateGrossHours(shift: Shift): number {
 }
 
 export function calculateNetHours(shift: Shift): number {
+  if (isZeroHourShift(shift)) {
+    return 0;
+  }
+
   const grossHours = calculateGrossHours(shift);
   const breakHours = shift.breakMinutes / 60;
 

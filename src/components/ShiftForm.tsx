@@ -9,6 +9,12 @@ interface ShiftFormProps {
   onDone?: () => void;
 }
 
+interface ShiftTemplate {
+  startTime: string;
+  endTime: string;
+  breakMinutes: number;
+}
+
 const shiftOptions: { value: ShiftType; label: string }[] = [
   { value: "EARLY", label: "Frühdienst" },
   { value: "LATE", label: "Spätdienst" },
@@ -21,6 +27,54 @@ const shiftOptions: { value: ShiftType; label: string }[] = [
   { value: "CUSTOM", label: "Individuell" },
 ];
 
+const shiftTemplates: Record<ShiftType, ShiftTemplate> = {
+  EARLY: {
+    startTime: "06:00",
+    endTime: "14:12",
+    breakMinutes: 30,
+  },
+  LATE: {
+    startTime: "13:18",
+    endTime: "21:30",
+    breakMinutes: 30,
+  },
+  NIGHT: {
+    startTime: "21:00",
+    endTime: "07:30",
+    breakMinutes: 60,
+  },
+  DAY: {
+    startTime: "08:00",
+    endTime: "16:12",
+    breakMinutes: 30,
+  },
+  TRAINING: {
+    startTime: "08:00",
+    endTime: "16:12",
+    breakMinutes: 30,
+  },
+  VACATION: {
+    startTime: "08:00",
+    endTime: "16:12",
+    breakMinutes: 30,
+  },
+  SICK: {
+    startTime: "08:00",
+    endTime: "16:12",
+    breakMinutes: 30,
+  },
+  FREE: {
+    startTime: "00:00",
+    endTime: "00:00",
+    breakMinutes: 0,
+  },
+  CUSTOM: {
+    startTime: "08:00",
+    endTime: "16:12",
+    breakMinutes: 30,
+  },
+};
+
 export default function ShiftForm({
   onAddShift,
   onUpdateShift,
@@ -30,11 +84,17 @@ export default function ShiftForm({
 }: ShiftFormProps) {
   const isEditing = Boolean(initialShift);
 
+  const initialTemplate = shiftTemplates[initialShift?.type ?? "EARLY"];
+
   const [date, setDate] = useState(initialShift?.date ?? initialDate ?? "");
-  const [startTime, setStartTime] = useState(initialShift?.startTime ?? "06:00");
-  const [endTime, setEndTime] = useState(initialShift?.endTime ?? "14:12");
+  const [startTime, setStartTime] = useState(
+    initialShift?.startTime ?? initialTemplate.startTime,
+  );
+  const [endTime, setEndTime] = useState(
+    initialShift?.endTime ?? initialTemplate.endTime,
+  );
   const [breakMinutes, setBreakMinutes] = useState(
-    initialShift?.breakMinutes ?? 30,
+    initialShift?.breakMinutes ?? initialTemplate.breakMinutes,
   );
   const [type, setType] = useState<ShiftType>(initialShift?.type ?? "EARLY");
   const [note, setNote] = useState(initialShift?.note ?? "");
@@ -55,11 +115,26 @@ export default function ShiftForm({
     }
   }, [initialDate, initialShift]);
 
+  function applyTemplate(nextType: ShiftType) {
+    const template = shiftTemplates[nextType];
+
+    setStartTime(template.startTime);
+    setEndTime(template.endTime);
+    setBreakMinutes(template.breakMinutes);
+  }
+
+  function handleTypeChange(nextType: ShiftType) {
+    setType(nextType);
+    applyTemplate(nextType);
+  }
+
   function resetAddForm() {
+    const template = shiftTemplates.EARLY;
+
     setDate(initialDate ?? "");
-    setStartTime("06:00");
-    setEndTime("14:12");
-    setBreakMinutes(30);
+    setStartTime(template.startTime);
+    setEndTime(template.endTime);
+    setBreakMinutes(template.breakMinutes);
     setType("EARLY");
     setNote("");
   }
@@ -116,6 +191,20 @@ export default function ShiftForm({
       </label>
 
       <label className="field">
+        <span>Dienstart</span>
+        <select
+          value={type}
+          onChange={(event) => handleTypeChange(event.target.value as ShiftType)}
+        >
+          {shiftOptions.map((option) => (
+            <option value={option.value} key={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="field">
         <span>Beginn</span>
         <input
           type="time"
@@ -147,20 +236,6 @@ export default function ShiftForm({
           value={breakMinutes}
           onChange={(event) => setBreakMinutes(Number(event.target.value))}
         />
-      </label>
-
-      <label className="field">
-        <span>Dienstart</span>
-        <select
-          value={type}
-          onChange={(event) => setType(event.target.value as ShiftType)}
-        >
-          {shiftOptions.map((option) => (
-            <option value={option.value} key={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
       </label>
 
       <label className="field">
