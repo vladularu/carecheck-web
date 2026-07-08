@@ -1,0 +1,19 @@
+{
+  "name": "CareCheck TVöD",
+  "short_name": "CareCheck",
+  "description": "Dienstplanprüfung, Arbeitszeit, Zuschläge und Monatsbericht für TVöD-P.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/carecheck-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
