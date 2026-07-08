@@ -1,11 +1,20 @@
 export interface CalendarDay {
   date: Date;
+  dateKey: string;
   dayNumber: number;
   currentMonth: boolean;
   weekend: boolean;
 }
 
 export type CalendarWeek = CalendarDay[];
+
+function formatDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 function startOfCalendar(year: number, month: number): Date {
   const firstDay = new Date(year, month, 1);
@@ -25,11 +34,14 @@ export function createCalendar(year: number, month: number): CalendarWeek[] {
     const days: CalendarDay[] = [];
 
     for (let day = 0; day < 7; day++) {
+      const date = new Date(current);
+
       days.push({
-        date: new Date(current),
-        dayNumber: current.getDate(),
-        currentMonth: current.getMonth() === month,
-        weekend: current.getDay() === 0 || current.getDay() === 6,
+        date,
+        dateKey: formatDateKey(date),
+        dayNumber: date.getDate(),
+        currentMonth: date.getMonth() === month,
+        weekend: date.getDay() === 0 || date.getDay() === 6,
       });
 
       current.setDate(current.getDate() + 1);
