@@ -464,6 +464,9 @@ a {
   text-align: center;
   font-size: 28px;
   letter-spacing: -0.04em;
+  color: #0f172a;
+  font-weight: 900;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .calendar {
