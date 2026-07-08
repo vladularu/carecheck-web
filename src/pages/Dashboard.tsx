@@ -4,6 +4,7 @@ import MonthlyPremiumSummary from "../components/dashboard/MonthlyPremiumSummary
 import ShiftSummary from "../components/dashboard/ShiftSummary";
 import StatusCard from "../components/dashboard/StatusCard";
 import WorkSummary from "../components/dashboard/WorkSummary";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import {
   calculateMonthlyHours,
@@ -30,6 +31,7 @@ const monthNames = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { profile, shifts, selectedYear, selectedMonth } = useAppContext();
 
   const monthLabel = `${monthNames[selectedMonth]} ${selectedYear}`;
@@ -128,7 +130,10 @@ export default function Dashboard() {
         hasHourlyRate={premiumHourlyRate > 0}
       />
 
-      <ExportCard onExportCsv={handleExportCsv} />
+      <ExportCard
+  onExportCsv={handleExportCsv}
+  onOpenReport={() => navigate("/bericht")}
+/>
 
       <ShiftSummary
         shiftCount={monthlyHours.shiftCount}
