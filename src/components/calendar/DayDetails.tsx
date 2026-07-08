@@ -9,13 +9,19 @@ import {
   formatTimeRange24,
 } from "../../services/format/dateTimeFormat";
 import type { Holiday } from "../../services/holiday/holidayService";
-import type { FederalState, Shift, ShiftType } from "../../types/index";
+import type {
+  ComplianceIssue,
+  FederalState,
+  Shift,
+  ShiftType,
+} from "../../types/index";
 import ShiftPremiumSummary from "./ShiftPremiumSummary";
 
 interface DayDetailsProps {
   dateKey: string;
   shifts: Shift[];
   holiday: Holiday | null;
+  complianceIssues: ComplianceIssue[];
   federalState: FederalState;
   baseHourlyRate?: number;
   onAddShift: (shift: Shift) => void;
@@ -35,10 +41,21 @@ const shiftLabels: Record<ShiftType, string> = {
   CUSTOM: "Individuell",
 };
 
+const severityLabels: Record<ComplianceIssue["severity"], string> = {
+  info: "Info",
+  warning: "Warnung",
+  critical: "Kritisch",
+};
+
+function getComplianceClassName(severity: ComplianceIssue["severity"]): string {
+  return `day-details-compliance-item day-details-compliance-${severity}`;
+}
+
 export default function DayDetails({
   dateKey,
   shifts,
   holiday,
+  complianceIssues,
   federalState,
   baseHourlyRate,
   onAddShift,
@@ -57,6 +74,23 @@ export default function DayDetails({
           <p className="day-details-holiday">Feiertag: {holiday.name}</p>
         )}
       </div>
+
+      {complianceIssues.length > 0 && (
+        <div className="day-details-compliance">
+          <strong>Prüfhinweise</strong>
+
+          {complianceIssues.map((issue) => (
+            <article
+              className={getComplianceClassName(issue.severity)}
+              key={issue.id}
+            >
+              <span>{severityLabels[issue.severity]}</span>
+              <strong>{issue.title}</strong>
+              <p>{issue.description}</p>
+            </article>
+          ))}
+        </div>
+      )}
 
       {shifts.length === 0 ? (
         <p>Für diesen Tag ist noch kein Dienst erfasst.</p>

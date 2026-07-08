@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import CalendarHeader from "../components/calendar/CalendarHeader";
 import DayDetails from "../components/calendar/DayDetails";
 import { useAppContext } from "../context/AppContext";
+import { filterShiftsByMonth } from "../services/calculation/monthlyHoursCalculator";
 import { createCalendar } from "../services/calendar/calendarService";
+import { checkCompliance } from "../services/compliance/complianceService";
 import {
   getHolidayByDate,
   getHolidaysForState,
   type Holiday,
 } from "../services/holiday/holidayService";
-import type { Shift } from "../types/index";
+import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
+import type { ComplianceIssue, Shift } from "../types/index";
 
 const monthNames = [
   "Januar",
@@ -48,6 +50,31 @@ function groupHolidaysByDate(holidays: Holiday[]): Map<string, Holiday> {
   return grouped;
 }
 
+function groupComplianceIssuesByDate(
+  issues: ComplianceIssue[],
+  shifts: Shift[],
+): Map<string, ComplianceIssue[]> {
+  const grouped = new Map<string, ComplianceIssue[]>();
+  const shiftDateById = new Map(shifts.map((shift) => [shift.id, shift.date]));
+
+  for (const issue of issues) {
+    if (!issue.relatedShiftId) {
+      continue;
+    }
+
+    const dateKey = shiftDateById.get(issue.relatedShiftId);
+
+    if (!dateKey) {
+      continue;
+    }
+
+    const current = grouped.get(dateKey) ?? [];
+    grouped.set(dateKey, [...current, issue]);
+  }
+
+  return grouped;
+}
+
 function createDateKey(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(
     2,
@@ -74,10 +101,21 @@ export default function Calendar() {
 
   const weeks = createCalendar(selectedYear, selectedMonth);
 
-  const shiftsByDate = groupShiftsByDate(shifts);
+  const shiftsInSelectedMonth = filterShiftsByMonth(
+    shifts,
+    selectedYear,
+    selectedMonth,
+  );
 
+  const shiftsByDate = groupShiftsByDate(shifts);
   const holidays = getHolidaysForState(selectedYear, profile.federalState);
   const holidaysByDate = groupHolidaysByDate(holidays);
+
+  const complianceIssues = checkCompliance(shiftsInSelectedMonth);
+  const complianceIssuesByDate = groupComplianceIssuesByDate(
+    complianceIssues,
+    shiftsInSelectedMonth,
+  );
 
   const selectedShifts = selectedDateKey
     ? shiftsByDate.get(selectedDateKey) ?? []
@@ -86,7 +124,12 @@ export default function Calendar() {
   const selectedHoliday = selectedDateKey
     ? getHolidayByDate(selectedDateKey, profile.federalState)
     : null;
-    const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
+
+  const selectedComplianceIssues = selectedDateKey
+    ? complianceIssuesByDate.get(selectedDateKey) ?? []
+    : [];
+
+  const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
 
   return (
     <section className="page">
@@ -100,21 +143,23 @@ export default function Calendar() {
         weeks={weeks}
         shiftsByDate={shiftsByDate}
         holidaysByDate={holidaysByDate}
+        complianceIssuesByDate={complianceIssuesByDate}
         selectedDateKey={selectedDateKey}
         onSelectDate={setSelectedDateKey}
       />
 
       {selectedDateKey && (
-<DayDetails
-  dateKey={selectedDateKey}
-  shifts={selectedShifts}
-  holiday={selectedHoliday}
-  federalState={profile.federalState}
-  baseHourlyRate={premiumHourlyRate}
-  onAddShift={addShift}
-  onUpdateShift={updateShift}
-  onDeleteShift={deleteShift}
-/>
+        <DayDetails
+          dateKey={selectedDateKey}
+          shifts={selectedShifts}
+          holiday={selectedHoliday}
+          complianceIssues={selectedComplianceIssues}
+          federalState={profile.federalState}
+          baseHourlyRate={premiumHourlyRate}
+          onAddShift={addShift}
+          onUpdateShift={updateShift}
+          onDeleteShift={deleteShift}
+        />
       )}
     </section>
   );

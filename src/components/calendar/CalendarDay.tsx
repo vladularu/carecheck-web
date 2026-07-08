@@ -2,12 +2,13 @@ import type { CalendarDay as CalendarDayModel } from "../../services/calendar/ca
 import { calculateNetHours } from "../../services/calculation/workingTimeCalculator";
 import { formatTimeRange24 } from "../../services/format/dateTimeFormat";
 import type { Holiday } from "../../services/holiday/holidayService";
-import type { Shift, ShiftType } from "../../types/index";
+import type { ComplianceIssue, Shift, ShiftType } from "../../types/index";
 
 interface CalendarDayProps {
   day: CalendarDayModel;
   shifts: Shift[];
   holiday: Holiday | null;
+  complianceIssues: ComplianceIssue[];
   selected: boolean;
   onSelect: (dateKey: string) => void;
 }
@@ -30,25 +31,45 @@ const shiftIcons: Record<ShiftType, string> = {
   NIGHT: "🌙",
   DAY: "☀️",
   TRAINING: "📘",
-  VACATION: "🏖️",
+  VACATION: "Krank",
   SICK: "Krank",
   FREE: "Frei",
   CUSTOM: "•",
 };
 
+function getHighestSeverity(issues: ComplianceIssue[]) {
+  if (issues.some((issue) => issue.severity === "critical")) {
+    return "critical";
+  }
+
+  if (issues.some((issue) => issue.severity === "warning")) {
+    return "warning";
+  }
+
+  if (issues.some((issue) => issue.severity === "info")) {
+    return "info";
+  }
+
+  return null;
+}
+
 export default function CalendarDay({
   day,
   shifts,
   holiday,
+  complianceIssues,
   selected,
   onSelect,
 }: CalendarDayProps) {
+  const highestSeverity = getHighestSeverity(complianceIssues);
+
   const classNames = [
     "calendar-day",
     day.currentMonth ? "current-month" : "outside-month",
     day.weekend ? "weekend" : "",
     holiday ? "holiday" : "",
     shifts.length > 0 ? "has-shift" : "",
+    highestSeverity ? `has-compliance-${highestSeverity}` : "",
     selected ? "selected" : "",
   ]
     .filter(Boolean)
@@ -62,7 +83,18 @@ export default function CalendarDay({
     >
       <div className="calendar-day-top">
         <div className="calendar-day-number">{day.dayNumber}</div>
-        {holiday && <span className="calendar-holiday-badge">FT</span>}
+
+        <div className="calendar-day-badges">
+          {holiday && <span className="calendar-holiday-badge">FT</span>}
+
+          {highestSeverity === "critical" && (
+            <span className="calendar-compliance-badge critical">!</span>
+          )}
+
+          {highestSeverity === "warning" && (
+            <span className="calendar-compliance-badge warning">⚠</span>
+          )}
+        </div>
       </div>
 
       {holiday && <div className="calendar-holiday-name">{holiday.name}</div>}
