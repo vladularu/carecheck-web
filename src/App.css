@@ -2930,3 +2930,78 @@ body {
     padding: 6px;
   }
 }
+
+/* =========================================================
+   v1.2.0 Datensicherung und Wiederherstellung
+   ========================================================= */
+
+.data-backup-card {
+  border-color: #bfdbfe;
+}
+
+.data-backup-stats {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 10px;
+}
+
+.data-backup-stats div {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--cc-surface-soft);
+  border: 1px solid var(--cc-border);
+}
+
+.data-backup-stats span {
+  color: var(--cc-text-muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.data-backup-stats strong {
+  color: var(--cc-text);
+  font-size: 18px;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+
+.data-backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.data-backup-message {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--cc-primary-soft);
+  color: var(--cc-primary-dark);
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.visually-hidden-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .data-backup-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .data-backup-actions {
+    flex-direction: column;
+  }
+
+  .data-backup-actions .ui-button {
+    width: 100%;
+  }
+}

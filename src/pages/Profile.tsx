@@ -1,6 +1,7 @@
 import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
+import DataBackupCard from "../components/profile/DataBackupCard";
 import { useAppContext } from "../context/AppContext";
 import {
   getTvoedPHourlyRate,
@@ -342,6 +343,8 @@ export default function Profile() {
           </p>
         </div>
       </Card>
+
+      <DataBackupCard />
     </section>
   );
 }
