@@ -3564,3 +3564,667 @@ nav[aria-label="Main navigation"] a {
     transform: translateX(-50%);
   }
 }
+
+/* =========================================================
+   CareCheck TVöD v1.2.1 – Mobile Layout Fix 01
+   Fix: Bottom-Navigation überdeckt Inhalt / Kalender zu eng
+   Nur CSS / keine Logikänderung
+   ========================================================= */
+
+/* Mehr Platz unter dem Inhalt, damit die feste Bottom-Navigation nichts verdeckt */
+body,
+#root {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+main,
+.main,
+.content,
+.page-content,
+.app-content,
+.calendar-page,
+.dashboard-page,
+.profile-page,
+.export-page {
+  padding-bottom: calc(140px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Mobile Navigation kompakter und sauber innerhalb des Screens halten */
+.bottom-nav,
+.mobile-nav,
+.tab-bar,
+.app-nav,
+nav[aria-label="Hauptnavigation"],
+nav[aria-label="Main navigation"] {
+  left: 12px !important;
+  right: 12px !important;
+  bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+  width: auto !important;
+  max-width: none !important;
+  min-height: 60px !important;
+  padding: 0.35rem !important;
+  border-radius: 24px !important;
+  transform: none !important;
+}
+
+/* Einzelne Navigationspunkte kleiner, damit sie nicht zu hoch werden */
+.bottom-nav a,
+.mobile-nav a,
+.tab-bar a,
+.app-nav a,
+nav[aria-label="Hauptnavigation"] a,
+nav[aria-label="Main navigation"] a {
+  min-height: 46px !important;
+  padding: 0.35rem 0.45rem !important;
+  border-radius: 18px !important;
+  font-size: 0.72rem !important;
+  line-height: 1.1 !important;
+  white-space: nowrap;
+}
+
+/* Aktiver Navigationspunkt weniger groß */
+.bottom-nav a.active,
+.mobile-nav a.active,
+.tab-bar a.active,
+.app-nav a.active,
+.bottom-nav a[aria-current="page"],
+.mobile-nav a[aria-current="page"],
+.tab-bar a[aria-current="page"],
+.app-nav a[aria-current="page"] {
+  border-radius: 18px !important;
+}
+
+/* Kalender auf kleinen Screens enger und ohne horizontales Abschneiden */
+@media (max-width: 760px) {
+  main,
+  .main,
+  .content,
+  .page-content,
+  .app-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .calendar,
+  .month-grid,
+  .calendar-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 0.35rem !important;
+    overflow: visible !important;
+  }
+
+  .calendar-day,
+  .day-cell,
+  .month-day {
+    min-width: 0 !important;
+    border-radius: 16px !important;
+  }
+
+  .calendar-card,
+  .calendar-page .card,
+  .calendar-page .panel,
+  .calendar-page .section {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden;
+  }
+
+  /* Tagesdetails bekommen Abstand zur Navigation */
+  .day-details,
+  .selected-day-details,
+  .daily-details,
+  .details-card,
+  .calendar-details {
+    margin-bottom: 110px !important;
+  }
+}
+
+/* Auf Desktop bleibt die Bottom-Navigation wieder zentriert */
+@media (min-width: 900px) {
+  .bottom-nav,
+  .mobile-nav,
+  .tab-bar,
+  .app-nav,
+  nav[aria-label="Hauptnavigation"],
+  nav[aria-label="Main navigation"] {
+    left: 50% !important;
+    right: auto !important;
+    width: min(620px, calc(100% - 32px)) !important;
+    transform: translateX(-50%) !important;
+  }
+}
+
+/* =========================================================
+   CareCheck TVöD v1.2.2 – Dashboard Premium Monats-Cockpit
+   Phase A: Nur CSS / keine Logikänderung
+   ========================================================= */
+
+/* Dashboard-Grundfläche */
+.dashboard,
+.dashboard-page,
+main.dashboard,
+.page.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+/* Dashboard obere Begrüßung / Monatskopf */
+.dashboard h1,
+.dashboard-page h1 {
+  margin-bottom: 0.25rem;
+  font-size: clamp(2rem, 8vw, 3.1rem);
+  font-weight: 850;
+  letter-spacing: -0.06em;
+}
+
+.dashboard h1 + p,
+.dashboard-page h1 + p,
+.dashboard .subtitle,
+.dashboard-page .subtitle {
+  max-width: 42rem;
+  margin-top: 0;
+  color: var(--cc-text-soft);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+/* Dashboard-Karten stärker wie App-Cockpit */
+.dashboard .card,
+.dashboard-page .card,
+.dashboard .panel,
+.dashboard-page .panel,
+.dashboard .section,
+.dashboard-page .section,
+.dashboard .dashboard-card,
+.dashboard-page .dashboard-card,
+.dashboard .summary-card,
+.dashboard-page .summary-card,
+.dashboard .stat-card,
+.dashboard-page .stat-card,
+.dashboard .check-card,
+.dashboard-page .check-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9)),
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.11), transparent 16rem);
+  border: 1px solid rgba(120, 132, 158, 0.18);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.075);
+}
+
+/* Feiner Premium-Lichtverlauf */
+.dashboard .card::before,
+.dashboard-page .card::before,
+.dashboard .panel::before,
+.dashboard-page .panel::before,
+.dashboard .dashboard-card::before,
+.dashboard-page .dashboard-card::before,
+.dashboard .summary-card::before,
+.dashboard-page .summary-card::before,
+.dashboard .stat-card::before,
+.dashboard-page .stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.7),
+    transparent 36%,
+    rgba(99, 102, 241, 0.035)
+  );
+}
+
+/* Inhalt über Lichtverlauf halten */
+.dashboard .card > *,
+.dashboard-page .card > *,
+.dashboard .panel > *,
+.dashboard-page .panel > *,
+.dashboard .dashboard-card > *,
+.dashboard-page .dashboard-card > *,
+.dashboard .summary-card > *,
+.dashboard-page .summary-card > *,
+.dashboard .stat-card > *,
+.dashboard-page .stat-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Große Werte im Dashboard */
+.dashboard strong,
+.dashboard-page strong,
+.dashboard .value,
+.dashboard-page .value,
+.dashboard .amount,
+.dashboard-page .amount,
+.dashboard .hours,
+.dashboard-page .hours,
+.dashboard .balance,
+.dashboard-page .balance,
+.dashboard .saldo,
+.dashboard-page .saldo {
+  color: var(--cc-text);
+  font-weight: 850;
+  letter-spacing: -0.045em;
+}
+
+/* Soll/Ist/Saldo optisch wie Monatswerte */
+.dashboard .metric,
+.dashboard-page .metric,
+.dashboard .kpi,
+.dashboard-page .kpi,
+.dashboard .value-card,
+.dashboard-page .value-card,
+.dashboard .summary-value,
+.dashboard-page .summary-value,
+.dashboard .hours-card,
+.dashboard-page .hours-card,
+.dashboard .balance-card,
+.dashboard-page .balance-card {
+  min-height: 116px;
+  padding: 1.1rem;
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 250, 255, 0.94)),
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.15), transparent 14rem);
+  border: 1px solid rgba(99, 102, 241, 0.16);
+  box-shadow: 0 16px 38px rgba(79, 70, 229, 0.09);
+}
+
+/* Labels kleiner und sauberer */
+.dashboard .metric-label,
+.dashboard-page .metric-label,
+.dashboard .kpi-label,
+.dashboard-page .kpi-label,
+.dashboard .label,
+.dashboard-page .label,
+.dashboard .caption,
+.dashboard-page .caption {
+  color: var(--cc-text-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+/* Werte größer */
+.dashboard .metric-value,
+.dashboard-page .metric-value,
+.dashboard .kpi-value,
+.dashboard-page .kpi-value,
+.dashboard .big-value,
+.dashboard-page .big-value {
+  font-size: clamp(2rem, 11vw, 3.4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.065em;
+}
+
+/* Zuschläge / Entgelt-Karten */
+.dashboard .allowance,
+.dashboard-page .allowance,
+.dashboard .bonus,
+.dashboard-page .bonus,
+.dashboard .salary,
+.dashboard-page .salary,
+.dashboard .pay,
+.dashboard-page .pay,
+.dashboard .zuschlag,
+.dashboard-page .zuschlag {
+  border-radius: 22px;
+  background: rgba(99, 102, 241, 0.075);
+  border: 1px solid rgba(99, 102, 241, 0.13);
+}
+
+/* Prüfstatus kompakter */
+.dashboard .check,
+.dashboard-page .check,
+.dashboard .warning,
+.dashboard-page .warning,
+.dashboard .alert,
+.dashboard-page .alert,
+.dashboard .notice,
+.dashboard-page .notice {
+  border-radius: 20px;
+  padding: 0.85rem 1rem;
+}
+
+/* Status-Pills im Dashboard */
+.dashboard .badge,
+.dashboard-page .badge,
+.dashboard .pill,
+.dashboard-page .pill,
+.dashboard .status,
+.dashboard-page .status,
+.dashboard .tag,
+.dashboard-page .tag {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+/* Dashboard Buttons weniger Webformular, mehr App */
+.dashboard button,
+.dashboard-page button,
+.dashboard .button,
+.dashboard-page .button,
+.dashboard .btn,
+.dashboard-page .btn {
+  min-height: 44px;
+  padding-inline: 1rem;
+}
+
+/* Listen im Dashboard ruhiger */
+.dashboard ul,
+.dashboard-page ul {
+  padding-left: 1.1rem;
+}
+
+.dashboard li,
+.dashboard-page li {
+  margin-bottom: 0.45rem;
+  color: var(--cc-text-soft);
+}
+
+/* Mobile Dashboard-Cockpit */
+@media (max-width: 760px) {
+  .dashboard,
+  .dashboard-page,
+  main.dashboard,
+  .page.dashboard {
+    gap: 0.9rem;
+  }
+
+  .dashboard h1,
+  .dashboard-page h1 {
+    margin-top: 0.45rem;
+    font-size: 2.15rem;
+  }
+
+  .dashboard h2,
+  .dashboard-page h2 {
+    font-size: 1.25rem;
+  }
+
+  .dashboard .card,
+  .dashboard-page .card,
+  .dashboard .panel,
+  .dashboard-page .panel,
+  .dashboard .section,
+  .dashboard-page .section,
+  .dashboard .dashboard-card,
+  .dashboard-page .dashboard-card,
+  .dashboard .summary-card,
+  .dashboard-page .summary-card,
+  .dashboard .stat-card,
+  .dashboard-page .stat-card,
+  .dashboard .check-card,
+  .dashboard-page .check-card {
+    border-radius: 24px;
+    padding: 1rem;
+  }
+
+  .dashboard .metric,
+  .dashboard-page .metric,
+  .dashboard .kpi,
+  .dashboard-page .kpi,
+  .dashboard .value-card,
+  .dashboard-page .value-card,
+  .dashboard .summary-value,
+  .dashboard-page .summary-value,
+  .dashboard .hours-card,
+  .dashboard-page .hours-card,
+  .dashboard .balance-card,
+  .dashboard-page .balance-card {
+    min-height: 104px;
+    padding: 0.95rem;
+    border-radius: 24px;
+  }
+
+  .dashboard .metric-value,
+  .dashboard-page .metric-value,
+  .dashboard .kpi-value,
+  .dashboard-page .kpi-value,
+  .dashboard .big-value,
+  .dashboard-page .big-value {
+    font-size: 2.25rem;
+  }
+
+  .dashboard p,
+  .dashboard-page p,
+  .dashboard li,
+  .dashboard-page li {
+    font-size: 0.92rem;
+  }
+}
+
+/* Sehr kleine Screens */
+@media (max-width: 390px) {
+  .dashboard h1,
+  .dashboard-page h1 {
+    font-size: 1.95rem;
+  }
+
+  .dashboard .metric-value,
+  .dashboard-page .metric-value,
+  .dashboard .kpi-value,
+  .dashboard-page .kpi-value,
+  .dashboard .big-value,
+  .dashboard-page .big-value {
+    font-size: 2rem;
+  }
+
+  .dashboard .card,
+  .dashboard-page .card,
+  .dashboard .panel,
+  .dashboard-page .panel,
+  .dashboard .section,
+  .dashboard-page .section,
+  .dashboard .dashboard-card,
+  .dashboard-page .dashboard-card,
+  .dashboard .summary-card,
+  .dashboard-page .summary-card,
+  .dashboard .stat-card,
+  .dashboard-page .stat-card,
+  .dashboard .check-card,
+  .dashboard-page .check-card {
+    padding: 0.85rem;
+  }
+}
+
+/* =========================================================
+   CareCheck TVöD v1.2.2 – Dashboard Mobile Width Fix
+   Nur CSS / keine Logikänderung
+   ========================================================= */
+
+@media (max-width: 760px) {
+  /* Dashboard soll die mobile Breite besser nutzen */
+  .dashboard,
+  .dashboard-page,
+  main.dashboard,
+  .page.dashboard {
+    width: 100% !important;
+    max-width: 100% !important;
+    align-items: stretch !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Alle direkten Dashboard-Karten auf volle Breite */
+  .dashboard > *,
+  .dashboard-page > *,
+  main.dashboard > *,
+  .page.dashboard > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Karten nicht mehr wie schmale Spalten wirken lassen */
+  .dashboard .card,
+  .dashboard-page .card,
+  .dashboard .panel,
+  .dashboard-page .panel,
+  .dashboard .section,
+  .dashboard-page .section,
+  .dashboard .dashboard-card,
+  .dashboard-page .dashboard-card,
+  .dashboard .summary-card,
+  .dashboard-page .summary-card,
+  .dashboard .stat-card,
+  .dashboard-page .stat-card,
+  .dashboard .check-card,
+  .dashboard-page .check-card,
+  .dashboard .export-card,
+  .dashboard-page .export-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Kleine Werte-Kacheln sauber in 2er/3er Raster statt zu eng */
+  .dashboard .metric-grid,
+  .dashboard-page .metric-grid,
+  .dashboard .stats-grid,
+  .dashboard-page .stats-grid,
+  .dashboard .summary-grid,
+  .dashboard-page .summary-grid,
+  .dashboard .kpi-grid,
+  .dashboard-page .kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.55rem !important;
+    width: 100% !important;
+  }
+
+  /* Export-Karte unten nicht überbreit oder gequetscht */
+  .dashboard .export-card,
+  .dashboard-page .export-card {
+    margin-top: 0.35rem !important;
+  }
+
+  /* Buttons im Export sauber umbrechen */
+  .dashboard .export-card button,
+  .dashboard-page .export-card button,
+  .dashboard .export-card .button,
+  .dashboard-page .export-card .button,
+  .dashboard .export-card .btn,
+  .dashboard-page .export-card .btn {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    white-space: nowrap;
+  }
+
+  /* Sehr kleine Texte etwas lesbarer */
+  .dashboard small,
+  .dashboard-page small {
+    font-size: 0.72rem !important;
+  }
+}
+
+@media (min-width: 761px) {
+  .dashboard,
+  .dashboard-page,
+  main.dashboard,
+  .page.dashboard {
+    max-width: 980px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* =========================================================
+   CareCheck TVöD v1.2.2 – Desktop Ratio Restore
+   Ziel: Desktop-Browser wieder breiter wie vorher
+   Mobile Premium bleibt aktiv
+   Nur CSS / keine Logikänderung
+   ========================================================= */
+
+@media (min-width: 761px) {
+  main,
+  .main,
+  .content,
+  .page-content,
+  .app-content {
+    width: min(1120px, calc(100% - 48px)) !important;
+    max-width: 1120px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .dashboard,
+  .dashboard-page,
+  main.dashboard,
+  .page.dashboard {
+    width: min(1120px, calc(100% - 48px)) !important;
+    max-width: 1120px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    align-items: stretch !important;
+  }
+
+  .dashboard > *,
+  .dashboard-page > *,
+  main.dashboard > *,
+  .page.dashboard > * {
+    max-width: none !important;
+  }
+
+  .dashboard .card,
+  .dashboard-page .card,
+  .dashboard .panel,
+  .dashboard-page .panel,
+  .dashboard .section,
+  .dashboard-page .section,
+  .dashboard .dashboard-card,
+  .dashboard-page .dashboard-card,
+  .dashboard .summary-card,
+  .dashboard-page .summary-card,
+  .dashboard .stat-card,
+  .dashboard-page .stat-card,
+  .dashboard .check-card,
+  .dashboard-page .check-card,
+  .dashboard .export-card,
+  .dashboard-page .export-card {
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .dashboard .metric-grid,
+  .dashboard-page .metric-grid,
+  .dashboard .stats-grid,
+  .dashboard-page .stats-grid,
+  .dashboard .summary-grid,
+  .dashboard-page .summary-grid,
+  .dashboard .kpi-grid,
+  .dashboard-page .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  }
+
+  .bottom-nav,
+  .mobile-nav,
+  .tab-bar,
+  .app-nav,
+  nav[aria-label="Hauptnavigation"],
+  nav[aria-label="Main navigation"] {
+    left: 50% !important;
+    right: auto !important;
+    width: min(620px, calc(100% - 32px)) !important;
+    transform: translateX(-50%) !important;
+  }
+}
