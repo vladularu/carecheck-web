@@ -61,7 +61,18 @@ function formatEuro(value: number | null): string {
 }
 
 function formatHours(value: number): string {
-  return `${value} h`;
+  return `${new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(value)} h`;
+}
+
+function formatReportDate(): string {
+  return new Intl.DateTimeFormat("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date());
 }
 
 export default function MonthlyReport() {
@@ -96,6 +107,21 @@ export default function MonthlyReport() {
 
   const complianceIssues = checkCompliance(shiftsInSelectedMonth);
 
+  const criticalCount = complianceIssues.filter(
+    (issue) => issue.severity === "critical",
+  ).length;
+
+  const warningCount = complianceIssues.filter(
+    (issue) => issue.severity === "warning",
+  ).length;
+
+  const reportStatus =
+    criticalCount > 0
+      ? "Kritische Hinweise vorhanden"
+      : warningCount > 0
+        ? "Warnungen vorhanden"
+        : "Keine Auffälligkeiten";
+
   function handlePrint() {
     window.print();
   }
@@ -126,14 +152,40 @@ export default function MonthlyReport() {
             <p>{monthLabel}</p>
           </div>
 
-          <div>
+          <div className="print-report-meta">
             <strong>{profile.payGroup} Stufe {profile.payLevel}</strong>
             <p>{profile.federalState} · {profile.weeklyHours} h/Woche</p>
+            <p>Erstellt am {formatReportDate()}</p>
           </div>
         </header>
 
+        <section className="print-report-status">
+          <div>
+            <span>Monatsstatus</span>
+            <strong>{reportStatus}</strong>
+          </div>
+
+          <div>
+            <span>Saldo</span>
+            <strong>{formatHours(monthlyHours.balanceHours)}</strong>
+          </div>
+
+          <div>
+            <span>Zuschläge</span>
+            <strong>{formatEuro(monthlyPremiums.totalAmount)}</strong>
+          </div>
+
+          <div>
+            <span>Prüfhinweise</span>
+            <strong>{complianceIssues.length}</strong>
+          </div>
+        </section>
+
         <section className="print-report-section">
-          <h2>Arbeitszeit</h2>
+          <div className="print-report-section-title">
+            <span>01</span>
+            <h2>Arbeitszeit</h2>
+          </div>
 
           <div className="print-report-grid">
             <div>
@@ -152,6 +204,16 @@ export default function MonthlyReport() {
             </div>
 
             <div>
+              <span>Überstunden</span>
+              <strong>{formatHours(monthlyHours.overtimeHours)}</strong>
+            </div>
+
+            <div>
+              <span>Unterstunden</span>
+              <strong>{formatHours(monthlyHours.undertimeHours)}</strong>
+            </div>
+
+            <div>
               <span>Arbeitstage</span>
               <strong>{monthlyHours.workingDayCount}</strong>
             </div>
@@ -165,14 +227,24 @@ export default function MonthlyReport() {
               <span>Feiertagsabzug</span>
               <strong>{formatHours(monthlyHours.holidayReductionHours)}</strong>
             </div>
+
+            <div>
+              <span>Ø Tagesarbeitszeit</span>
+              <strong>{formatHours(monthlyHours.averageDailyHours)}</strong>
+            </div>
           </div>
         </section>
 
         <section className="print-report-section">
-          <h2>Zuschläge</h2>
+          <div className="print-report-section-title">
+            <span>02</span>
+            <h2>Zuschläge</h2>
+          </div>
 
           {monthlyPremiums.lines.length === 0 ? (
-            <p>Keine zuschlagspflichtigen Zeiten erkannt.</p>
+            <p className="print-report-empty">
+              Keine zuschlagspflichtigen Zeiten erkannt.
+            </p>
           ) : (
             <table className="print-report-table">
               <thead>
@@ -193,13 +265,9 @@ export default function MonthlyReport() {
                   </tr>
                 ))}
 
-                <tr>
-                  <td colSpan={3}>
-                    <strong>Summe Zuschläge</strong>
-                  </td>
-                  <td>
-                    <strong>{formatEuro(monthlyPremiums.totalAmount)}</strong>
-                  </td>
+                <tr className="print-report-total-row">
+                  <td colSpan={3}>Summe Zuschläge</td>
+                  <td>{formatEuro(monthlyPremiums.totalAmount)}</td>
                 </tr>
               </tbody>
             </table>
@@ -207,10 +275,13 @@ export default function MonthlyReport() {
         </section>
 
         <section className="print-report-section">
-          <h2>Prüfhinweise</h2>
+          <div className="print-report-section-title">
+            <span>03</span>
+            <h2>Prüfhinweise</h2>
+          </div>
 
           {complianceIssues.length === 0 ? (
-            <p>Keine Auffälligkeiten gefunden.</p>
+            <p className="print-report-empty">Keine Auffälligkeiten gefunden.</p>
           ) : (
             <table className="print-report-table">
               <thead>
@@ -234,12 +305,15 @@ export default function MonthlyReport() {
         </section>
 
         <section className="print-report-section">
-          <h2>Dienste</h2>
+          <div className="print-report-section-title">
+            <span>04</span>
+            <h2>Dienste</h2>
+          </div>
 
           {shiftsInSelectedMonth.length === 0 ? (
-            <p>Keine Dienste erfasst.</p>
+            <p className="print-report-empty">Keine Dienste erfasst.</p>
           ) : (
-            <table className="print-report-table">
+            <table className="print-report-table print-report-shift-table">
               <thead>
                 <tr>
                   <th>Datum</th>
@@ -265,6 +339,13 @@ export default function MonthlyReport() {
             </table>
           )}
         </section>
+
+        <footer className="print-report-footer">
+          <p>
+            Dieser Bericht wurde lokal mit CareCheck TVöD erstellt. Die Werte
+            dienen der persönlichen Dienstplan- und Arbeitszeitkontrolle.
+          </p>
+        </footer>
       </article>
     </section>
   );
