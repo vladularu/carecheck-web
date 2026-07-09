@@ -31,6 +31,57 @@ const monthNames = [
   "Dezember",
 ];
 
+function formatHours(value: number): string {
+  return `${value.toLocaleString("de-DE", {
+    minimumFractionDigits: value % 1 === 0 ? 0 : 1,
+    maximumFractionDigits: 2,
+  })} h`;
+}
+
+function formatPercent(value: number): string {
+  return `${value.toLocaleString("de-DE", {
+    maximumFractionDigits: 0,
+  })}%`;
+}
+
+function getBalanceText(balanceHours: number): string {
+  if (balanceHours > 0) {
+    return `+${formatHours(balanceHours)}`;
+  }
+
+  return formatHours(balanceHours);
+}
+
+function getCockpitStatusLabel(
+  criticalCount: number,
+  warningCount: number,
+): string {
+  if (criticalCount > 0) {
+    return "Kritisch";
+  }
+
+  if (warningCount > 0) {
+    return "Warnungen";
+  }
+
+  return "Unauffällig";
+}
+
+function getCockpitStatusClassName(
+  criticalCount: number,
+  warningCount: number,
+): string {
+  if (criticalCount > 0) {
+    return "cockpit-status cockpit-status-critical";
+  }
+
+  if (warningCount > 0) {
+    return "cockpit-status cockpit-status-warning";
+  }
+
+  return "cockpit-status cockpit-status-ok";
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const { profile, shifts, selectedYear, selectedMonth } = useAppContext();
@@ -88,70 +139,188 @@ export default function Dashboard() {
       100,
   );
 
-function handleExportCsv() {
-  downloadMonthlyReportCsv({
-    monthLabel,
-    profile,
-    shifts: shiftsInSelectedMonth,
-    monthlyHours,
-    monthlyPremiums,
-    complianceIssues,
-  });
-}
+  function handleExportCsv() {
+    downloadMonthlyReportCsv({
+      monthLabel,
+      profile,
+      shifts: shiftsInSelectedMonth,
+      monthlyHours,
+      monthlyPremiums,
+      complianceIssues,
+    });
+  }
 
-function handleExportXlsx() {
-  downloadMonthlyReportXlsx({
-    monthLabel,
-    profile,
-    shifts: shiftsInSelectedMonth,
-    monthlyHours,
-    monthlyPremiums,
-    complianceIssues,
-  });
-}
+  function handleExportXlsx() {
+    downloadMonthlyReportXlsx({
+      monthLabel,
+      profile,
+      shifts: shiftsInSelectedMonth,
+      monthlyHours,
+      monthlyPremiums,
+      complianceIssues,
+    });
+  }
 
   return (
-    <section className="dashboard-page">
-      <DashboardHero
-        monthLabel={monthLabel}
-        profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel} · Zuschlagsbasis ${premiumHourlyRate} €/h`}
-      />
+    <>
+      <section className="dashboard-page dashboard-desktop-legacy">
+        <DashboardHero
+          monthLabel={monthLabel}
+          profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel} · Zuschlagsbasis ${premiumHourlyRate} €/h`}
+        />
 
-      <WorkSummary
-        actualHours={monthlyHours.actualHours}
-        targetHours={monthlyHours.targetHours}
-        balanceHours={monthlyHours.balanceHours}
-        remainingHours={remainingHours}
-        overtimeHours={monthlyHours.overtimeHours}
-        progress={progress}
-        workingDayCount={monthlyHours.workingDayCount}
-        publicHolidayCount={monthlyHours.publicHolidayCount}
-        holidayReductionHours={monthlyHours.holidayReductionHours}
-        averageDailyHours={monthlyHours.averageDailyHours}
-      />
+        <WorkSummary
+          actualHours={monthlyHours.actualHours}
+          targetHours={monthlyHours.targetHours}
+          balanceHours={monthlyHours.balanceHours}
+          remainingHours={remainingHours}
+          overtimeHours={monthlyHours.overtimeHours}
+          progress={progress}
+          workingDayCount={monthlyHours.workingDayCount}
+          publicHolidayCount={monthlyHours.publicHolidayCount}
+          holidayReductionHours={monthlyHours.holidayReductionHours}
+          averageDailyHours={monthlyHours.averageDailyHours}
+        />
 
-      <StatusCard
-        criticalCount={criticalCount}
-        warningCount={warningCount}
-        issueCount={complianceIssues.length}
-        checkedShiftCount={shiftsInSelectedMonth.length}
-      />
+        <StatusCard
+          criticalCount={criticalCount}
+          warningCount={warningCount}
+          issueCount={complianceIssues.length}
+          checkedShiftCount={shiftsInSelectedMonth.length}
+        />
 
-      <MonthlyPremiumSummary
-        monthlyPremiums={monthlyPremiums}
-        hasHourlyRate={premiumHourlyRate > 0}
-      />
+        <MonthlyPremiumSummary
+          monthlyPremiums={monthlyPremiums}
+          hasHourlyRate={premiumHourlyRate > 0}
+        />
 
-<ExportCard
-  onExportCsv={handleExportCsv}
-  onExportXlsx={handleExportXlsx}
-  onOpenReport={() => navigate("/bericht")}
-/>
+        <ExportCard
+          onExportCsv={handleExportCsv}
+          onExportXlsx={handleExportXlsx}
+          onOpenReport={() => navigate("/bericht")}
+        />
 
-      <ShiftSummary
-        shiftCount={monthlyHours.shiftCount}
-        shiftTypeCounts={monthlyHours.shiftTypeCounts}
-      />
-    </section>
+        <ShiftSummary
+          shiftCount={monthlyHours.shiftCount}
+          shiftTypeCounts={monthlyHours.shiftTypeCounts}
+        />
+      </section>
+
+      <section className="dashboard-page premium-month-cockpit dashboard-mobile-cockpit">
+        <DashboardHero
+          monthLabel={monthLabel}
+          profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel} · Zuschlagsbasis ${premiumHourlyRate} €/h`}
+        />
+
+        <section className="cockpit-overview-card" aria-label="Monatsübersicht">
+          <div className="cockpit-overview-header">
+            <div>
+              <span className="cockpit-eyebrow">Monatsstatus</span>
+              <h2>{monthLabel}</h2>
+            </div>
+
+            <span
+              className={getCockpitStatusClassName(criticalCount, warningCount)}
+            >
+              {getCockpitStatusLabel(criticalCount, warningCount)}
+            </span>
+          </div>
+
+          <div className="cockpit-main-values">
+            <div>
+              <span>Iststunden</span>
+              <strong>{formatHours(monthlyHours.actualHours)}</strong>
+            </div>
+
+            <div>
+              <span>Sollstunden</span>
+              <strong>{formatHours(monthlyHours.targetHours)}</strong>
+            </div>
+
+            <div>
+              <span>Saldo</span>
+              <strong>{getBalanceText(monthlyHours.balanceHours)}</strong>
+            </div>
+          </div>
+
+          <div className="cockpit-progress-area">
+            <div className="cockpit-progress-label">
+              <span>Monatsfortschritt</span>
+              <strong>{formatPercent(progress)}</strong>
+            </div>
+
+            <div className="cockpit-progress-track">
+              <span style={{ width: `${progress}%` }} />
+            </div>
+          </div>
+
+          <div className="cockpit-mini-grid">
+            <article>
+              <span>Reststunden</span>
+              <strong>{formatHours(remainingHours)}</strong>
+            </article>
+
+            <article>
+              <span>Überstunden</span>
+              <strong>{formatHours(monthlyHours.overtimeHours)}</strong>
+            </article>
+
+            <article>
+              <span>Dienste</span>
+              <strong>{monthlyHours.shiftCount}</strong>
+            </article>
+
+            <article>
+              <span>Geprüft</span>
+              <strong>{shiftsInSelectedMonth.length}</strong>
+            </article>
+          </div>
+        </section>
+
+        <section className="cockpit-content-grid">
+          <div className="cockpit-content-main">
+            <WorkSummary
+              actualHours={monthlyHours.actualHours}
+              targetHours={monthlyHours.targetHours}
+              balanceHours={monthlyHours.balanceHours}
+              remainingHours={remainingHours}
+              overtimeHours={monthlyHours.overtimeHours}
+              progress={progress}
+              workingDayCount={monthlyHours.workingDayCount}
+              publicHolidayCount={monthlyHours.publicHolidayCount}
+              holidayReductionHours={monthlyHours.holidayReductionHours}
+              averageDailyHours={monthlyHours.averageDailyHours}
+            />
+
+            <StatusCard
+              criticalCount={criticalCount}
+              warningCount={warningCount}
+              issueCount={complianceIssues.length}
+              checkedShiftCount={shiftsInSelectedMonth.length}
+            />
+          </div>
+
+          <div className="cockpit-content-side">
+            <MonthlyPremiumSummary
+              monthlyPremiums={monthlyPremiums}
+              hasHourlyRate={premiumHourlyRate > 0}
+            />
+          </div>
+        </section>
+
+        <div className="cockpit-wide-card">
+          <ShiftSummary
+            shiftCount={monthlyHours.shiftCount}
+            shiftTypeCounts={monthlyHours.shiftTypeCounts}
+          />
+        </div>
+
+        <ExportCard
+          onExportCsv={handleExportCsv}
+          onExportXlsx={handleExportXlsx}
+          onOpenReport={() => navigate("/bericht")}
+        />
+      </section>
+    </>
   );
 }
