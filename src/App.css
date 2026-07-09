@@ -1387,3 +1387,341 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================================
+   v1.1.1 Design Foundation
+   Professioneller visueller Grundstil
+   ========================================================= */
+
+:root {
+  --cc-bg: #f5f7fb;
+  --cc-surface: #ffffff;
+  --cc-surface-soft: #f8fafc;
+
+  --cc-text: #0f172a;
+  --cc-text-muted: #64748b;
+  --cc-text-soft: #94a3b8;
+
+  --cc-border: #e2e8f0;
+  --cc-border-strong: #cbd5e1;
+
+  --cc-primary: #2563eb;
+  --cc-primary-dark: #1d4ed8;
+  --cc-primary-soft: #dbeafe;
+
+  --cc-success: #16a34a;
+  --cc-success-soft: #dcfce7;
+
+  --cc-warning: #ea580c;
+  --cc-warning-soft: #ffedd5;
+
+  --cc-danger: #dc2626;
+  --cc-danger-soft: #fee2e2;
+
+  --cc-radius-sm: 12px;
+  --cc-radius-md: 16px;
+  --cc-radius-lg: 22px;
+  --cc-radius-xl: 28px;
+
+  --cc-shadow-card: 0 18px 45px rgba(15, 23, 42, 0.07);
+  --cc-shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.06);
+
+  --cc-page-width: 1120px;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 34rem),
+    linear-gradient(180deg, #f8fafc 0%, var(--cc-bg) 100%);
+  color: var(--cc-text);
+}
+
+.app-shell {
+  max-width: var(--cc-page-width);
+}
+
+.page,
+.dashboard-page {
+  gap: 18px;
+}
+
+/* Karten */
+
+.ui-card {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: var(--cc-radius-xl);
+  box-shadow: var(--cc-shadow-card);
+  backdrop-filter: blur(10px);
+}
+
+.ui-card:hover {
+  border-color: rgba(203, 213, 225, 0.95);
+}
+
+/* Überschriften */
+
+.ui-page-header {
+  padding: 4px 2px;
+}
+
+.ui-page-header span,
+.card-label {
+  color: var(--cc-primary);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ui-page-header h1 {
+  color: var(--cc-text);
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.ui-page-header p {
+  max-width: 760px;
+  color: var(--cc-text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Buttons */
+
+.ui-button,
+.primary-button,
+.danger-button {
+  min-height: 44px;
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.ui-button:hover,
+.primary-button:hover,
+.danger-button:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button,
+.ui-button:not(.ui-button-secondary):not(.ui-button-danger) {
+  background: linear-gradient(135deg, var(--cc-primary), var(--cc-primary-dark));
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+}
+
+.ui-button-secondary {
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  color: var(--cc-text);
+}
+
+.ui-button-danger,
+.danger-button {
+  background: var(--cc-danger);
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(220, 38, 38, 0.18);
+}
+
+/* Formulare */
+
+.field {
+  gap: 7px;
+}
+
+.field span {
+  color: var(--cc-text-muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.field input,
+.field select,
+.field textarea {
+  min-height: 44px;
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius-md);
+  background: var(--cc-surface);
+  color: var(--cc-text);
+  font-size: 15px;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--cc-primary);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+/* Dashboard */
+
+.dashboard-hero {
+  border-radius: 32px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.98), rgba(30, 64, 175, 0.96)),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.22), transparent 18rem);
+  box-shadow: 0 24px 60px rgba(30, 64, 175, 0.28);
+}
+
+.dashboard-hero h1,
+.dashboard-hero h2 {
+  letter-spacing: -0.06em;
+}
+
+.work-card-header,
+.monthly-premium-header,
+.day-details-header {
+  border-bottom: 1px solid var(--cc-border);
+  padding-bottom: 12px;
+}
+
+.progress-track {
+  height: 12px;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.progress-fill {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--cc-primary), #38bdf8);
+}
+
+/* Statusflächen */
+
+.compliance-issue,
+.day-details-compliance-item,
+.dashboard-status-grid div,
+.shift-premium-row,
+.monthly-premium-row,
+.shift-type-row {
+  border-radius: var(--cc-radius-md);
+}
+
+.compliance-issue-warning,
+.day-details-compliance-warning,
+.dashboard-status-warning {
+  border-color: #fed7aa;
+  background: var(--cc-warning-soft);
+}
+
+.compliance-issue-critical,
+.day-details-compliance-critical,
+.dashboard-status-critical {
+  border-color: #fecaca;
+  background: var(--cc-danger-soft);
+}
+
+.dashboard-status-ok {
+  border-color: #bbf7d0;
+  background: var(--cc-success-soft);
+}
+
+/* Kalender dezenter und sauberer */
+
+.calendar-header {
+  border-radius: var(--cc-radius-xl);
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  box-shadow: var(--cc-shadow-soft);
+}
+
+.calendar-day {
+  border-color: var(--cc-border);
+  background: var(--cc-surface);
+  transition:
+    border-color 0.16s ease,
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.calendar-day:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.calendar-day.selected {
+  border-color: var(--cc-primary);
+  box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.18);
+}
+
+.calendar-day.outside-month {
+  background: #f8fafc;
+  opacity: 0.58;
+}
+
+.calendar-shift {
+  border-radius: 10px;
+  background: var(--cc-primary-soft);
+  color: #1e3a8a;
+}
+
+/* Tabellen / Bericht */
+
+.print-report {
+  box-shadow: var(--cc-shadow-card);
+}
+
+.print-report-table th {
+  background: #f1f5f9;
+  color: var(--cc-text);
+}
+
+.print-report-table td,
+.print-report-table th {
+  border-color: var(--cc-border-strong);
+}
+
+/* Navigation */
+
+.bottom-nav {
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.13);
+  backdrop-filter: blur(14px);
+}
+
+.bottom-nav a {
+  border-radius: 999px;
+  color: var(--cc-text-muted);
+  font-weight: 900;
+}
+
+.bottom-nav a.active {
+  background: var(--cc-primary-soft);
+  color: var(--cc-primary-dark);
+}
+
+/* Mobile nur vorsichtig, kein kompletter Umbau */
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .ui-card {
+    border-radius: 22px;
+  }
+
+  .ui-page-header h1 {
+    font-size: 30px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 16px;
+  }
+}
