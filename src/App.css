@@ -2067,3 +2067,359 @@ body {
     width: 100%;
   }
 }
+
+/* =========================================================
+   v1.1.3 Kalender optisch verbessern
+   Vorsichtige reine CSS-Verbesserung ohne Logikänderung
+   ========================================================= */
+
+.calendar {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--cc-radius-xl);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--cc-border);
+  box-shadow: var(--cc-shadow-soft);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-weekdays span {
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  border-radius: 999px;
+  background: var(--cc-surface-soft);
+  color: var(--cc-text-muted);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.03em;
+}
+
+.calendar-grid {
+  gap: 8px;
+}
+
+.calendar-day {
+  min-height: 132px;
+  padding: 10px;
+  border-radius: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.calendar-day.current-month {
+  background: var(--cc-surface);
+}
+
+.calendar-day.outside-month {
+  background: #f8fafc;
+  color: var(--cc-text-soft);
+  opacity: 0.56;
+}
+
+.calendar-day.weekend.current-month {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.calendar-day.selected {
+  background: #ffffff;
+  border-color: var(--cc-primary);
+  box-shadow:
+    inset 0 0 0 2px rgba(37, 99, 235, 0.18),
+    0 12px 28px rgba(37, 99, 235, 0.11);
+}
+
+.calendar-day-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.calendar-day-number {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--cc-text);
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.calendar-day.selected .calendar-day-number {
+  background: var(--cc-primary);
+  color: #ffffff;
+}
+
+.calendar-day-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.calendar-holiday-badge,
+.calendar-compliance-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.calendar-holiday-badge {
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.calendar-compliance-badge.warning {
+  background: var(--cc-warning-soft);
+  color: #9a3412;
+}
+
+.calendar-compliance-badge.critical {
+  background: var(--cc-danger);
+  color: #ffffff;
+}
+
+.calendar-day.holiday.current-month {
+  border-color: #c7d2fe;
+}
+
+.calendar-holiday-name {
+  margin-bottom: 8px;
+  color: #4338ca;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.calendar-shifts {
+  display: grid;
+  gap: 6px;
+}
+
+.calendar-shift {
+  display: grid;
+  gap: 2px;
+  padding: 7px 8px;
+  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  color: #1e3a8a;
+}
+
+.calendar-shift strong {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 950;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-shift span {
+  color: #1e40af;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.calendar-more {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--cc-surface-soft);
+  color: var(--cc-text-muted);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.calendar-day.has-compliance-warning {
+  border-color: #fdba74;
+  box-shadow: inset 0 0 0 1px rgba(234, 88, 12, 0.12);
+}
+
+.calendar-day.has-compliance-critical {
+  border-color: #fca5a5;
+  box-shadow: inset 0 0 0 2px rgba(220, 38, 38, 0.16);
+}
+
+/* Tagesdetails */
+
+.day-details {
+  gap: 16px;
+}
+
+.day-details-header {
+  display: grid;
+  gap: 4px;
+}
+
+.day-details-header span {
+  color: var(--cc-primary);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.day-details-header strong {
+  color: var(--cc-text);
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+.day-details-holiday {
+  display: inline-flex;
+  width: fit-content;
+  margin: 6px 0 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.day-details-list {
+  display: grid;
+  gap: 12px;
+}
+
+.day-details-shift {
+  border-radius: 20px;
+  background: var(--cc-surface-soft);
+  border: 1px solid var(--cc-border);
+}
+
+.day-details-shift-main strong {
+  color: var(--cc-text);
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+
+.day-details-shift-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.day-details-shift-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--cc-border);
+  color: var(--cc-text-muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.day-details-actions {
+  padding-top: 4px;
+}
+
+.day-details-form,
+.day-details-edit-form {
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid var(--cc-border);
+}
+
+/* Mobile: nur Kalender verdichten, kein kompletter Layout-Umbau */
+
+@media (max-width: 760px) {
+  .calendar {
+    padding: 8px;
+    gap: 7px;
+    border-radius: 20px;
+  }
+
+  .calendar-weekdays {
+    gap: 4px;
+  }
+
+  .calendar-weekdays span {
+    min-height: 28px;
+    font-size: 11px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  .calendar-day {
+    min-height: 86px;
+    padding: 6px;
+    border-radius: 13px;
+  }
+
+  .calendar-day-number {
+    min-width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .calendar-day-top {
+    margin-bottom: 5px;
+  }
+
+  .calendar-holiday-badge,
+  .calendar-compliance-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    font-size: 9px;
+  }
+
+  .calendar-holiday-name {
+    display: none;
+  }
+
+  .calendar-shifts {
+    gap: 3px;
+  }
+
+  .calendar-shift {
+    padding: 4px 5px;
+    border-radius: 8px;
+  }
+
+  .calendar-shift strong {
+    font-size: 10px;
+  }
+
+  .calendar-shift span {
+    display: none;
+  }
+
+  .calendar-more {
+    padding: 2px 5px;
+    font-size: 9px;
+  }
+
+  .day-details-header strong {
+    font-size: 23px;
+  }
+
+  .day-details-shift {
+    border-radius: 16px;
+  }
+}
