@@ -1,0 +1,507 @@
+/* =========================================================
+   CareCheck TVöD v1.2.3b – Responsive Layout Foundation
+   Zentrale Regeln für Mobile / Tablet / Desktop
+   Nur CSS / keine Logikänderung
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. Basis-Schutz
+   --------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------
+   2. Zentrale Layout-Variablen
+   --------------------------------------------------------- */
+
+:root {
+  --cc-screen-padding-mobile: 10px;
+  --cc-screen-padding-tablet: 20px;
+  --cc-screen-padding-desktop: 32px;
+
+  --cc-page-mobile: 100%;
+  --cc-page-tablet: 920px;
+  --cc-page-desktop: 1120px;
+  --cc-page-large: 1180px;
+
+  --cc-gap-mobile: 0.9rem;
+  --cc-gap-tablet: 1rem;
+  --cc-gap-desktop: 1rem;
+
+  --cc-bottom-nav-height: 78px;
+  --cc-bottom-safe-space: calc(120px + env(safe-area-inset-bottom));
+}
+
+/* ---------------------------------------------------------
+   3. Einheitliche Seitenbreiten
+   --------------------------------------------------------- */
+
+main,
+.main,
+.content,
+.page-content,
+.app-content,
+.page,
+.dashboard-page,
+.calendar-page,
+.profile-page,
+.export-page,
+.report-page,
+.premium-month-cockpit,
+.dashboard-desktop-legacy,
+.dashboard-mobile-cockpit {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: var(--cc-bottom-safe-space);
+}
+
+/* ---------------------------------------------------------
+   4. Karten dürfen Layout nie sprengen
+   --------------------------------------------------------- */
+
+.card,
+.panel,
+.section,
+.box,
+.widget,
+.tile,
+.dashboard-card,
+.calendar-card,
+.profile-card,
+.export-card,
+.backup-card,
+.shift-card,
+.stat-card,
+.summary-card,
+.check-card,
+.warning-card,
+.form-card,
+.day-details,
+.cockpit-overview-card,
+.cockpit-wide-card {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------
+   5. Grids/Flex-Bereiche stabilisieren
+   --------------------------------------------------------- */
+
+.calendar,
+.calendar-grid,
+.calendar-weekdays,
+.cockpit-content-grid,
+.cockpit-content-main,
+.cockpit-content-side,
+.cockpit-main-values,
+.cockpit-mini-grid,
+.compliance-summary,
+.day-details-list,
+.day-details-shift-actions {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* ---------------------------------------------------------
+   6. Texte, Buttons, Badges laufen nicht aus Karten heraus
+   --------------------------------------------------------- */
+
+button,
+.button,
+.btn,
+input,
+select,
+textarea,
+.badge,
+.pill,
+.tag,
+.status,
+.calendar-shift-chip,
+.calendar-shift-mini-dot,
+.calendar-shift-more-compact {
+  max-width: 100%;
+}
+
+p,
+span,
+strong,
+small,
+label,
+button,
+a {
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------
+   7. Mobile: iPhone / kleine Geräte
+   --------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  main,
+  .main,
+  .content,
+  .page-content,
+  .app-content,
+  .page,
+  .dashboard-page,
+  .calendar-page,
+  .profile-page,
+  .export-page,
+  .report-page,
+  .premium-month-cockpit,
+  .dashboard-mobile-cockpit {
+    width: var(--cc-page-mobile) !important;
+    max-width: var(--cc-page-mobile) !important;
+    padding-left: var(--cc-screen-padding-mobile) !important;
+    padding-right: var(--cc-screen-padding-mobile) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .dashboard-desktop-legacy {
+    display: none !important;
+  }
+
+  .dashboard-mobile-cockpit {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--cc-gap-mobile) !important;
+  }
+
+  .premium-month-cockpit {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--cc-gap-mobile) !important;
+  }
+
+  .cockpit-content-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--cc-gap-mobile) !important;
+    width: 100% !important;
+  }
+
+  .cockpit-content-main,
+  .cockpit-content-side {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--cc-gap-mobile) !important;
+    width: 100% !important;
+  }
+
+  .cockpit-main-values {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.55rem !important;
+  }
+
+  .cockpit-mini-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.55rem !important;
+  }
+
+  .calendar-page {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  .calendar,
+  .calendar-grid,
+  .calendar-weekdays {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .calendar-grid {
+    gap: 0.35rem !important;
+  }
+
+  .calendar-day {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .day-details {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .bottom-nav,
+  .mobile-nav,
+  .tab-bar,
+  .app-nav,
+  nav[aria-label="Hauptnavigation"],
+  nav[aria-label="Main navigation"] {
+    position: fixed !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    z-index: 80 !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   8. Tablet: iPad / kleine Browserfenster
+   --------------------------------------------------------- */
+
+@media (min-width: 761px) and (max-width: 1023px) {
+  main,
+  .main,
+  .content,
+  .page-content,
+  .app-content,
+  .page,
+  .dashboard-page,
+  .calendar-page,
+  .profile-page,
+  .export-page,
+  .report-page,
+  .dashboard-desktop-legacy {
+    width: min(var(--cc-page-tablet), calc(100% - 40px)) !important;
+    max-width: var(--cc-page-tablet) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .dashboard-desktop-legacy {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--cc-gap-tablet) !important;
+  }
+
+  .dashboard-mobile-cockpit {
+    display: none !important;
+  }
+
+  .cockpit-content-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: var(--cc-gap-tablet) !important;
+  }
+
+  .cockpit-main-values {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .cockpit-mini-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .day-details {
+    width: min(680px, 100%) !important;
+    max-width: 680px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .bottom-nav,
+  .mobile-nav,
+  .tab-bar,
+  .app-nav,
+  nav[aria-label="Hauptnavigation"],
+  nav[aria-label="Main navigation"] {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    width: min(620px, calc(100% - 32px)) !important;
+    transform: translateX(-50%) !important;
+    z-index: 80 !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   9. Desktop: normale Browseransicht
+   --------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  main,
+  .main,
+  .content,
+  .page-content,
+  .app-content,
+  .page,
+  .dashboard-page,
+  .calendar-page,
+  .profile-page,
+  .export-page,
+  .report-page {
+    width: min(var(--cc-page-desktop), calc(100% - 64px)) !important;
+    max-width: var(--cc-page-desktop) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .dashboard-desktop-legacy {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--cc-gap-desktop) !important;
+    width: min(980px, calc(100% - 64px)) !important;
+    max-width: 980px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .dashboard-mobile-cockpit {
+    display: none !important;
+  }
+
+  .premium-month-cockpit:not(.dashboard-mobile-cockpit) {
+    width: min(var(--cc-page-desktop), calc(100% - 64px)) !important;
+    max-width: var(--cc-page-desktop) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .cockpit-content-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr) !important;
+    gap: var(--cc-gap-desktop) !important;
+    align-items: start !important;
+  }
+
+  .cockpit-content-main,
+  .cockpit-content-side {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--cc-gap-desktop) !important;
+    min-width: 0 !important;
+  }
+
+  .cockpit-main-values {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .cockpit-mini-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .calendar-page {
+    width: min(var(--cc-page-desktop), calc(100% - 64px)) !important;
+    max-width: var(--cc-page-desktop) !important;
+  }
+
+  .day-details {
+    width: min(720px, 100%) !important;
+    max-width: 720px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .bottom-nav,
+  .mobile-nav,
+  .tab-bar,
+  .app-nav,
+  nav[aria-label="Hauptnavigation"],
+  nav[aria-label="Main navigation"] {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    width: min(640px, calc(100% - 32px)) !important;
+    transform: translateX(-50%) !important;
+    z-index: 80 !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   10. Große Monitore
+   --------------------------------------------------------- */
+
+@media (min-width: 1280px) {
+  main,
+  .main,
+  .content,
+  .page-content,
+  .app-content,
+  .page,
+  .calendar-page,
+  .profile-page,
+  .export-page,
+  .report-page {
+    width: min(var(--cc-page-large), calc(100% - 80px)) !important;
+    max-width: var(--cc-page-large) !important;
+  }
+
+  .dashboard-desktop-legacy {
+    width: min(980px, calc(100% - 80px)) !important;
+    max-width: 980px !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   11. Utility-Klassen für spätere saubere Entwicklung
+   --------------------------------------------------------- */
+
+.cc-mobile-only {
+  display: none;
+}
+
+.cc-tablet-only {
+  display: none;
+}
+
+.cc-desktop-only {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .cc-mobile-only {
+    display: block !important;
+  }
+
+  .cc-hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1023px) {
+  .cc-tablet-only {
+    display: block !important;
+  }
+
+  .cc-hide-tablet {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cc-desktop-only {
+    display: block !important;
+  }
+
+  .cc-hide-desktop {
+    display: none !important;
+  }
+}

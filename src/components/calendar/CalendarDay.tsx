@@ -1,6 +1,4 @@
 import type { CalendarDay as CalendarDayModel } from "../../services/calendar/calendarService";
-import { calculateNetHours } from "../../services/calculation/workingTimeCalculator";
-import { formatTimeRange24 } from "../../services/format/dateTimeFormat";
 import type { Holiday } from "../../services/holiday/holidayService";
 import type { ComplianceIssue, Shift, ShiftType } from "../../types/index";
 
@@ -13,27 +11,27 @@ interface CalendarDayProps {
   onSelect: (dateKey: string) => void;
 }
 
-const shiftLabels: Record<ShiftType, string> = {
-  EARLY: "Frühdienst",
-  LATE: "Spätdienst",
-  NIGHT: "Nachtdienst",
-  DAY: "Tagdienst",
-  TRAINING: "Fortbildung",
+const shiftShortLabels: Record<ShiftType, string> = {
+  EARLY: "Früh",
+  LATE: "Spät",
+  NIGHT: "Nacht",
+  DAY: "Tag",
+  TRAINING: "Fortb.",
   VACATION: "Urlaub",
   SICK: "Krank",
   FREE: "Frei",
-  CUSTOM: "Individuell",
+  CUSTOM: "Dienst",
 };
 
-const shiftIcons: Record<ShiftType, string> = {
-  EARLY: "🌅",
-  LATE: "🌇",
-  NIGHT: "🌙",
-  DAY: "☀️",
-  TRAINING: "📘",
-  VACATION: "Krank",
-  SICK: "Krank",
-  FREE: "Frei",
+const shiftDotLabels: Record<ShiftType, string> = {
+  EARLY: "F",
+  LATE: "S",
+  NIGHT: "N",
+  DAY: "T",
+  TRAINING: "B",
+  VACATION: "U",
+  SICK: "K",
+  FREE: "frei",
   CUSTOM: "•",
 };
 
@@ -53,6 +51,41 @@ function getHighestSeverity(issues: ComplianceIssue[]) {
   return null;
 }
 
+function getShiftTypeClassName(type: ShiftType): string {
+  return `calendar-shift-type-${type.toLowerCase()}`;
+}
+
+function getDayAriaLabel(
+  day: CalendarDayModel,
+  shifts: Shift[],
+  holiday: Holiday | null,
+  issueCount: number,
+): string {
+  const parts = [`Tag ${day.dayNumber}`];
+
+  if (holiday) {
+    parts.push(`Feiertag ${holiday.name}`);
+  }
+
+  if (shifts.length === 1) {
+    parts.push("1 Dienst");
+  }
+
+  if (shifts.length > 1) {
+    parts.push(`${shifts.length} Dienste`);
+  }
+
+  if (issueCount === 1) {
+    parts.push("1 Prüfhinweis");
+  }
+
+  if (issueCount > 1) {
+    parts.push(`${issueCount} Prüfhinweise`);
+  }
+
+  return parts.join(", ");
+}
+
 export default function CalendarDay({
   day,
   shifts,
@@ -62,9 +95,13 @@ export default function CalendarDay({
   onSelect,
 }: CalendarDayProps) {
   const highestSeverity = getHighestSeverity(complianceIssues);
+  const primaryShift = shifts[0];
+  const secondaryShifts = shifts.slice(1, 4);
+  const hiddenShiftCount = Math.max(0, shifts.length - 4);
 
   const classNames = [
     "calendar-day",
+    "calendar-day-compact",
     day.currentMonth ? "current-month" : "outside-month",
     day.weekend ? "weekend" : "",
     holiday ? "holiday" : "",
@@ -77,6 +114,12 @@ export default function CalendarDay({
 
   return (
     <button
+      aria-label={getDayAriaLabel(
+        day,
+        shifts,
+        holiday,
+        complianceIssues.length,
+      )}
       className={classNames}
       type="button"
       onClick={() => onSelect(day.dateKey)}
@@ -92,31 +135,47 @@ export default function CalendarDay({
           )}
 
           {highestSeverity === "warning" && (
-            <span className="calendar-compliance-badge warning">⚠</span>
+            <span className="calendar-compliance-badge warning">!</span>
           )}
         </div>
       </div>
 
-      {holiday && <div className="calendar-holiday-name">{holiday.name}</div>}
+      <div className="calendar-day-body">
+        {primaryShift ? (
+          <div
+            className={[
+              "calendar-shift-chip",
+              getShiftTypeClassName(primaryShift.type),
+            ].join(" ")}
+          >
+            <span className="calendar-shift-chip-dot" />
+            <strong>{shiftShortLabels[primaryShift.type]}</strong>
+          </div>
+        ) : (
+          <span className="calendar-empty-marker" />
+        )}
 
-      <div className="calendar-shifts">
-        {shifts.slice(0, 2).map((shift) => (
-          <div className="calendar-shift" key={shift.id}>
-            <strong>
-              {shiftIcons[shift.type]} {shiftLabels[shift.type]}
-            </strong>
+        {(secondaryShifts.length > 0 || hiddenShiftCount > 0) && (
+          <div className="calendar-shift-dot-row">
+            {secondaryShifts.map((shift) => (
+              <span
+                className={[
+                  "calendar-shift-mini-dot",
+                  getShiftTypeClassName(shift.type),
+                ].join(" ")}
+                key={shift.id}
+                title={shiftShortLabels[shift.type]}
+              >
+                {shiftDotLabels[shift.type]}
+              </span>
+            ))}
 
-            {shift.type !== "FREE" && (
-              <>
-                <span>{formatTimeRange24(shift.startTime, shift.endTime)}</span>
-                <span>{calculateNetHours(shift)} h</span>
-              </>
+            {hiddenShiftCount > 0 && (
+              <span className="calendar-shift-more-compact">
+                +{hiddenShiftCount}
+              </span>
             )}
           </div>
-        ))}
-
-        {shifts.length > 2 && (
-          <span className="calendar-more">+{shifts.length - 2} weitere</span>
         )}
       </div>
     </button>

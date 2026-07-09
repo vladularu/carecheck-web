@@ -132,7 +132,7 @@ export default function Calendar() {
   const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
 
   return (
-    <section className="page">
+    <section className="page calendar-page">
       <CalendarHeader
         monthLabel={`${monthNames[selectedMonth]} ${selectedYear}`}
         onPrevious={previousMonth}
@@ -147,6 +147,43 @@ export default function Calendar() {
         selectedDateKey={selectedDateKey}
         onSelectDate={setSelectedDateKey}
       />
+
+      <div className="calendar-legend" aria-label="Kalender-Legende">
+        <span>
+          <i className="calendar-legend-dot calendar-shift-type-early" />
+          Früh
+        </span>
+
+        <span>
+          <i className="calendar-legend-dot calendar-shift-type-late" />
+          Spät
+        </span>
+
+        <span>
+          <i className="calendar-legend-dot calendar-shift-type-night" />
+          Nacht
+        </span>
+
+        <span>
+          <i className="calendar-legend-dot calendar-shift-type-day" />
+          Tag
+        </span>
+
+        <span>
+          <i className="calendar-legend-dot calendar-shift-type-vacation" />
+          Urlaub
+        </span>
+
+        <span>
+          <i className="calendar-legend-dot calendar-shift-type-sick" />
+          Krank
+        </span>
+
+        <span>
+          <i className="calendar-legend-dot calendar-shift-type-training" />
+          Fortbildung
+        </span>
+      </div>
 
       {selectedDateKey && (
         <DayDetails
