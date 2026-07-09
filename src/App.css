@@ -5908,3 +5908,252 @@ textarea {
     font-size: 0.48rem !important;
   }
 }
+
+/* =========================================================
+   CareCheck TVöD v1.2.4 – ShiftForm Premium UX
+   Ziel: Dienstformular als mobile Premium-Erfassung
+   TSX + CSS / Speicherlogik bleibt gleich
+   ========================================================= */
+
+.shift-form-premium {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.shift-form-header {
+  padding: 1rem;
+  border: 1px solid rgba(99, 102, 241, 0.14);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 14rem),
+    rgba(255, 255, 255, 0.72);
+}
+
+.shift-form-header span {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--cc-primary-dark);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.shift-form-header strong {
+  display: block;
+  color: var(--cc-text);
+  font-size: clamp(1.35rem, 5vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.shift-form-header p {
+  margin: 0.55rem 0 0;
+  color: var(--cc-text-soft);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.shift-type-picker {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.shift-type-picker legend {
+  margin-bottom: 0.55rem;
+  color: var(--cc-text-muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.shift-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.shift-type-tile {
+  min-width: 0;
+  min-height: 92px;
+  padding: 0.75rem;
+  border: 1px solid rgba(120, 132, 158, 0.16);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--cc-text);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+  text-align: left;
+}
+
+.shift-type-tile span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  margin-bottom: 0.45rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.09);
+  color: var(--cc-primary-dark);
+  font-size: 0.7rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.shift-type-tile strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: inherit;
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.shift-type-tile small {
+  display: block;
+  color: var(--cc-text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.shift-type-tile.selected {
+  border-color: rgba(99, 102, 241, 0.38);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 247, 255, 0.94)),
+    rgba(99, 102, 241, 0.1);
+  box-shadow: 0 16px 34px rgba(79, 70, 229, 0.14);
+}
+
+.shift-type-tile.selected span {
+  background: linear-gradient(135deg, var(--cc-primary), var(--cc-blue));
+  color: #ffffff;
+}
+
+.shift-type-tile-early.selected {
+  border-color: rgba(59, 130, 246, 0.42);
+}
+
+.shift-type-tile-late.selected {
+  border-color: rgba(245, 158, 11, 0.42);
+}
+
+.shift-type-tile-night.selected {
+  border-color: rgba(79, 70, 229, 0.42);
+}
+
+.shift-type-tile-vacation.selected {
+  border-color: rgba(22, 163, 74, 0.42);
+}
+
+.shift-type-tile-sick.selected,
+.shift-type-tile-free.selected {
+  border-color: rgba(100, 116, 139, 0.38);
+}
+
+.shift-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid rgba(120, 132, 158, 0.14);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.shift-form-field-full {
+  width: 100%;
+}
+
+.shift-time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.shift-form-premium .field {
+  min-width: 0;
+}
+
+.shift-form-premium .field span {
+  color: var(--cc-text-muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.shift-form-premium input,
+.shift-form-premium select,
+.shift-form-premium textarea {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 18px;
+}
+
+.shift-form-submit {
+  width: 100%;
+  min-height: 54px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+/* Mobile: große Fingerflächen, 2 Spalten */
+@media (max-width: 760px) {
+  .shift-form-premium {
+    gap: 0.85rem;
+  }
+
+  .shift-form-header,
+  .shift-form-section {
+    padding: 0.85rem;
+    border-radius: 22px;
+  }
+
+  .shift-type-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .shift-type-tile {
+    min-height: 88px;
+    padding: 0.68rem;
+    border-radius: 18px;
+  }
+
+  .shift-type-tile strong {
+    font-size: 0.82rem;
+  }
+
+  .shift-type-tile small {
+    font-size: 0.64rem;
+  }
+
+  .shift-time-grid {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  .shift-form-submit {
+    min-height: 52px;
+  }
+}
+
+/* Desktop: Formular ruhiger und breiter, aber nicht überladen */
+@media (min-width: 1024px) {
+  .shift-form-premium {
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .shift-type-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

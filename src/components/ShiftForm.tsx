@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useAppContext } from "../context/AppContext";
 import type { Shift, ShiftType } from "../types/index";
 
@@ -10,17 +10,80 @@ interface ShiftFormProps {
   onDone?: () => void;
 }
 
-const shiftOptions: { value: ShiftType; label: string }[] = [
-  { value: "EARLY", label: "Frühdienst" },
-  { value: "LATE", label: "Spätdienst" },
-  { value: "NIGHT", label: "Nachtdienst" },
-  { value: "DAY", label: "Tagdienst" },
-  { value: "TRAINING", label: "Fortbildung" },
-  { value: "VACATION", label: "Urlaub" },
-  { value: "SICK", label: "Krank" },
-  { value: "FREE", label: "Frei" },
-  { value: "CUSTOM", label: "Individuell" },
+const shiftOptions: {
+  value: ShiftType;
+  label: string;
+  shortLabel: string;
+  description: string;
+}[] = [
+  {
+    value: "EARLY",
+    label: "Frühdienst",
+    shortLabel: "Früh",
+    description: "Früher Dienst",
+  },
+  {
+    value: "LATE",
+    label: "Spätdienst",
+    shortLabel: "Spät",
+    description: "Später Dienst",
+  },
+  {
+    value: "NIGHT",
+    label: "Nachtdienst",
+    shortLabel: "Nacht",
+    description: "Nachtdienst",
+  },
+  {
+    value: "DAY",
+    label: "Tagdienst",
+    shortLabel: "Tag",
+    description: "Normaler Tagdienst",
+  },
+  {
+    value: "TRAINING",
+    label: "Fortbildung",
+    shortLabel: "Fortb.",
+    description: "Schulung / Fortbildung",
+  },
+  {
+    value: "VACATION",
+    label: "Urlaub",
+    shortLabel: "Urlaub",
+    description: "Urlaubstag",
+  },
+  {
+    value: "SICK",
+    label: "Krank",
+    shortLabel: "Krank",
+    description: "Krankmeldung",
+  },
+  {
+    value: "FREE",
+    label: "Frei",
+    shortLabel: "Frei",
+    description: "Freier Tag",
+  },
+  {
+    value: "CUSTOM",
+    label: "Individuell",
+    shortLabel: "Eigen",
+    description: "Eigener Dienst",
+  },
 ];
+
+function getShiftTileClassName(
+  optionType: ShiftType,
+  selectedType: ShiftType,
+): string {
+  const classNames = [
+    "shift-type-tile",
+    `shift-type-tile-${optionType.toLowerCase()}`,
+    optionType === selectedType ? "selected" : "",
+  ];
+
+  return classNames.filter(Boolean).join(" ");
+}
 
 export default function ShiftForm({
   onAddShift,
@@ -87,7 +150,7 @@ export default function ShiftForm({
     setNote("");
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!date || !startTime || !endTime) {
@@ -125,77 +188,102 @@ export default function ShiftForm({
     }
   }
 
+  const selectedShiftOption = shiftOptions.find((option) => option.value === type);
+
   return (
-    <form className="form-grid" onSubmit={handleSubmit} lang="de-DE">
-      <label className="field">
-        <span>Datum</span>
-        <input
-          type="date"
-          lang="de-DE"
-          value={date}
-          onChange={(event) => setDate(event.target.value)}
-          required
-        />
-      </label>
+    <form
+      className="form-grid shift-form-premium"
+      onSubmit={handleSubmit}
+      lang="de-DE"
+    >
+      <div className="shift-form-header">
+        <span>{isEditing ? "Dienst bearbeiten" : "Dienst hinzufügen"}</span>
+        <strong>{selectedShiftOption?.label ?? "Dienst"}</strong>
+        <p>
+          Wähle zuerst die Dienstart. Beginn, Ende und Pause werden aus deinen
+          Dienstvorlagen übernommen und können angepasst werden.
+        </p>
+      </div>
 
-      <label className="field">
-        <span>Dienstart</span>
-        <select
-          value={type}
-          onChange={(event) => handleTypeChange(event.target.value as ShiftType)}
-        >
+      <fieldset className="shift-type-picker">
+        <legend>Dienstart</legend>
+
+        <div className="shift-type-grid">
           {shiftOptions.map((option) => (
-            <option value={option.value} key={option.value}>
-              {option.label}
-            </option>
+            <button
+              aria-pressed={option.value === type}
+              className={getShiftTileClassName(option.value, type)}
+              key={option.value}
+              type="button"
+              onClick={() => handleTypeChange(option.value)}
+            >
+              <span>{option.shortLabel}</span>
+              <strong>{option.label}</strong>
+              <small>{option.description}</small>
+            </button>
           ))}
-        </select>
-      </label>
+        </div>
+      </fieldset>
 
-      <label className="field">
-        <span>Beginn</span>
-        <input
-          type="time"
-          lang="de-DE"
-          step="60"
-          value={startTime}
-          onChange={(event) => setStartTime(event.target.value)}
-          required
-        />
-      </label>
+      <div className="shift-form-section">
+        <label className="field shift-form-field-full">
+          <span>Datum</span>
+          <input
+            type="date"
+            lang="de-DE"
+            value={date}
+            onChange={(event) => setDate(event.target.value)}
+            required
+          />
+        </label>
 
-      <label className="field">
-        <span>Ende</span>
-        <input
-          type="time"
-          lang="de-DE"
-          step="60"
-          value={endTime}
-          onChange={(event) => setEndTime(event.target.value)}
-          required
-        />
-      </label>
+        <div className="shift-time-grid">
+          <label className="field">
+            <span>Beginn</span>
+            <input
+              type="time"
+              lang="de-DE"
+              step="60"
+              value={startTime}
+              onChange={(event) => setStartTime(event.target.value)}
+              required
+            />
+          </label>
 
-      <label className="field">
-        <span>Pause Minuten</span>
-        <input
-          type="number"
-          min="0"
-          value={breakMinutes}
-          onChange={(event) => setBreakMinutes(Number(event.target.value))}
-        />
-      </label>
+          <label className="field">
+            <span>Ende</span>
+            <input
+              type="time"
+              lang="de-DE"
+              step="60"
+              value={endTime}
+              onChange={(event) => setEndTime(event.target.value)}
+              required
+            />
+          </label>
 
-      <label className="field">
-        <span>Notiz</span>
-        <input
-          placeholder="Optional"
-          value={note}
-          onChange={(event) => setNote(event.target.value)}
-        />
-      </label>
+          <label className="field">
+            <span>Pause</span>
+            <input
+              type="number"
+              min="0"
+              value={breakMinutes}
+              onChange={(event) => setBreakMinutes(Number(event.target.value))}
+            />
+          </label>
+        </div>
 
-      <button className="primary-button" type="submit">
+        <label className="field shift-form-field-full">
+          <span>Notiz</span>
+          <input
+            placeholder="Optional, z. B. Station, Besonderheit oder Tausch"
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+          />
+        </label>
+      </div>
+
+      <button className="primary-button shift-form-submit" type="submit">
         {isEditing ? "Änderung speichern" : "Dienst speichern"}
       </button>
     </form>
