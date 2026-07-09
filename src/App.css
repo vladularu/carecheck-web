@@ -5076,3 +5076,397 @@ textarea {
     padding-right: 8px !important;
   }
 }
+
+/* =========================================================
+   CareCheck TVöD v1.2.3 – Kalender Quick-Add Polish
+   Ziel: vorhandenen Quick-Add sichtbar, mobil und hochwertig machen
+   Nur CSS / keine Logikänderung
+   ========================================================= */
+
+/* Tagesdetails als klare mobile Karte */
+.day-details {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.13), transparent 16rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 255, 0.94));
+  border: 1px solid rgba(99, 102, 241, 0.16);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+}
+
+.day-details-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.day-details-header > span {
+  color: var(--cc-primary-dark);
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.day-details-header > strong {
+  color: var(--cc-text);
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.day-details-holiday {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0.35rem 0 0;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #92400e;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+/* Leerer Tag: ruhiger Hinweis */
+.day-details > p {
+  margin: 0.75rem 0;
+  color: var(--cc-text-soft);
+  font-size: 0.95rem;
+}
+
+/* Quick-Add Button deutlich als Hauptaktion */
+.day-details-actions {
+  margin-top: 1rem;
+}
+
+.day-details-actions button {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 999px;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--cc-primary), var(--cc-blue));
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 850;
+  box-shadow: 0 16px 32px rgba(79, 70, 229, 0.24);
+}
+
+.day-details-actions button:hover {
+  box-shadow: 0 18px 38px rgba(79, 70, 229, 0.3);
+}
+
+/* Quick-Add Formular als eigene Premium-Fläche */
+.day-details-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(99, 102, 241, 0.14);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.1), transparent 14rem),
+    rgba(255, 255, 255, 0.76);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+/* Bereits erfasste Dienste ruhiger darstellen */
+.day-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.day-details-shift {
+  padding: 0.95rem;
+  border: 1px solid rgba(120, 132, 158, 0.16);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.055);
+}
+
+.day-details-shift-main > strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--cc-text);
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.day-details-shift-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.6rem;
+}
+
+.day-details-shift-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.09);
+  color: var(--cc-primary-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+/* Bearbeiten/Löschen übersichtlicher */
+.day-details-shift-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.day-details-shift-actions button {
+  flex: 1 1 auto;
+  min-height: 42px;
+}
+
+/* Prüfhinweise dezenter */
+.day-details-compliance {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.day-details-compliance > strong {
+  color: var(--cc-text);
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.day-details-compliance-item {
+  padding: 0.75rem;
+  border-radius: 18px;
+  border: 1px solid rgba(120, 132, 158, 0.16);
+}
+
+.day-details-compliance-item span {
+  display: inline-flex;
+  margin-bottom: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.day-details-compliance-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: #92400e;
+}
+
+.day-details-compliance-critical {
+  background: rgba(220, 38, 38, 0.1);
+  color: #991b1b;
+}
+
+.day-details-compliance-info {
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+}
+
+/* Mobile: Quick-Add wirkt wie native iPhone-Aktion */
+@media (max-width: 760px) {
+  .day-details {
+    margin-top: 0.9rem;
+    padding: 1rem !important;
+    border-radius: 26px;
+  }
+
+  .day-details-header {
+    margin-bottom: 0.85rem;
+  }
+
+  .day-details-actions {
+    position: sticky;
+    bottom: calc(82px + env(safe-area-inset-bottom));
+    z-index: 20;
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.2rem;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(248, 250, 255, 0.92) 38%,
+      rgba(248, 250, 255, 0.98)
+    );
+  }
+
+  .day-details-actions button {
+    min-height: 54px;
+    font-size: 0.95rem;
+  }
+
+  .day-details-form {
+    padding: 0.85rem;
+    border-radius: 22px;
+  }
+
+  .day-details-shift {
+    padding: 0.85rem;
+    border-radius: 20px;
+  }
+}
+
+/* Desktop: ruhig halten */
+@media (min-width: 1024px) {
+  .day-details {
+    max-width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .day-details-actions button {
+    width: auto;
+    min-width: 260px;
+  }
+}
+
+/* =========================================================
+   CareCheck TVöD v1.2.3 – Quick-Add Mobile Overlap Fix
+   Ziel: Button überdeckt Tagesdetails auf iPhone nicht mehr
+   Nur CSS / keine Logikänderung
+   ========================================================= */
+
+/* Quick-Add soll auf Mobile nicht mehr sticky über dem Inhalt liegen */
+@media (max-width: 760px) {
+  .day-details-actions {
+    position: static !important;
+    z-index: auto !important;
+
+    margin-top: 1rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .day-details-actions button {
+    width: 100% !important;
+    min-height: 50px !important;
+    border-radius: 22px !important;
+    font-size: 0.92rem !important;
+    box-shadow: 0 12px 26px rgba(79, 70, 229, 0.22) !important;
+  }
+
+  /* Tagesdetails bekommen genug Platz für Überschrift, Datum und Inhalt */
+  .day-details {
+    padding-top: 1.15rem !important;
+    padding-bottom: 1.15rem !important;
+  }
+
+  .day-details-header {
+    position: relative !important;
+    z-index: 1 !important;
+    margin-bottom: 1rem !important;
+    text-align: center;
+  }
+
+  .day-details-header > strong {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 1.45rem !important;
+  }
+
+  /* Wenn ein Dienst vorhanden ist: Bearbeiten/Löschen zuerst, Quick-Add danach */
+  .day-details-shift-actions {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .day-details-shift-actions button {
+    min-height: 46px !important;
+    border-radius: 20px !important;
+  }
+
+  /* Formular nach dem Öffnen mit Abstand anzeigen */
+  .day-details-form {
+    margin-top: 0.9rem !important;
+  }
+}
+
+/* Sehr kleine iPhones */
+@media (max-width: 390px) {
+  .day-details-actions button {
+    min-height: 48px !important;
+    font-size: 0.88rem !important;
+  }
+
+  .day-details-header > strong {
+    font-size: 1.3rem !important;
+  }
+}
+
+/* =========================================================
+   CareCheck TVöD v1.2.3 – DayDetails Desktop Width Fix
+   Ziel: Tagesdetails auf Desktop breiter und ruhiger darstellen
+   Nur CSS / keine Logikänderung
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  .day-details {
+    width: min(720px, 100%) !important;
+    max-width: 720px !important;
+    margin-top: 2rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 1.35rem !important;
+    border-radius: 28px !important;
+  }
+
+  .day-details-header {
+    text-align: center;
+    margin-bottom: 1rem !important;
+  }
+
+  .day-details-header > strong {
+    font-size: 2rem !important;
+  }
+
+  .day-details > p {
+    text-align: center;
+    font-size: 1rem !important;
+  }
+
+  .day-details-actions {
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 1.1rem !important;
+  }
+
+  .day-details-actions button {
+    width: auto !important;
+    min-width: 340px !important;
+    max-width: 420px !important;
+    min-height: 52px !important;
+    border-radius: 999px !important;
+  }
+
+  .day-details-form {
+    margin-top: 1.2rem !important;
+  }
+
+  .day-details-list {
+    margin-top: 1rem !important;
+  }
+
+  .day-details-shift {
+    padding: 1rem !important;
+  }
+}
+
+/* Tablet: etwas breiter als Mobile, aber nicht zu groß */
+@media (min-width: 761px) and (max-width: 1023px) {
+  .day-details {
+    width: min(680px, 100%) !important;
+    max-width: 680px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
