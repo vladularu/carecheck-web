@@ -50,16 +50,16 @@ const payGroups: PayGroup[] = [
 
 const payLevels: PayLevel[] = [1, 2, 3, 4, 5, 6];
 
-const templateLabels: { type: ShiftType; label: string }[] = [
-  { type: "EARLY", label: "Frühdienst" },
-  { type: "LATE", label: "Spätdienst" },
-  { type: "NIGHT", label: "Nachtdienst" },
-  { type: "DAY", label: "Tagdienst" },
-  { type: "TRAINING", label: "Fortbildung" },
-  { type: "VACATION", label: "Urlaub" },
-  { type: "SICK", label: "Krank" },
-  { type: "FREE", label: "Frei" },
-  { type: "CUSTOM", label: "Individuell" },
+const templateLabels: { type: ShiftType; label: string; helper: string }[] = [
+  { type: "EARLY", label: "Frühdienst", helper: "Standard-Frühdienst" },
+  { type: "LATE", label: "Spätdienst", helper: "Standard-Spätdienst" },
+  { type: "NIGHT", label: "Nachtdienst", helper: "Dienst über Mitternacht" },
+  { type: "DAY", label: "Tagdienst", helper: "Regulärer Tagdienst" },
+  { type: "TRAINING", label: "Fortbildung", helper: "Arbeitszeit Fortbildung" },
+  { type: "VACATION", label: "Urlaub", helper: "Abwesenheit / geplant" },
+  { type: "SICK", label: "Krank", helper: "Abwesenheit / krank" },
+  { type: "FREE", label: "Frei", helper: "Zählt mit 0 Stunden" },
+  { type: "CUSTOM", label: "Individuell", helper: "Freie Dienstvorlage" },
 ];
 
 function formatEuro(value: number | null): string {
@@ -108,202 +108,238 @@ export default function Profile() {
   }
 
   return (
-    <section className="page">
+    <section className="page profile-page">
       <PageHeader
         eyebrow="Einstellungen"
         title="Profil"
         description="Grunddaten für Dienstplan, Feiertage, Sollstunden, Zuschläge und Dienstvorlagen."
       />
 
-      <Card>
-        <div className="form-grid">
-          <label className="field">
-            <span>Bundesland</span>
-            <select
-              value={profile.federalState}
-              onChange={(event) =>
-                setProfile({
-                  ...profile,
-                  federalState: event.target.value as FederalState,
-                })
-              }
-            >
-              {federalStates.map((state) => (
-                <option value={state.value} key={state.value}>
-                  {state.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="field">
-            <span>Wochenarbeitszeit</span>
-            <input
-              type="number"
-              min="1"
-              step="0.1"
-              value={profile.weeklyHours}
-              onChange={(event) =>
-                setProfile({
-                  ...profile,
-                  weeklyHours: Number(event.target.value),
-                })
-              }
-            />
-          </label>
-
-          <label className="field">
-            <span>TVöD-P Gruppe</span>
-            <select
-              value={profile.payGroup}
-              onChange={(event) =>
-                setProfile({
-                  ...profile,
-                  payGroup: event.target.value as PayGroup,
-                })
-              }
-            >
-              {payGroups.map((group) => (
-                <option value={group} key={group}>
-                  {group}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="field">
-            <span>Stufe</span>
-            <select
-              value={profile.payLevel}
-              onChange={(event) =>
-                setProfile({
-                  ...profile,
-                  payLevel: Number(event.target.value) as PayLevel,
-                })
-              }
-            >
-              {payLevels.map((level) => (
-                <option value={level} key={level}>
-                  Stufe {level}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="tariff-box">
-            <span>Automatische TVöD-P Werte</span>
-
-            <div className="tariff-row">
-              <p>Tarifstand</p>
-              <strong>{getTvoedPTariffLabel()}</strong>
-            </div>
-
-            <div className="tariff-row">
-              <p>Monatsentgelt laut Gruppe/Stufe</p>
-              <strong>{formatEuro(monthlySalary)}</strong>
-            </div>
-
-            <div className="tariff-row">
-              <p>Individueller Stundenwert</p>
-              <strong>{formatEuro(individualHourlyRate)}</strong>
-            </div>
-
-            <div className="tariff-row highlight">
-              <p>Zuschlags-Stundenwert</p>
-              <strong>{formatEuro(premiumHourlyRate)}</strong>
-            </div>
-
-            <p className="profile-helper">
-              Für TVöD-Zeitzuschläge verwendet CareCheck automatisch Stufe 3 der
-              jeweiligen Entgeltgruppe. Bei {profile.payGroup} ist das{" "}
-              {formatEuro(premiumHourlyRate)}.
+      <div className="profile-grid">
+        <Card className="profile-section-card">
+          <div className="profile-section-header">
+            <span className="card-label">Arbeitszeit</span>
+            <strong>Standort & Wochenstunden</strong>
+            <p>
+              Diese Angaben steuern Feiertage, Sollstunden und Monatsauswertung.
             </p>
           </div>
 
-          <div className="template-settings">
-            <div className="template-settings-header">
-              <div>
-                <span className="card-label">Dienstvorlagen</span>
-                <strong>Standardzeiten</strong>
-              </div>
-
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={resetShiftTemplates}
+          <div className="profile-form-grid">
+            <label className="field">
+              <span>Bundesland</span>
+              <select
+                value={profile.federalState}
+                onChange={(event) =>
+                  setProfile({
+                    ...profile,
+                    federalState: event.target.value as FederalState,
+                  })
+                }
               >
-                Zurücksetzen
-              </Button>
-            </div>
+                {federalStates.map((state) => (
+                  <option value={state.value} key={state.value}>
+                    {state.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-            <p className="profile-helper">
-              Diese Zeiten werden automatisch übernommen, wenn du im Dienstplan
-              eine Dienstart auswählst. Du kannst sie pro Dienst weiterhin
-              manuell ändern.
+            <label className="field">
+              <span>Wochenarbeitszeit</span>
+              <input
+                type="number"
+                min="1"
+                step="0.1"
+                value={profile.weeklyHours}
+                onChange={(event) =>
+                  setProfile({
+                    ...profile,
+                    weeklyHours: Number(event.target.value),
+                  })
+                }
+              />
+            </label>
+          </div>
+        </Card>
+
+        <Card className="profile-section-card">
+          <div className="profile-section-header">
+            <span className="card-label">Tarif</span>
+            <strong>TVöD-P Eingruppierung</strong>
+            <p>
+              Gruppe und Stufe bestimmen Monatsentgelt, Stundenwert und
+              Zuschlagsbasis.
             </p>
-
-            <div className="template-grid">
-              {templateLabels.map((item) => {
-                const template = shiftTemplates[item.type];
-
-                return (
-                  <div className="template-card" key={item.type}>
-                    <strong>{item.label}</strong>
-
-                    <label className="field">
-                      <span>Beginn</span>
-                      <input
-                        type="time"
-                        value={template.startTime}
-                        onChange={(event) =>
-                          handleTemplateChange(
-                            item.type,
-                            "startTime",
-                            event.target.value,
-                          )
-                        }
-                      />
-                    </label>
-
-                    <label className="field">
-                      <span>Ende</span>
-                      <input
-                        type="time"
-                        value={template.endTime}
-                        onChange={(event) =>
-                          handleTemplateChange(
-                            item.type,
-                            "endTime",
-                            event.target.value,
-                          )
-                        }
-                      />
-                    </label>
-
-                    <label className="field">
-                      <span>Pause Minuten</span>
-                      <input
-                        type="number"
-                        min="0"
-                        value={template.breakMinutes}
-                        onChange={(event) =>
-                          handleTemplateChange(
-                            item.type,
-                            "breakMinutes",
-                            event.target.value,
-                          )
-                        }
-                      />
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
           </div>
 
-          <Button type="button" variant="secondary">
-            Profil wird automatisch gespeichert
+          <div className="profile-form-grid">
+            <label className="field">
+              <span>TVöD-P Gruppe</span>
+              <select
+                value={profile.payGroup}
+                onChange={(event) =>
+                  setProfile({
+                    ...profile,
+                    payGroup: event.target.value as PayGroup,
+                  })
+                }
+              >
+                {payGroups.map((group) => (
+                  <option value={group} key={group}>
+                    {group}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="field">
+              <span>Stufe</span>
+              <select
+                value={profile.payLevel}
+                onChange={(event) =>
+                  setProfile({
+                    ...profile,
+                    payLevel: Number(event.target.value) as PayLevel,
+                  })
+                }
+              >
+                {payLevels.map((level) => (
+                  <option value={level} key={level}>
+                    Stufe {level}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </Card>
+      </div>
+
+      <Card className="profile-section-card tariff-summary-card">
+        <div className="profile-section-header">
+          <span className="card-label">Automatische Werte</span>
+          <strong>TVöD-P Berechnung</strong>
+          <p>
+            CareCheck nutzt diese Werte für Gehaltsübersicht und
+            Zuschlagsberechnung.
+          </p>
+        </div>
+
+        <div className="tariff-summary-grid">
+          <div>
+            <span>Tarifstand</span>
+            <strong>{getTvoedPTariffLabel()}</strong>
+          </div>
+
+          <div>
+            <span>Monatsentgelt</span>
+            <strong>{formatEuro(monthlySalary)}</strong>
+          </div>
+
+          <div>
+            <span>Individueller Stundenwert</span>
+            <strong>{formatEuro(individualHourlyRate)}</strong>
+          </div>
+
+          <div className="highlight">
+            <span>Zuschlags-Stundenwert</span>
+            <strong>{formatEuro(premiumHourlyRate)}</strong>
+          </div>
+        </div>
+
+        <p className="profile-helper">
+          Für TVöD-Zeitzuschläge verwendet CareCheck automatisch Stufe 3 der
+          jeweiligen Entgeltgruppe. Bei {profile.payGroup} ist das{" "}
+          {formatEuro(premiumHourlyRate)}.
+        </p>
+      </Card>
+
+      <Card className="profile-section-card">
+        <div className="template-settings-header">
+          <div className="profile-section-header">
+            <span className="card-label">Dienstvorlagen</span>
+            <strong>Standardzeiten</strong>
+            <p>
+              Diese Zeiten werden automatisch übernommen, wenn du im Dienstplan
+              eine Dienstart auswählst. Jeder einzelne Dienst kann trotzdem
+              manuell angepasst werden.
+            </p>
+          </div>
+
+          <Button type="button" variant="secondary" onClick={resetShiftTemplates}>
+            Zurücksetzen
           </Button>
+        </div>
+
+        <div className="template-grid">
+          {templateLabels.map((item) => {
+            const template = shiftTemplates[item.type];
+
+            return (
+              <article className="template-card" key={item.type}>
+                <div className="template-card-header">
+                  <strong>{item.label}</strong>
+                  <span>{item.helper}</span>
+                </div>
+
+                <div className="template-card-fields">
+                  <label className="field">
+                    <span>Beginn</span>
+                    <input
+                      type="time"
+                      value={template.startTime}
+                      onChange={(event) =>
+                        handleTemplateChange(
+                          item.type,
+                          "startTime",
+                          event.target.value,
+                        )
+                      }
+                    />
+                  </label>
+
+                  <label className="field">
+                    <span>Ende</span>
+                    <input
+                      type="time"
+                      value={template.endTime}
+                      onChange={(event) =>
+                        handleTemplateChange(
+                          item.type,
+                          "endTime",
+                          event.target.value,
+                        )
+                      }
+                    />
+                  </label>
+
+                  <label className="field">
+                    <span>Pause</span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={template.breakMinutes}
+                      onChange={(event) =>
+                        handleTemplateChange(
+                          item.type,
+                          "breakMinutes",
+                          event.target.value,
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="profile-save-note">
+          <strong>Automatisch gespeichert</strong>
+          <p>
+            Änderungen an Profil und Dienstvorlagen werden lokal im Browser
+            gespeichert.
+          </p>
         </div>
       </Card>
     </section>
