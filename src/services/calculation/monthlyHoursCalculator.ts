@@ -1,5 +1,9 @@
 import type { Shift, ShiftType, UserProfile } from "../../types/index";
 import { getHolidaysForState } from "../holiday/holidayService";
+import {
+  countsAsPlanningDay,
+  countsAsShift,
+} from "./shiftTypeRules";
 import { calculateTotalNetHours } from "./workingTimeCalculator";
 
 export interface ShiftTypeCount {
@@ -13,10 +17,31 @@ export interface MonthlyHoursResult {
   balanceHours: number;
   overtimeHours: number;
   undertimeHours: number;
+
+  /**
+   * Anzahl der planungsrelevanten Einträge.
+   * FREE wird ausdrücklich nicht mitgezählt.
+   */
   shiftCount: number;
+
+  /**
+   * Verteilung aller planungsrelevanten Dienstarten.
+   * FREE wird ausdrücklich nicht mitgezählt.
+   */
   shiftTypeCounts: ShiftTypeCount[];
 
+  /**
+   * Tatsächlich belegte planungsrelevante Kalendertage.
+   * Mehrere Dienste am selben Tag zählen nur als ein Planungstag.
+   */
+  plannedDayCount: number;
+
+  /**
+   * Reguläre Soll-Arbeitstage des Monats:
+   * Montag bis Freitag abzüglich gesetzlicher Feiertage.
+   */
   workingDayCount: number;
+
   publicHolidayCount: number;
   holidayReductionHours: number;
   averageDailyHours: number;
@@ -77,7 +102,9 @@ export function calculateMonthlyTargetHours(
   }
 
   const workingDayCount = weekdayCount - publicHolidayCount;
-  const targetHours = roundToTwoDecimals(workingDayCount * averageDailyHours);
+  const targetHours = roundToTwoDecimals(
+    workingDayCount * averageDailyHours,
+  );
   const holidayReductionHours = roundToTwoDecimals(
     publicHolidayCount * averageDailyHours,
   );
@@ -111,10 +138,14 @@ export function filterShiftsByMonth(
   });
 }
 
+export function filterCountedShifts(shifts: Shift[]): Shift[] {
+  return shifts.filter(countsAsShift);
+}
+
 export function countShiftTypes(shifts: Shift[]): ShiftTypeCount[] {
   const counts = new Map<ShiftType, number>();
 
-  for (const shift of shifts) {
+  for (const shift of filterCountedShifts(shifts)) {
     counts.set(shift.type, (counts.get(shift.type) ?? 0) + 1);
   }
 
@@ -124,6 +155,16 @@ export function countShiftTypes(shifts: Shift[]): ShiftTypeCount[] {
   }));
 }
 
+export function countPlannedDays(shifts: Shift[]): number {
+  const dateKeys = new Set(
+    shifts
+      .filter(countsAsPlanningDay)
+      .map((shift) => shift.date),
+  );
+
+  return dateKeys.size;
+}
+
 export function calculateMonthlyHours(
   shifts: Shift[],
   profile: UserProfile,
@@ -131,9 +172,13 @@ export function calculateMonthlyHours(
   monthIndex: number,
 ): MonthlyHoursResult {
   const shiftsInMonth = filterShiftsByMonth(shifts, year, monthIndex);
+  const countedShifts = filterCountedShifts(shiftsInMonth);
+
   const target = calculateMonthlyTargetHours(profile, year, monthIndex);
-  const actualHours = calculateTotalNetHours(shiftsInMonth);
-  const balanceHours = roundToTwoDecimals(actualHours - target.targetHours);
+  const actualHours = calculateTotalNetHours(countedShifts);
+  const balanceHours = roundToTwoDecimals(
+    actualHours - target.targetHours,
+  );
 
   return {
     targetHours: target.targetHours,
@@ -144,8 +189,10 @@ export function calculateMonthlyHours(
       0,
       roundToTwoDecimals(target.targetHours - actualHours),
     ),
-    shiftCount: shiftsInMonth.length,
-    shiftTypeCounts: countShiftTypes(shiftsInMonth),
+
+    shiftCount: countedShifts.length,
+    shiftTypeCounts: countShiftTypes(countedShifts),
+    plannedDayCount: countPlannedDays(countedShifts),
 
     workingDayCount: target.workingDayCount,
     publicHolidayCount: target.publicHolidayCount,
