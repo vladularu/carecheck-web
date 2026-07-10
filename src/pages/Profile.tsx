@@ -1,8 +1,8 @@
-import PageHeader from "../components/ui/PageHeader";
+﻿import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import DataBackupCard from "../components/profile/DataBackupCard";
-import { useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/useAppContext";
 import {
   getTvoedPHourlyRate,
   getTvoedPMonthlySalary,
@@ -18,7 +18,7 @@ import type {
 } from "../types/index";
 
 const federalStates: { value: FederalState; label: string }[] = [
-  { value: "BW", label: "Baden-Württemberg" },
+  { value: "BW", label: "Baden-WÃ¼rttemberg" },
   { value: "BY", label: "Bayern" },
   { value: "BE", label: "Berlin" },
   { value: "BB", label: "Brandenburg" },
@@ -33,7 +33,7 @@ const federalStates: { value: FederalState; label: string }[] = [
   { value: "SN", label: "Sachsen" },
   { value: "ST", label: "Sachsen-Anhalt" },
   { value: "SH", label: "Schleswig-Holstein" },
-  { value: "TH", label: "Thüringen" },
+  { value: "TH", label: "ThÃ¼ringen" },
 ];
 
 const payGroups: PayGroup[] = [
@@ -52,20 +52,20 @@ const payGroups: PayGroup[] = [
 const payLevels: PayLevel[] = [1, 2, 3, 4, 5, 6];
 
 const templateLabels: { type: ShiftType; label: string; helper: string }[] = [
-  { type: "EARLY", label: "Frühdienst", helper: "Standard-Frühdienst" },
-  { type: "LATE", label: "Spätdienst", helper: "Standard-Spätdienst" },
-  { type: "NIGHT", label: "Nachtdienst", helper: "Dienst über Mitternacht" },
-  { type: "DAY", label: "Tagdienst", helper: "Regulärer Tagdienst" },
+  { type: "EARLY", label: "FrÃ¼hdienst", helper: "Standard-FrÃ¼hdienst" },
+  { type: "LATE", label: "SpÃ¤tdienst", helper: "Standard-SpÃ¤tdienst" },
+  { type: "NIGHT", label: "Nachtdienst", helper: "Dienst Ã¼ber Mitternacht" },
+  { type: "DAY", label: "Tagdienst", helper: "RegulÃ¤rer Tagdienst" },
   { type: "TRAINING", label: "Fortbildung", helper: "Arbeitszeit Fortbildung" },
   { type: "VACATION", label: "Urlaub", helper: "Abwesenheit / geplant" },
   { type: "SICK", label: "Krank", helper: "Abwesenheit / krank" },
-  { type: "FREE", label: "Frei", helper: "Zählt mit 0 Stunden" },
+  { type: "FREE", label: "Frei", helper: "ZÃ¤hlt mit 0 Stunden" },
   { type: "CUSTOM", label: "Individuell", helper: "Freie Dienstvorlage" },
 ];
 
 function formatEuro(value: number | null): string {
   if (value === null) {
-    return "nicht verfügbar";
+    return "nicht verfÃ¼gbar";
   }
 
   return new Intl.NumberFormat("de-DE", {
@@ -113,7 +113,7 @@ export default function Profile() {
       <PageHeader
         eyebrow="Einstellungen"
         title="Profil"
-        description="Grunddaten für Dienstplan, Feiertage, Sollstunden, Zuschläge und Dienstvorlagen."
+        description="Grunddaten fÃ¼r Dienstplan, Feiertage, Sollstunden, ZuschlÃ¤ge und Dienstvorlagen."
       />
 
       <div className="profile-grid">
@@ -167,7 +167,7 @@ export default function Profile() {
         <Card className="profile-section-card">
           <div className="profile-section-header">
             <span className="card-label">Tarif</span>
-            <strong>TVöD-P Eingruppierung</strong>
+            <strong>TVÃ¶D-P Eingruppierung</strong>
             <p>
               Gruppe und Stufe bestimmen Monatsentgelt, Stundenwert und
               Zuschlagsbasis.
@@ -176,7 +176,7 @@ export default function Profile() {
 
           <div className="profile-form-grid">
             <label className="field">
-              <span>TVöD-P Gruppe</span>
+              <span>TVÃ¶D-P Gruppe</span>
               <select
                 value={profile.payGroup}
                 onChange={(event) =>
@@ -219,9 +219,9 @@ export default function Profile() {
       <Card className="profile-section-card tariff-summary-card">
         <div className="profile-section-header">
           <span className="card-label">Automatische Werte</span>
-          <strong>TVöD-P Berechnung</strong>
+          <strong>TVÃ¶D-P Berechnung</strong>
           <p>
-            CareCheck nutzt diese Werte für Gehaltsübersicht und
+            CareCheck nutzt diese Werte fÃ¼r GehaltsÃ¼bersicht und
             Zuschlagsberechnung.
           </p>
         </div>
@@ -249,7 +249,7 @@ export default function Profile() {
         </div>
 
         <p className="profile-helper">
-          Für TVöD-Zeitzuschläge verwendet CareCheck automatisch Stufe 3 der
+          FÃ¼r TVÃ¶D-ZeitzuschlÃ¤ge verwendet CareCheck automatisch Stufe 3 der
           jeweiligen Entgeltgruppe. Bei {profile.payGroup} ist das{" "}
           {formatEuro(premiumHourlyRate)}.
         </p>
@@ -261,14 +261,14 @@ export default function Profile() {
             <span className="card-label">Dienstvorlagen</span>
             <strong>Standardzeiten</strong>
             <p>
-              Diese Zeiten werden automatisch übernommen, wenn du im Dienstplan
-              eine Dienstart auswählst. Jeder einzelne Dienst kann trotzdem
+              Diese Zeiten werden automatisch Ã¼bernommen, wenn du im Dienstplan
+              eine Dienstart auswÃ¤hlst. Jeder einzelne Dienst kann trotzdem
               manuell angepasst werden.
             </p>
           </div>
 
           <Button type="button" variant="secondary" onClick={resetShiftTemplates}>
-            Zurücksetzen
+            ZurÃ¼cksetzen
           </Button>
         </div>
 
@@ -338,7 +338,7 @@ export default function Profile() {
         <div className="profile-save-note">
           <strong>Automatisch gespeichert</strong>
           <p>
-            Änderungen an Profil und Dienstvorlagen werden lokal im Browser
+            Ã„nderungen an Profil und Dienstvorlagen werden lokal im Browser
             gespeichert.
           </p>
         </div>

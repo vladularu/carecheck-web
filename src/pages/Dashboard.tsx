@@ -1,11 +1,11 @@
-import DashboardHero from "../components/dashboard/DashboardHero";
+﻿import DashboardHero from "../components/dashboard/DashboardHero";
 import ExportCard from "../components/dashboard/ExportCard";
 import MonthlyPremiumSummary from "../components/dashboard/MonthlyPremiumSummary";
 import ShiftSummary from "../components/dashboard/ShiftSummary";
 import StatusCard from "../components/dashboard/StatusCard";
 import WorkSummary from "../components/dashboard/WorkSummary";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/useAppContext";
 import { downloadMonthlyReportXlsx } from "../services/export/monthlyReportXlsxService";
 import {
   calculateMonthlyHours,
@@ -19,7 +19,7 @@ import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffServi
 const monthNames = [
   "Januar",
   "Februar",
-  "März",
+  "MÃ¤rz",
   "April",
   "Mai",
   "Juni",
@@ -64,7 +64,7 @@ function getCockpitStatusLabel(
     return "Warnungen";
   }
 
-  return "Unauffällig";
+  return "UnauffÃ¤llig";
 }
 
 function getCockpitStatusClassName(
@@ -166,7 +166,7 @@ export default function Dashboard() {
       <section className="dashboard-page dashboard-desktop-legacy">
         <DashboardHero
           monthLabel={monthLabel}
-          profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel} · Zuschlagsbasis ${premiumHourlyRate} €/h`}
+          profileLabel={`${profile.federalState} Â· ${profile.weeklyHours} h/Woche Â· ${profile.payGroup} Stufe ${profile.payLevel} Â· Zuschlagsbasis ${premiumHourlyRate} â‚¬/h`}
         />
 
         <WorkSummary
@@ -209,10 +209,10 @@ export default function Dashboard() {
       <section className="dashboard-page premium-month-cockpit dashboard-mobile-cockpit">
         <DashboardHero
           monthLabel={monthLabel}
-          profileLabel={`${profile.federalState} · ${profile.weeklyHours} h/Woche · ${profile.payGroup} Stufe ${profile.payLevel} · Zuschlagsbasis ${premiumHourlyRate} €/h`}
+          profileLabel={`${profile.federalState} Â· ${profile.weeklyHours} h/Woche Â· ${profile.payGroup} Stufe ${profile.payLevel} Â· Zuschlagsbasis ${premiumHourlyRate} â‚¬/h`}
         />
 
-        <section className="cockpit-overview-card" aria-label="Monatsübersicht">
+        <section className="cockpit-overview-card" aria-label="MonatsÃ¼bersicht">
           <div className="cockpit-overview-header">
             <div>
               <span className="cockpit-eyebrow">Monatsstatus</span>
@@ -261,7 +261,7 @@ export default function Dashboard() {
             </article>
 
             <article>
-              <span>Überstunden</span>
+              <span>Ãœberstunden</span>
               <strong>{formatHours(monthlyHours.overtimeHours)}</strong>
             </article>
 
@@ -271,7 +271,7 @@ export default function Dashboard() {
             </article>
 
             <article>
-              <span>Geprüft</span>
+              <span>GeprÃ¼ft</span>
               <strong>{shiftsInSelectedMonth.length}</strong>
             </article>
           </div>

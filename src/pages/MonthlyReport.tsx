@@ -1,7 +1,7 @@
-import Button from "../components/ui/Button";
+﻿import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
-import { useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/useAppContext";
 import {
   calculateMonthlyHours,
   filterShiftsByMonth,
@@ -19,7 +19,7 @@ import type { ComplianceIssue, ShiftType } from "../types/index";
 const monthNames = [
   "Januar",
   "Februar",
-  "März",
+  "MÃ¤rz",
   "April",
   "Mai",
   "Juni",
@@ -32,8 +32,8 @@ const monthNames = [
 ];
 
 const shiftLabels: Record<ShiftType, string> = {
-  EARLY: "Frühdienst",
-  LATE: "Spätdienst",
+  EARLY: "FrÃ¼hdienst",
+  LATE: "SpÃ¤tdienst",
   NIGHT: "Nachtdienst",
   DAY: "Tagdienst",
   TRAINING: "Fortbildung",
@@ -51,7 +51,7 @@ const severityLabels: Record<ComplianceIssue["severity"], string> = {
 
 function formatEuro(value: number | null): string {
   if (value === null) {
-    return "—";
+    return "â€”";
   }
 
   return new Intl.NumberFormat("de-DE", {
@@ -120,7 +120,7 @@ export default function MonthlyReport() {
       ? "Kritische Hinweise vorhanden"
       : warningCount > 0
         ? "Warnungen vorhanden"
-        : "Keine Auffälligkeiten";
+        : "Keine AuffÃ¤lligkeiten";
 
   function handlePrint() {
     window.print();
@@ -131,8 +131,8 @@ export default function MonthlyReport() {
       <div className="no-print">
         <PageHeader
           eyebrow="Bericht"
-          title={`Monatsbericht · ${monthLabel}`}
-          description="Druckansicht für PDF-Export über den Browser."
+          title={`Monatsbericht Â· ${monthLabel}`}
+          description="Druckansicht fÃ¼r PDF-Export Ã¼ber den Browser."
         />
 
         <Card>
@@ -147,14 +147,14 @@ export default function MonthlyReport() {
       <article className="print-report">
         <header className="print-report-header">
           <div>
-            <span>CareCheck TVöD</span>
+            <span>CareCheck TVÃ¶D</span>
             <h1>Monatsbericht</h1>
             <p>{monthLabel}</p>
           </div>
 
           <div className="print-report-meta">
             <strong>{profile.payGroup} Stufe {profile.payLevel}</strong>
-            <p>{profile.federalState} · {profile.weeklyHours} h/Woche</p>
+            <p>{profile.federalState} Â· {profile.weeklyHours} h/Woche</p>
             <p>Erstellt am {formatReportDate()}</p>
           </div>
         </header>
@@ -171,12 +171,12 @@ export default function MonthlyReport() {
           </div>
 
           <div>
-            <span>Zuschläge</span>
+            <span>ZuschlÃ¤ge</span>
             <strong>{formatEuro(monthlyPremiums.totalAmount)}</strong>
           </div>
 
           <div>
-            <span>Prüfhinweise</span>
+            <span>PrÃ¼fhinweise</span>
             <strong>{complianceIssues.length}</strong>
           </div>
         </section>
@@ -204,7 +204,7 @@ export default function MonthlyReport() {
             </div>
 
             <div>
-              <span>Überstunden</span>
+              <span>Ãœberstunden</span>
               <strong>{formatHours(monthlyHours.overtimeHours)}</strong>
             </div>
 
@@ -229,7 +229,7 @@ export default function MonthlyReport() {
             </div>
 
             <div>
-              <span>Ø Tagesarbeitszeit</span>
+              <span>Ã˜ Tagesarbeitszeit</span>
               <strong>{formatHours(monthlyHours.averageDailyHours)}</strong>
             </div>
           </div>
@@ -238,7 +238,7 @@ export default function MonthlyReport() {
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>02</span>
-            <h2>Zuschläge</h2>
+            <h2>ZuschlÃ¤ge</h2>
           </div>
 
           {monthlyPremiums.lines.length === 0 ? (
@@ -266,7 +266,7 @@ export default function MonthlyReport() {
                 ))}
 
                 <tr className="print-report-total-row">
-                  <td colSpan={3}>Summe Zuschläge</td>
+                  <td colSpan={3}>Summe ZuschlÃ¤ge</td>
                   <td>{formatEuro(monthlyPremiums.totalAmount)}</td>
                 </tr>
               </tbody>
@@ -277,11 +277,11 @@ export default function MonthlyReport() {
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>03</span>
-            <h2>Prüfhinweise</h2>
+            <h2>PrÃ¼fhinweise</h2>
           </div>
 
           {complianceIssues.length === 0 ? (
-            <p className="print-report-empty">Keine Auffälligkeiten gefunden.</p>
+            <p className="print-report-empty">Keine AuffÃ¤lligkeiten gefunden.</p>
           ) : (
             <table className="print-report-table">
               <thead>
@@ -342,8 +342,8 @@ export default function MonthlyReport() {
 
         <footer className="print-report-footer">
           <p>
-            Dieser Bericht wurde lokal mit CareCheck TVöD erstellt. Die Werte
-            dienen der persönlichen Dienstplan- und Arbeitszeitkontrolle.
+            Dieser Bericht wurde lokal mit CareCheck TVÃ¶D erstellt. Die Werte
+            dienen der persÃ¶nlichen Dienstplan- und Arbeitszeitkontrolle.
           </p>
         </footer>
       </article>

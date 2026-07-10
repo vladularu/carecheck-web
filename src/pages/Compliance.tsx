@@ -1,6 +1,6 @@
-import Card from "../components/ui/Card";
+﻿import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
-import { useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/useAppContext";
 import { filterShiftsByMonth } from "../services/calculation/monthlyHoursCalculator";
 import { checkCompliance } from "../services/compliance/complianceService";
 import type { ComplianceIssue } from "../types/index";
@@ -14,7 +14,7 @@ const severityLabels: Record<ComplianceIssue["severity"], string> = {
 const monthNames = [
   "Januar",
   "Februar",
-  "März",
+  "MÃ¤rz",
   "April",
   "Mai",
   "Juni",
@@ -54,9 +54,9 @@ export default function Compliance() {
   return (
     <section className="page">
       <PageHeader
-        eyebrow="Prüfung"
-        title={`Arbeitszeitgesetz · ${selectedMonthLabel}`}
-        description="Basisprüfung für Ruhezeit, Pausen und tägliche Arbeitszeit im ausgewählten Monat."
+        eyebrow="PrÃ¼fung"
+        title={`Arbeitszeitgesetz Â· ${selectedMonthLabel}`}
+        description="BasisprÃ¼fung fÃ¼r Ruhezeit, Pausen und tÃ¤gliche Arbeitszeit im ausgewÃ¤hlten Monat."
       />
 
       <Card>
@@ -72,25 +72,25 @@ export default function Compliance() {
           </div>
 
           <div>
-            <span>Dienste geprüft</span>
+            <span>Dienste geprÃ¼ft</span>
             <strong>{shiftsInSelectedMonth.length}</strong>
           </div>
         </div>
 
 <p className="compliance-note">
-  Es werden nur Dienste aus dem aktuell ausgewählten Monat geprüft:{" "}
-  <strong>{selectedMonthLabel}</strong>. Geprüft werden Ruhezeit, Pausen,
-  Tagesarbeitszeit und Wochenendfolge. Den Monat änderst du über die Kalender-
+  Es werden nur Dienste aus dem aktuell ausgewÃ¤hlten Monat geprÃ¼ft:{" "}
+  <strong>{selectedMonthLabel}</strong>. GeprÃ¼ft werden Ruhezeit, Pausen,
+  Tagesarbeitszeit und Wochenendfolge. Den Monat Ã¤nderst du Ã¼ber die Kalender-
   oder Dashboard-Navigation.
 </p>
       </Card>
 
       {issues.length === 0 ? (
         <Card>
-          <strong>Keine Auffälligkeiten gefunden</strong>
+          <strong>Keine AuffÃ¤lligkeiten gefunden</strong>
           <p>
-            Für {selectedMonthLabel} wurden keine Basisverstöße gegen die
-            hinterlegten Prüfregeln erkannt.
+            FÃ¼r {selectedMonthLabel} wurden keine BasisverstÃ¶ÃŸe gegen die
+            hinterlegten PrÃ¼fregeln erkannt.
           </p>
         </Card>
       ) : (

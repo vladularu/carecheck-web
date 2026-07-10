@@ -1,7 +1,7 @@
-import ShiftForm from "../components/ShiftForm";
+﻿import ShiftForm from "../components/ShiftForm";
 import ShiftList from "../components/ShiftList";
 import { calculateTotalNetHours } from "../services/calculation/workingTimeCalculator";
-import { useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/useAppContext";
 
 export default function Planner() {
   const { shifts, addShift, deleteShift } = useAppContext();
@@ -11,7 +11,7 @@ export default function Planner() {
   return (
     <section className="page">
       <h1>Dienstplan</h1>
-      <p>Dienste anlegen, speichern und löschen.</p>
+      <p>Dienste anlegen, speichern und lÃ¶schen.</p>
 
       <ShiftForm onAddShift={addShift} />
 

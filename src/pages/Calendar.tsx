@@ -1,8 +1,8 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import CalendarHeader from "../components/calendar/CalendarHeader";
 import DayDetails from "../components/calendar/DayDetails";
-import { useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/useAppContext";
 import { filterShiftsByMonth } from "../services/calculation/monthlyHoursCalculator";
 import { createCalendar } from "../services/calendar/calendarService";
 import { checkCompliance } from "../services/compliance/complianceService";
@@ -17,7 +17,7 @@ import type { ComplianceIssue, Shift } from "../types/index";
 const monthNames = [
   "Januar",
   "Februar",
-  "März",
+  "MÃ¤rz",
   "April",
   "Mai",
   "Juni",
@@ -151,12 +151,12 @@ export default function Calendar() {
       <div className="calendar-legend" aria-label="Kalender-Legende">
         <span>
           <i className="calendar-legend-dot calendar-shift-type-early" />
-          Früh
+          FrÃ¼h
         </span>
 
         <span>
           <i className="calendar-legend-dot calendar-shift-type-late" />
-          Spät
+          SpÃ¤t
         </span>
 
         <span>

@@ -1,5 +1,5 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { useAppContext } from "../context/AppContext";
+﻿import { useState, type FormEvent } from "react";
+import { useAppContext } from "../context/useAppContext";
 import type { Shift, ShiftType } from "../types/index";
 
 interface ShiftFormProps {
@@ -18,15 +18,15 @@ const shiftOptions: {
 }[] = [
   {
     value: "EARLY",
-    label: "Frühdienst",
-    shortLabel: "Früh",
-    description: "Früher Dienst",
+    label: "FrÃ¼hdienst",
+    shortLabel: "FrÃ¼h",
+    description: "FrÃ¼her Dienst",
   },
   {
     value: "LATE",
-    label: "Spätdienst",
-    shortLabel: "Spät",
-    description: "Später Dienst",
+    label: "SpÃ¤tdienst",
+    shortLabel: "SpÃ¤t",
+    description: "SpÃ¤ter Dienst",
   },
   {
     value: "NIGHT",
@@ -95,36 +95,27 @@ export default function ShiftForm({
   const { shiftTemplates } = useAppContext();
   const isEditing = Boolean(initialShift);
 
-  const initialTemplate = shiftTemplates[initialShift?.type ?? "EARLY"];
+  const initialType = initialShift?.type ?? "EARLY";
+  const initialTemplate = shiftTemplates[initialType];
 
-  const [date, setDate] = useState(initialShift?.date ?? initialDate ?? "");
+  const [date, setDate] = useState(
+    initialShift?.date ?? initialDate ?? "",
+  );
+
   const [startTime, setStartTime] = useState(
     initialShift?.startTime ?? initialTemplate.startTime,
   );
+
   const [endTime, setEndTime] = useState(
     initialShift?.endTime ?? initialTemplate.endTime,
   );
+
   const [breakMinutes, setBreakMinutes] = useState(
     initialShift?.breakMinutes ?? initialTemplate.breakMinutes,
   );
-  const [type, setType] = useState<ShiftType>(initialShift?.type ?? "EARLY");
+
+  const [type, setType] = useState<ShiftType>(initialType);
   const [note, setNote] = useState(initialShift?.note ?? "");
-
-  useEffect(() => {
-    if (initialShift) {
-      setDate(initialShift.date);
-      setStartTime(initialShift.startTime);
-      setEndTime(initialShift.endTime);
-      setBreakMinutes(initialShift.breakMinutes);
-      setType(initialShift.type);
-      setNote(initialShift.note ?? "");
-      return;
-    }
-
-    if (initialDate) {
-      setDate(initialDate);
-    }
-  }, [initialDate, initialShift]);
 
   function applyTemplate(nextType: ShiftType) {
     const template = shiftTemplates[nextType];
@@ -172,23 +163,27 @@ export default function ShiftForm({
       return;
     }
 
-    if (onAddShift) {
-      onAddShift({
-        id: crypto.randomUUID(),
-        date,
-        startTime,
-        endTime,
-        breakMinutes,
-        type,
-        note: note.trim() || undefined,
-      });
-
-      resetAddForm();
-      onDone?.();
+    if (!onAddShift) {
+      return;
     }
+
+    onAddShift({
+      id: crypto.randomUUID(),
+      date,
+      startTime,
+      endTime,
+      breakMinutes,
+      type,
+      note: note.trim() || undefined,
+    });
+
+    resetAddForm();
+    onDone?.();
   }
 
-  const selectedShiftOption = shiftOptions.find((option) => option.value === type);
+  const selectedShiftOption = shiftOptions.find(
+    (option) => option.value === type,
+  );
 
   return (
     <form
@@ -197,11 +192,15 @@ export default function ShiftForm({
       lang="de-DE"
     >
       <div className="shift-form-header">
-        <span>{isEditing ? "Dienst bearbeiten" : "Dienst hinzufügen"}</span>
+        <span>
+          {isEditing ? "Dienst bearbeiten" : "Dienst hinzufÃ¼gen"}
+        </span>
+
         <strong>{selectedShiftOption?.label ?? "Dienst"}</strong>
+
         <p>
-          Wähle zuerst die Dienstart. Beginn, Ende und Pause werden aus deinen
-          Dienstvorlagen übernommen und können angepasst werden.
+          WÃ¤hle zuerst die Dienstart. Beginn, Ende und Pause werden aus deinen
+          Dienstvorlagen Ã¼bernommen und kÃ¶nnen angepasst werden.
         </p>
       </div>
 
@@ -228,6 +227,7 @@ export default function ShiftForm({
       <div className="shift-form-section">
         <label className="field shift-form-field-full">
           <span>Datum</span>
+
           <input
             type="date"
             lang="de-DE"
@@ -240,6 +240,7 @@ export default function ShiftForm({
         <div className="shift-time-grid">
           <label className="field">
             <span>Beginn</span>
+
             <input
               type="time"
               lang="de-DE"
@@ -252,6 +253,7 @@ export default function ShiftForm({
 
           <label className="field">
             <span>Ende</span>
+
             <input
               type="time"
               lang="de-DE"
@@ -264,17 +266,21 @@ export default function ShiftForm({
 
           <label className="field">
             <span>Pause</span>
+
             <input
               type="number"
               min="0"
               value={breakMinutes}
-              onChange={(event) => setBreakMinutes(Number(event.target.value))}
+              onChange={(event) =>
+                setBreakMinutes(Number(event.target.value))
+              }
             />
           </label>
         </div>
 
         <label className="field shift-form-field-full">
           <span>Notiz</span>
+
           <input
             placeholder="Optional, z. B. Station, Besonderheit oder Tausch"
             value={note}
@@ -283,8 +289,11 @@ export default function ShiftForm({
         </label>
       </div>
 
-      <button className="primary-button shift-form-submit" type="submit">
-        {isEditing ? "Änderung speichern" : "Dienst speichern"}
+      <button
+        className="primary-button shift-form-submit"
+        type="submit"
+      >
+        {isEditing ? "Ã„nderung speichern" : "Dienst speichern"}
       </button>
     </form>
   );

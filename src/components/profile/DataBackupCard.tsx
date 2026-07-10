@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { useAppContext } from "../../context/AppContext";
+﻿import { useRef, useState } from "react";
+import { useAppContext } from "../../context/useAppContext";
 import {
   downloadCareCheckBackup,
   readBackupFile,
@@ -67,8 +67,8 @@ export default function DataBackupCard() {
         <strong>Backup & Wiederherstellung</strong>
         <p>
           Sichere Profil, Dienste und Dienstvorlagen als JSON-Datei. Diese Datei
-          kannst du später wieder importieren, zum Beispiel nach einem
-          Gerätewechsel oder wenn Browserdaten gelöscht wurden.
+          kannst du spÃ¤ter wieder importieren, zum Beispiel nach einem
+          GerÃ¤tewechsel oder wenn Browserdaten gelÃ¶scht wurden.
         </p>
       </div>
 
@@ -79,8 +79,8 @@ export default function DataBackupCard() {
         </div>
 
         <div>
-          <span>Backup enthält</span>
-          <strong>Profil · Dienste · Vorlagen</strong>
+          <span>Backup enthÃ¤lt</span>
+          <strong>Profil Â· Dienste Â· Vorlagen</strong>
         </div>
       </div>
 
@@ -109,7 +109,7 @@ export default function DataBackupCard() {
       {message && <p className="data-backup-message">{message}</p>}
 
       <p className="profile-helper">
-        Hinweis: Die Wiederherstellung überschreibt die aktuell lokal
+        Hinweis: Die Wiederherstellung Ã¼berschreibt die aktuell lokal
         gespeicherten Daten dieser App.
       </p>
     </Card>
