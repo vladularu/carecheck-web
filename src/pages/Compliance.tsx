@@ -1,12 +1,7 @@
 import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
 import { useAppContext } from "../context/useAppContext";
-import {
-  calculateMonthlyHours,
-  filterShiftsByMonth,
-} from "../services/calculation/monthlyHoursCalculator";
-import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
-import { checkCompliance } from "../services/compliance/complianceService";
+import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
 import type { ComplianceIssue } from "../types/index";
 
 const severityLabels: Record<ComplianceIssue["severity"], string> = {
@@ -38,7 +33,6 @@ function getIssueClassName(
 
 export default function Compliance() {
   const {
-    profile,
     shifts,
     selectedYear,
     selectedMonth,
@@ -47,27 +41,17 @@ export default function Compliance() {
   const selectedMonthLabel =
     `${monthNames[selectedMonth]} ${selectedYear}`;
 
-  const shiftsInSelectedMonth = filterShiftsByMonth(
-    shifts,
-    selectedYear,
-    selectedMonth,
-  );
-
-  const complianceRelevantShifts =
-    filterComplianceRelevantShifts(
-      shiftsInSelectedMonth,
+  const monthlyCompliance =
+    calculateMonthlyCompliance(
+      shifts,
+      selectedYear,
+      selectedMonth,
     );
 
-  const monthlyHours = calculateMonthlyHours(
-    shifts,
-    profile,
-    selectedYear,
-    selectedMonth,
-  );
-
-  const issues = checkCompliance(
-    complianceRelevantShifts,
-  );
+  const {
+    issues,
+    complianceRelevantShiftsInSelectedMonth,
+  } = monthlyCompliance;
 
   const criticalCount = issues.filter(
     (issue) => issue.severity === "critical",
@@ -82,7 +66,7 @@ export default function Compliance() {
       <PageHeader
         eyebrow="Prüfung"
         title={`Arbeitszeitgesetz · ${selectedMonthLabel}`}
-        description="Basisprüfung für Ruhezeit, Pausen, tägliche Arbeitszeit und Wochenendfolge im ausgewählten Monat."
+        description="Prüfung für Ruhezeit, Pausen, tägliche Arbeitszeit, Überschneidungen und Wochenendfolge im ausgewählten Monat."
       />
 
       <Card>
@@ -101,8 +85,8 @@ export default function Compliance() {
             <span>Einträge geprüft</span>
             <strong>
               {
-                monthlyHours
-                  .complianceRelevantShiftCount
+                complianceRelevantShiftsInSelectedMonth
+                  .length
               }
             </strong>
           </div>
@@ -111,11 +95,12 @@ export default function Compliance() {
         <p className="compliance-note">
           Es werden nur compliance-relevante Einträge
           aus dem aktuell ausgewählten Monat geprüft:{" "}
-          <strong>{selectedMonthLabel}</strong>. Urlaub,
-          Krank und Frei werden nicht als Arbeitsdienste
-          geprüft. Fortbildungen bleiben
-          compliance-relevant. Den Monat änderst du über
-          die Kalender- oder Dashboard-Navigation.
+          <strong>{selectedMonthLabel}</strong>.
+          Ruhezeiten und Wochenendfolgen werden dabei
+          auch über die vorherige Monatsgrenze hinweg
+          berücksichtigt. Urlaub, Krank und Frei werden
+          nicht als Arbeitsdienste geprüft.
+          Fortbildungen bleiben compliance-relevant.
         </p>
       </Card>
 
@@ -127,7 +112,7 @@ export default function Compliance() {
 
           <p>
             Für {selectedMonthLabel} wurden keine
-            Basisverstöße gegen die hinterlegten
+            Verstöße gegen die hinterlegten
             Prüfregeln erkannt.
           </p>
         </Card>
