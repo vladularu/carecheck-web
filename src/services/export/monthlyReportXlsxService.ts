@@ -1,12 +1,16 @@
 import * as XLSX from "xlsx";
+import type {
+  ComplianceIssue,
+  Shift,
+  UserProfile,
+} from "../../types/index";
 import type { MonthlyHoursResult } from "../calculation/monthlyHoursCalculator";
 import type { MonthlyPremiumResult } from "../calculation/monthlyPremiumCalculator";
-import type { ComplianceIssue, Shift, UserProfile } from "../../types/index";
+import { calculateNetHours } from "../calculation/workingTimeCalculator";
 import {
   formatDateGerman,
   formatTimeRange24,
 } from "../format/dateTimeFormat";
-import { calculateNetHours } from "../calculation/workingTimeCalculator";
 
 interface MonthlyReportXlsxInput {
   monthLabel: string;
@@ -29,14 +33,22 @@ const shiftLabels: Record<Shift["type"], string> = {
   CUSTOM: "Individuell",
 };
 
-const severityLabels: Record<ComplianceIssue["severity"], string> = {
+const severityLabels: Record<
+  ComplianceIssue["severity"],
+  string
+> = {
   info: "Info",
   warning: "Warnung",
   critical: "Kritisch",
 };
 
-function createFileName(monthLabel: string): string {
-  return `CareCheck_Monatsbericht_${monthLabel.replace(/\s+/g, "_")}.xlsx`;
+function createFileName(
+  monthLabel: string,
+): string {
+  return `CareCheck_Monatsbericht_${monthLabel.replace(
+    /\s+/g,
+    "_",
+  )}.xlsx`;
 }
 
 function formatEuro(value: number | null): string {
@@ -50,8 +62,13 @@ function formatEuro(value: number | null): string {
   }).format(value);
 }
 
-function setColumnWidths(sheet: XLSX.WorkSheet, widths: number[]) {
-  sheet["!cols"] = widths.map((width) => ({ wch: width }));
+function setColumnWidths(
+  sheet: XLSX.WorkSheet,
+  widths: number[],
+) {
+  sheet["!cols"] = widths.map((width) => ({
+    wch: width,
+  }));
 }
 
 export function downloadMonthlyReportXlsx({
@@ -69,25 +86,100 @@ export function downloadMonthlyReportXlsx({
     [],
     ["Monat", monthLabel],
     ["Bundesland", profile.federalState],
-    ["Wochenarbeitszeit", `${profile.weeklyHours} h`],
+    [
+      "Wochenarbeitszeit",
+      `${profile.weeklyHours} h`,
+    ],
     ["TVöD-P Gruppe", profile.payGroup],
     ["Stufe", profile.payLevel],
     [],
     ["Arbeitszeit"],
-    ["Sollstunden", monthlyHours.targetHours],
-    ["Iststunden", monthlyHours.actualHours],
+    [
+      "Sollstunden",
+      monthlyHours.targetHours,
+    ],
+    [
+      "Iststunden",
+      monthlyHours.actualHours,
+    ],
     ["Saldo", monthlyHours.balanceHours],
-    ["Überstunden", monthlyHours.overtimeHours],
-    ["Unterstunden", monthlyHours.undertimeHours],
-    ["Arbeitstage", monthlyHours.workingDayCount],
-    ["Feiertage", monthlyHours.publicHolidayCount],
-    ["Feiertagsabzug", monthlyHours.holidayReductionHours],
-    ["Ø Tagesarbeitszeit", monthlyHours.averageDailyHours],
+    [
+      "Überstunden",
+      monthlyHours.overtimeHours,
+    ],
+    [
+      "Unterstunden",
+      monthlyHours.undertimeHours,
+    ],
+    [
+      "Soll-Arbeitstage",
+      monthlyHours.workingDayCount,
+    ],
+    [
+      "Feiertage",
+      monthlyHours.publicHolidayCount,
+    ],
+    [
+      "Feiertagsabzug",
+      monthlyHours.holidayReductionHours,
+    ],
+    [
+      "Durchschnittliche tägliche Sollzeit",
+      monthlyHours.averageDailyHours,
+    ],
+    [],
+    ["Monatsplanung"],
+    [
+      "Arbeitsdienste",
+      monthlyHours.workShiftCount,
+    ],
+    [
+      "Planungseinträge",
+      monthlyHours.planningEntryCount,
+    ],
+    [
+      "Planungstage",
+      monthlyHours.plannedDayCount,
+    ],
+    [
+      "Kalendereinträge",
+      monthlyHours.calendarEntryCount,
+    ],
+    [
+      "Urlaubstage",
+      monthlyHours.vacationDayCount,
+    ],
+    [
+      "Krankheitstage",
+      monthlyHours.sickDayCount,
+    ],
+    [
+      "Fortbildungstage",
+      monthlyHours.trainingDayCount,
+    ],
+    [
+      "Frei-Tage",
+      monthlyHours.freeDayCount,
+    ],
+    [
+      "Compliance-relevante Einträge",
+      monthlyHours.complianceRelevantShiftCount,
+    ],
   ];
 
-  const overviewSheet = XLSX.utils.aoa_to_sheet(overviewRows);
-  setColumnWidths(overviewSheet, [28, 28]);
-  XLSX.utils.book_append_sheet(workbook, overviewSheet, "Übersicht");
+  const overviewSheet =
+    XLSX.utils.aoa_to_sheet(overviewRows);
+
+  setColumnWidths(
+    overviewSheet,
+    [38, 28],
+  );
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    overviewSheet,
+    "Übersicht",
+  );
 
   const premiumRows = [
     ["Art", "Stunden", "Prozent", "Betrag"],
@@ -98,18 +190,39 @@ export function downloadMonthlyReportXlsx({
       formatEuro(line.amount),
     ]),
     [],
-    ["Summe Zuschläge", "", "", formatEuro(monthlyPremiums.totalAmount)],
+    [
+      "Summe Zuschläge",
+      "",
+      "",
+      formatEuro(
+        monthlyPremiums.totalAmount,
+      ),
+    ],
   ];
 
-  const premiumSheet = XLSX.utils.aoa_to_sheet(premiumRows);
-  setColumnWidths(premiumSheet, [30, 14, 14, 18]);
-  XLSX.utils.book_append_sheet(workbook, premiumSheet, "Zuschläge");
+  const premiumSheet =
+    XLSX.utils.aoa_to_sheet(premiumRows);
+
+  setColumnWidths(
+    premiumSheet,
+    [30, 14, 14, 18],
+  );
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    premiumSheet,
+    "Zuschläge",
+  );
 
   const complianceRows =
     complianceIssues.length === 0
       ? [["Keine Auffälligkeiten"]]
       : [
-          ["Schweregrad", "Titel", "Beschreibung"],
+          [
+            "Schweregrad",
+            "Titel",
+            "Beschreibung",
+          ],
           ...complianceIssues.map((issue) => [
             severityLabels[issue.severity],
             issue.title,
@@ -117,25 +230,60 @@ export function downloadMonthlyReportXlsx({
           ]),
         ];
 
-  const complianceSheet = XLSX.utils.aoa_to_sheet(complianceRows);
-  setColumnWidths(complianceSheet, [16, 32, 90]);
-  XLSX.utils.book_append_sheet(workbook, complianceSheet, "Prüfung");
+  const complianceSheet =
+    XLSX.utils.aoa_to_sheet(
+      complianceRows,
+    );
+
+  setColumnWidths(
+    complianceSheet,
+    [16, 32, 90],
+  );
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    complianceSheet,
+    "Prüfung",
+  );
 
   const shiftRows = [
-    ["Datum", "Dienstart", "Zeit", "Pause Minuten", "Netto Stunden", "Notiz"],
+    [
+      "Datum",
+      "Eintragsart",
+      "Zeit",
+      "Pause Minuten",
+      "Netto Stunden",
+      "Notiz",
+    ],
     ...shifts.map((shift) => [
       formatDateGerman(shift.date),
       shiftLabels[shift.type],
-      formatTimeRange24(shift.startTime, shift.endTime),
+      formatTimeRange24(
+        shift.startTime,
+        shift.endTime,
+      ),
       shift.breakMinutes,
       calculateNetHours(shift),
       shift.note ?? "",
     ]),
   ];
 
-  const shiftsSheet = XLSX.utils.aoa_to_sheet(shiftRows);
-  setColumnWidths(shiftsSheet, [14, 18, 18, 16, 16, 36]);
-  XLSX.utils.book_append_sheet(workbook, shiftsSheet, "Dienste");
+  const shiftsSheet =
+    XLSX.utils.aoa_to_sheet(shiftRows);
 
-  XLSX.writeFile(workbook, createFileName(monthLabel));
+  setColumnWidths(
+    shiftsSheet,
+    [14, 18, 18, 16, 16, 36],
+  );
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    shiftsSheet,
+    "Kalendereinträge",
+  );
+
+  XLSX.writeFile(
+    workbook,
+    createFileName(monthLabel),
+  );
 }

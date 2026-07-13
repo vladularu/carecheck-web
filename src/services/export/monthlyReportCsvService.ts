@@ -1,11 +1,15 @@
+import type {
+  ComplianceIssue,
+  Shift,
+  UserProfile,
+} from "../../types/index";
 import type { MonthlyHoursResult } from "../calculation/monthlyHoursCalculator";
 import type { MonthlyPremiumResult } from "../calculation/monthlyPremiumCalculator";
-import type { ComplianceIssue, Shift, UserProfile } from "../../types/index";
+import { calculateNetHours } from "../calculation/workingTimeCalculator";
 import {
   formatDateGerman,
   formatTimeRange24,
 } from "../format/dateTimeFormat";
-import { calculateNetHours } from "../calculation/workingTimeCalculator";
 
 interface MonthlyReportCsvInput {
   monthLabel: string;
@@ -28,20 +32,29 @@ const shiftLabels: Record<Shift["type"], string> = {
   CUSTOM: "Individuell",
 };
 
-const severityLabels: Record<ComplianceIssue["severity"], string> = {
+const severityLabels: Record<
+  ComplianceIssue["severity"],
+  string
+> = {
   info: "Info",
   warning: "Warnung",
   critical: "Kritisch",
 };
 
-function escapeCsv(value: string | number | null | undefined): string {
+function escapeCsv(
+  value: string | number | null | undefined,
+): string {
   const text = String(value ?? "");
   const escaped = text.replace(/"/g, '""');
 
   return `"${escaped}"`;
 }
 
-function createRow(values: Array<string | number | null | undefined>): string {
+function createRow(
+  values: Array<
+    string | number | null | undefined
+  >,
+): string {
   return values.map(escapeCsv).join(";");
 }
 
@@ -60,8 +73,13 @@ function formatEuro(value: number | null): string {
   }).format(value);
 }
 
-function createDownloadFileName(monthLabel: string): string {
-  return `CareCheck_Monatsbericht_${monthLabel.replace(/\s+/g, "_")}.csv`;
+function createDownloadFileName(
+  monthLabel: string,
+): string {
+  return `CareCheck_Monatsbericht_${monthLabel.replace(
+    /\s+/g,
+    "_",
+  )}.csv`;
 }
 
 export function createMonthlyReportCsv({
@@ -74,31 +92,178 @@ export function createMonthlyReportCsv({
 }: MonthlyReportCsvInput): string {
   const rows: string[] = [];
 
-  rows.push(createRow(["CareCheck TVöD Monatsbericht"]));
+  rows.push(
+    createRow(["CareCheck TVöD Monatsbericht"]),
+  );
   rows.push(createRow(["Monat", monthLabel]));
-  rows.push(createRow(["Bundesland", profile.federalState]));
-  rows.push(createRow(["Wochenarbeitszeit", `${formatNumber(profile.weeklyHours)} h`]));
-  rows.push(createRow(["TVöD-P Gruppe", profile.payGroup]));
-  rows.push(createRow(["Stufe", profile.payLevel]));
+  rows.push(
+    createRow([
+      "Bundesland",
+      profile.federalState,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Wochenarbeitszeit",
+      `${formatNumber(profile.weeklyHours)} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "TVöD-P Gruppe",
+      profile.payGroup,
+    ]),
+  );
+  rows.push(
+    createRow(["Stufe", profile.payLevel]),
+  );
   rows.push("");
 
   rows.push(createRow(["Arbeitszeit"]));
-  rows.push(createRow(["Sollstunden", `${formatNumber(monthlyHours.targetHours)} h`]));
-  rows.push(createRow(["Iststunden", `${formatNumber(monthlyHours.actualHours)} h`]));
-  rows.push(createRow(["Saldo", `${formatNumber(monthlyHours.balanceHours)} h`]));
-  rows.push(createRow(["Überstunden", `${formatNumber(monthlyHours.overtimeHours)} h`]));
-  rows.push(createRow(["Unterstunden", `${formatNumber(monthlyHours.undertimeHours)} h`]));
-  rows.push(createRow(["Arbeitstage", monthlyHours.workingDayCount]));
-  rows.push(createRow(["Feiertage", monthlyHours.publicHolidayCount]));
-  rows.push(createRow(["Feiertagsabzug", `${formatNumber(monthlyHours.holidayReductionHours)} h`]));
+  rows.push(
+    createRow([
+      "Sollstunden",
+      `${formatNumber(
+        monthlyHours.targetHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Iststunden",
+      `${formatNumber(
+        monthlyHours.actualHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Saldo",
+      `${formatNumber(
+        monthlyHours.balanceHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Überstunden",
+      `${formatNumber(
+        monthlyHours.overtimeHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Unterstunden",
+      `${formatNumber(
+        monthlyHours.undertimeHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Soll-Arbeitstage",
+      monthlyHours.workingDayCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Feiertage",
+      monthlyHours.publicHolidayCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Feiertagsabzug",
+      `${formatNumber(
+        monthlyHours.holidayReductionHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Durchschnittliche tägliche Sollzeit",
+      `${formatNumber(
+        monthlyHours.averageDailyHours,
+      )} h`,
+    ]),
+  );
+  rows.push("");
+
+  rows.push(createRow(["Monatsplanung"]));
+  rows.push(
+    createRow([
+      "Arbeitsdienste",
+      monthlyHours.workShiftCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Planungseinträge",
+      monthlyHours.planningEntryCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Planungstage",
+      monthlyHours.plannedDayCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Kalendereinträge",
+      monthlyHours.calendarEntryCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Urlaubstage",
+      monthlyHours.vacationDayCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Krankheitstage",
+      monthlyHours.sickDayCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Fortbildungstage",
+      monthlyHours.trainingDayCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Frei-Tage",
+      monthlyHours.freeDayCount,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Compliance-relevante Einträge",
+      monthlyHours.complianceRelevantShiftCount,
+    ]),
+  );
   rows.push("");
 
   rows.push(createRow(["Zuschläge"]));
 
   if (monthlyPremiums.lines.length === 0) {
-    rows.push(createRow(["Keine zuschlagspflichtigen Zeiten erkannt"]));
+    rows.push(
+      createRow([
+        "Keine zuschlagspflichtigen Zeiten erkannt",
+      ]),
+    );
   } else {
-    rows.push(createRow(["Art", "Stunden", "Prozent", "Betrag"]));
+    rows.push(
+      createRow([
+        "Art",
+        "Stunden",
+        "Prozent",
+        "Betrag",
+      ]),
+    );
 
     for (const line of monthlyPremiums.lines) {
       rows.push(
@@ -116,7 +281,9 @@ export function createMonthlyReportCsv({
         "Summe Zuschläge",
         "",
         "",
-        formatEuro(monthlyPremiums.totalAmount),
+        formatEuro(
+          monthlyPremiums.totalAmount,
+        ),
       ]),
     );
   }
@@ -126,9 +293,17 @@ export function createMonthlyReportCsv({
   rows.push(createRow(["Prüfhinweise"]));
 
   if (complianceIssues.length === 0) {
-    rows.push(createRow(["Keine Auffälligkeiten"]));
+    rows.push(
+      createRow(["Keine Auffälligkeiten"]),
+    );
   } else {
-    rows.push(createRow(["Schweregrad", "Titel", "Beschreibung"]));
+    rows.push(
+      createRow([
+        "Schweregrad",
+        "Titel",
+        "Beschreibung",
+      ]),
+    );
 
     for (const issue of complianceIssues) {
       rows.push(
@@ -143,11 +318,11 @@ export function createMonthlyReportCsv({
 
   rows.push("");
 
-  rows.push(createRow(["Dienste"]));
+  rows.push(createRow(["Kalendereinträge"]));
   rows.push(
     createRow([
       "Datum",
-      "Dienstart",
+      "Eintragsart",
       "Beginn-Ende",
       "Pause Minuten",
       "Netto Stunden",
@@ -160,9 +335,14 @@ export function createMonthlyReportCsv({
       createRow([
         formatDateGerman(shift.date),
         shiftLabels[shift.type],
-        formatTimeRange24(shift.startTime, shift.endTime),
+        formatTimeRange24(
+          shift.startTime,
+          shift.endTime,
+        ),
         shift.breakMinutes,
-        `${formatNumber(calculateNetHours(shift))} h`,
+        `${formatNumber(
+          calculateNetHours(shift),
+        )} h`,
         shift.note ?? "",
       ]),
     );
@@ -175,15 +355,22 @@ export function downloadMonthlyReportCsv(
   input: MonthlyReportCsvInput,
 ): void {
   const csv = createMonthlyReportCsv(input);
-  const blob = new Blob([`\uFEFF${csv}`], {
-    type: "text/csv;charset=utf-8;",
-  });
+
+  const blob = new Blob(
+    [`\uFEFF${csv}`],
+    {
+      type: "text/csv;charset=utf-8;",
+    },
+  );
 
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
 
   link.href = url;
-  link.download = createDownloadFileName(input.monthLabel);
+  link.download = createDownloadFileName(
+    input.monthLabel,
+  );
+
   document.body.appendChild(link);
   link.click();
 

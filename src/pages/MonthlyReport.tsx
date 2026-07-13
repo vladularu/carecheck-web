@@ -1,4 +1,3 @@
-﻿import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
@@ -8,6 +7,7 @@ import {
   filterShiftsByMonth,
 } from "../services/calculation/monthlyHoursCalculator";
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
+import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
 import { calculateNetHours } from "../services/calculation/workingTimeCalculator";
 import { checkCompliance } from "../services/compliance/complianceService";
 import {
@@ -20,7 +20,7 @@ import type { ComplianceIssue, ShiftType } from "../types/index";
 const monthNames = [
   "Januar",
   "Februar",
-  "MÃ¤rz",
+  "März",
   "April",
   "Mai",
   "Juni",
@@ -33,8 +33,8 @@ const monthNames = [
 ];
 
 const shiftLabels: Record<ShiftType, string> = {
-  EARLY: "FrÃ¼hdienst",
-  LATE: "SpÃ¤tdienst",
+  EARLY: "Frühdienst",
+  LATE: "Spätdienst",
   NIGHT: "Nachtdienst",
   DAY: "Tagdienst",
   TRAINING: "Fortbildung",
@@ -52,7 +52,7 @@ const severityLabels: Record<ComplianceIssue["severity"], string> = {
 
 function formatEuro(value: number | null): string {
   if (value === null) {
-    return "â€”";
+    return "—";
   }
 
   return new Intl.NumberFormat("de-DE", {
@@ -77,10 +77,18 @@ function formatReportDate(): string {
 }
 
 export default function MonthlyReport() {
-  const { profile, shifts, selectedYear, selectedMonth } = useAppContext();
+  const {
+    profile,
+    shifts,
+    selectedYear,
+    selectedMonth,
+  } = useAppContext();
 
-  const monthLabel = `${monthNames[selectedMonth]} ${selectedYear}`;
-  const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
+  const monthLabel =
+    `${monthNames[selectedMonth]} ${selectedYear}`;
+
+  const premiumHourlyRate =
+    getTvoedPPremiumHourlyRate(profile.payGroup);
 
   const shiftsInSelectedMonth = filterShiftsByMonth(
     shifts,
@@ -107,11 +115,13 @@ export default function MonthlyReport() {
   );
 
   const complianceRelevantShifts =
-  filterComplianceRelevantShifts(shiftsInSelectedMonth);
+    filterComplianceRelevantShifts(
+      shiftsInSelectedMonth,
+    );
 
-const complianceIssues = checkCompliance(
-  complianceRelevantShifts,
-);
+  const complianceIssues = checkCompliance(
+    complianceRelevantShifts,
+  );
 
   const criticalCount = complianceIssues.filter(
     (issue) => issue.severity === "critical",
@@ -126,7 +136,7 @@ const complianceIssues = checkCompliance(
       ? "Kritische Hinweise vorhanden"
       : warningCount > 0
         ? "Warnungen vorhanden"
-        : "Keine AuffÃ¤lligkeiten";
+        : "Keine Auffälligkeiten";
 
   function handlePrint() {
     window.print();
@@ -137,13 +147,16 @@ const complianceIssues = checkCompliance(
       <div className="no-print">
         <PageHeader
           eyebrow="Bericht"
-          title={`Monatsbericht Â· ${monthLabel}`}
-          description="Druckansicht fÃ¼r PDF-Export Ã¼ber den Browser."
+          title={`Monatsbericht · ${monthLabel}`}
+          description="Druckansicht für PDF-Export über den Browser."
         />
 
         <Card>
           <div className="report-actions">
-            <Button type="button" onClick={handlePrint}>
+            <Button
+              type="button"
+              onClick={handlePrint}
+            >
               Drucken / als PDF speichern
             </Button>
           </div>
@@ -153,14 +166,21 @@ const complianceIssues = checkCompliance(
       <article className="print-report">
         <header className="print-report-header">
           <div>
-            <span>CareCheck TVÃ¶D</span>
+            <span>CareCheck TVöD</span>
             <h1>Monatsbericht</h1>
             <p>{monthLabel}</p>
           </div>
 
           <div className="print-report-meta">
-            <strong>{profile.payGroup} Stufe {profile.payLevel}</strong>
-            <p>{profile.federalState} Â· {profile.weeklyHours} h/Woche</p>
+            <strong>
+              {profile.payGroup} Stufe {profile.payLevel}
+            </strong>
+
+            <p>
+              {profile.federalState} ·{" "}
+              {profile.weeklyHours} h/Woche
+            </p>
+
             <p>Erstellt am {formatReportDate()}</p>
           </div>
         </header>
@@ -173,16 +193,20 @@ const complianceIssues = checkCompliance(
 
           <div>
             <span>Saldo</span>
-            <strong>{formatHours(monthlyHours.balanceHours)}</strong>
+            <strong>
+              {formatHours(monthlyHours.balanceHours)}
+            </strong>
           </div>
 
           <div>
-            <span>ZuschlÃ¤ge</span>
-            <strong>{formatEuro(monthlyPremiums.totalAmount)}</strong>
+            <span>Zuschläge</span>
+            <strong>
+              {formatEuro(monthlyPremiums.totalAmount)}
+            </strong>
           </div>
 
           <div>
-            <span>PrÃ¼fhinweise</span>
+            <span>Prüfhinweise</span>
             <strong>{complianceIssues.length}</strong>
           </div>
         </section>
@@ -196,47 +220,69 @@ const complianceIssues = checkCompliance(
           <div className="print-report-grid">
             <div>
               <span>Sollstunden</span>
-              <strong>{formatHours(monthlyHours.targetHours)}</strong>
+              <strong>
+                {formatHours(monthlyHours.targetHours)}
+              </strong>
             </div>
 
             <div>
               <span>Iststunden</span>
-              <strong>{formatHours(monthlyHours.actualHours)}</strong>
+              <strong>
+                {formatHours(monthlyHours.actualHours)}
+              </strong>
             </div>
 
             <div>
               <span>Saldo</span>
-              <strong>{formatHours(monthlyHours.balanceHours)}</strong>
+              <strong>
+                {formatHours(monthlyHours.balanceHours)}
+              </strong>
             </div>
 
             <div>
-              <span>Ãœberstunden</span>
-              <strong>{formatHours(monthlyHours.overtimeHours)}</strong>
+              <span>Überstunden</span>
+              <strong>
+                {formatHours(monthlyHours.overtimeHours)}
+              </strong>
             </div>
 
             <div>
               <span>Unterstunden</span>
-              <strong>{formatHours(monthlyHours.undertimeHours)}</strong>
+              <strong>
+                {formatHours(monthlyHours.undertimeHours)}
+              </strong>
             </div>
 
             <div>
-              <span>Arbeitstage</span>
-              <strong>{monthlyHours.workingDayCount}</strong>
+              <span>Soll-Arbeitstage</span>
+              <strong>
+                {monthlyHours.workingDayCount}
+              </strong>
             </div>
 
             <div>
               <span>Feiertage</span>
-              <strong>{monthlyHours.publicHolidayCount}</strong>
+              <strong>
+                {monthlyHours.publicHolidayCount}
+              </strong>
             </div>
 
             <div>
               <span>Feiertagsabzug</span>
-              <strong>{formatHours(monthlyHours.holidayReductionHours)}</strong>
+              <strong>
+                {formatHours(
+                  monthlyHours.holidayReductionHours,
+                )}
+              </strong>
             </div>
 
             <div>
-              <span>Ã˜ Tagesarbeitszeit</span>
-              <strong>{formatHours(monthlyHours.averageDailyHours)}</strong>
+              <span>Ø tägliche Sollzeit</span>
+              <strong>
+                {formatHours(
+                  monthlyHours.averageDailyHours,
+                )}
+              </strong>
             </div>
           </div>
         </section>
@@ -244,7 +290,82 @@ const complianceIssues = checkCompliance(
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>02</span>
-            <h2>ZuschlÃ¤ge</h2>
+            <h2>Monatsplanung</h2>
+          </div>
+
+          <div className="print-report-grid">
+            <div>
+              <span>Arbeitsdienste</span>
+              <strong>
+                {monthlyHours.workShiftCount}
+              </strong>
+            </div>
+
+            <div>
+              <span>Planungseinträge</span>
+              <strong>
+                {monthlyHours.planningEntryCount}
+              </strong>
+            </div>
+
+            <div>
+              <span>Planungstage</span>
+              <strong>
+                {monthlyHours.plannedDayCount}
+              </strong>
+            </div>
+
+            <div>
+              <span>Kalendereinträge</span>
+              <strong>
+                {monthlyHours.calendarEntryCount}
+              </strong>
+            </div>
+
+            <div>
+              <span>Urlaubstage</span>
+              <strong>
+                {monthlyHours.vacationDayCount}
+              </strong>
+            </div>
+
+            <div>
+              <span>Krankheitstage</span>
+              <strong>
+                {monthlyHours.sickDayCount}
+              </strong>
+            </div>
+
+            <div>
+              <span>Fortbildungstage</span>
+              <strong>
+                {monthlyHours.trainingDayCount}
+              </strong>
+            </div>
+
+            <div>
+              <span>Frei-Tage</span>
+              <strong>
+                {monthlyHours.freeDayCount}
+              </strong>
+            </div>
+
+            <div>
+              <span>Compliance-relevant</span>
+              <strong>
+                {
+                  monthlyHours
+                    .complianceRelevantShiftCount
+                }
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="print-report-section">
+          <div className="print-report-section-title">
+            <span>03</span>
+            <h2>Zuschläge</h2>
           </div>
 
           {monthlyPremiums.lines.length === 0 ? (
@@ -261,19 +382,28 @@ const complianceIssues = checkCompliance(
                   <th>Betrag</th>
                 </tr>
               </thead>
+
               <tbody>
                 {monthlyPremiums.lines.map((line) => (
                   <tr key={line.key}>
                     <td>{line.label}</td>
-                    <td>{formatHours(line.hours)}</td>
+                    <td>
+                      {formatHours(line.hours)}
+                    </td>
                     <td>{line.percentage} %</td>
                     <td>{formatEuro(line.amount)}</td>
                   </tr>
                 ))}
 
                 <tr className="print-report-total-row">
-                  <td colSpan={3}>Summe ZuschlÃ¤ge</td>
-                  <td>{formatEuro(monthlyPremiums.totalAmount)}</td>
+                  <td colSpan={3}>
+                    Summe Zuschläge
+                  </td>
+                  <td>
+                    {formatEuro(
+                      monthlyPremiums.totalAmount,
+                    )}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -282,12 +412,14 @@ const complianceIssues = checkCompliance(
 
         <section className="print-report-section">
           <div className="print-report-section-title">
-            <span>03</span>
-            <h2>PrÃ¼fhinweise</h2>
+            <span>04</span>
+            <h2>Prüfhinweise</h2>
           </div>
 
           {complianceIssues.length === 0 ? (
-            <p className="print-report-empty">Keine AuffÃ¤lligkeiten gefunden.</p>
+            <p className="print-report-empty">
+              Keine Auffälligkeiten gefunden.
+            </p>
           ) : (
             <table className="print-report-table">
               <thead>
@@ -297,10 +429,17 @@ const complianceIssues = checkCompliance(
                   <th>Beschreibung</th>
                 </tr>
               </thead>
+
               <tbody>
                 {complianceIssues.map((issue) => (
                   <tr key={issue.id}>
-                    <td>{severityLabels[issue.severity]}</td>
+                    <td>
+                      {
+                        severityLabels[
+                          issue.severity
+                        ]
+                      }
+                    </td>
                     <td>{issue.title}</td>
                     <td>{issue.description}</td>
                   </tr>
@@ -312,32 +451,50 @@ const complianceIssues = checkCompliance(
 
         <section className="print-report-section">
           <div className="print-report-section-title">
-            <span>04</span>
-            <h2>Dienste</h2>
+            <span>05</span>
+            <h2>Kalendereinträge</h2>
           </div>
 
           {shiftsInSelectedMonth.length === 0 ? (
-            <p className="print-report-empty">Keine Dienste erfasst.</p>
+            <p className="print-report-empty">
+              Keine Kalendereinträge erfasst.
+            </p>
           ) : (
             <table className="print-report-table print-report-shift-table">
               <thead>
                 <tr>
                   <th>Datum</th>
-                  <th>Dienstart</th>
+                  <th>Eintragsart</th>
                   <th>Zeit</th>
                   <th>Pause</th>
                   <th>Netto</th>
                   <th>Notiz</th>
                 </tr>
               </thead>
+
               <tbody>
                 {shiftsInSelectedMonth.map((shift) => (
                   <tr key={shift.id}>
-                    <td>{formatDateGerman(shift.date)}</td>
-                    <td>{shiftLabels[shift.type]}</td>
-                    <td>{formatTimeRange24(shift.startTime, shift.endTime)}</td>
-                    <td>{shift.breakMinutes} min</td>
-                    <td>{formatHours(calculateNetHours(shift))}</td>
+                    <td>
+                      {formatDateGerman(shift.date)}
+                    </td>
+                    <td>
+                      {shiftLabels[shift.type]}
+                    </td>
+                    <td>
+                      {formatTimeRange24(
+                        shift.startTime,
+                        shift.endTime,
+                      )}
+                    </td>
+                    <td>
+                      {shift.breakMinutes} min
+                    </td>
+                    <td>
+                      {formatHours(
+                        calculateNetHours(shift),
+                      )}
+                    </td>
                     <td>{shift.note ?? ""}</td>
                   </tr>
                 ))}
@@ -348,8 +505,10 @@ const complianceIssues = checkCompliance(
 
         <footer className="print-report-footer">
           <p>
-            Dieser Bericht wurde lokal mit CareCheck TVÃ¶D erstellt. Die Werte
-            dienen der persÃ¶nlichen Dienstplan- und Arbeitszeitkontrolle.
+            Dieser Bericht wurde lokal mit CareCheck
+            TVöD erstellt. Die Werte dienen der
+            persönlichen Dienstplan- und
+            Arbeitszeitkontrolle.
           </p>
         </footer>
       </article>
