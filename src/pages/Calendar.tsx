@@ -5,6 +5,7 @@ import DayDetails from "../components/calendar/DayDetails";
 import { useAppContext } from "../context/useAppContext";
 import { filterShiftsByMonth } from "../services/calculation/monthlyHoursCalculator";
 import { createCalendar } from "../services/calendar/calendarService";
+import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
 import { checkCompliance } from "../services/compliance/complianceService";
 import {
   getHolidayByDate,
@@ -111,11 +112,16 @@ export default function Calendar() {
   const holidays = getHolidaysForState(selectedYear, profile.federalState);
   const holidaysByDate = groupHolidaysByDate(holidays);
 
-  const complianceIssues = checkCompliance(shiftsInSelectedMonth);
-  const complianceIssuesByDate = groupComplianceIssuesByDate(
-    complianceIssues,
-    shiftsInSelectedMonth,
-  );
+  const complianceRelevantShifts =
+  filterComplianceRelevantShifts(shiftsInSelectedMonth);
+
+const complianceIssues = checkCompliance(
+  complianceRelevantShifts,
+);
+const complianceIssuesByDate = groupComplianceIssuesByDate(
+  complianceIssues,
+  complianceRelevantShifts,
+);
 
   const selectedShifts = selectedDateKey
     ? shiftsByDate.get(selectedDateKey) ?? []

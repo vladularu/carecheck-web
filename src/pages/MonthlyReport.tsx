@@ -1,4 +1,5 @@
-﻿import Button from "../components/ui/Button";
+﻿import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
+import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
 import { useAppContext } from "../context/useAppContext";
@@ -105,7 +106,12 @@ export default function MonthlyReport() {
     },
   );
 
-  const complianceIssues = checkCompliance(shiftsInSelectedMonth);
+  const complianceRelevantShifts =
+  filterComplianceRelevantShifts(shiftsInSelectedMonth);
+
+const complianceIssues = checkCompliance(
+  complianceRelevantShifts,
+);
 
   const criticalCount = complianceIssues.filter(
     (issue) => issue.severity === "critical",
