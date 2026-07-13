@@ -3,7 +3,10 @@ import type {
   Shift,
 } from "../../types/index";
 import { isComplianceRelevant } from "../calculation/shiftTypeRules";
-import { calculateNetHours } from "../calculation/workingTimeCalculator";
+import {
+  calculateGrossHours,
+  calculateNetHours,
+} from "../calculation/workingTimeCalculator";
 
 function createDateTime(
   dateKey: string,
@@ -116,6 +119,80 @@ function createIssue(
     description,
     relatedShiftId,
   };
+}
+
+function checkTimePlausibility(
+  shift: Shift,
+): ComplianceIssue[] {
+  if (!isComplianceRelevant(shift)) {
+    return [];
+  }
+
+  const issues: ComplianceIssue[] = [];
+
+  if (shift.startTime === shift.endTime) {
+    issues.push(
+      createIssue(
+        "critical",
+        "Dienstbeginn und Dienstende identisch",
+        `${formatShiftLabel(
+          shift,
+        )} hat dieselbe Beginn- und Endzeit. Der Dienst würde technisch als 24-Stunden-Dienst interpretiert. Zeitangaben prüfen.`,
+        shift.id,
+      ),
+    );
+
+    return issues;
+  }
+
+  if (shift.breakMinutes < 0) {
+    issues.push(
+      createIssue(
+        "critical",
+        "Negativer Pausenwert",
+        `${formatShiftLabel(
+          shift,
+        )} enthält einen negativen Pausenwert von ${shift.breakMinutes} Minuten. Die Pause muss mindestens 0 Minuten betragen.`,
+        shift.id,
+      ),
+    );
+  }
+
+  const grossHours =
+    calculateGrossHours(shift);
+
+  const grossMinutes =
+    Math.round(grossHours * 60);
+
+  if (
+    shift.breakMinutes > grossMinutes
+  ) {
+    issues.push(
+      createIssue(
+        "critical",
+        "Pause länger als Dienstzeit",
+        `${formatShiftLabel(
+          shift,
+        )} hat ${grossMinutes} Minuten Brutto-Dienstzeit, aber ${shift.breakMinutes} Minuten Pause. Die Pausenzeit darf nicht länger als die gesamte Dienstzeit sein.`,
+        shift.id,
+      ),
+    );
+  }
+
+  if (grossHours > 16) {
+    issues.push(
+      createIssue(
+        "critical",
+        "Ungewöhnlich lange Dienstzeit",
+        `${formatShiftLabel(
+          shift,
+        )} umfasst ${grossHours} Stunden Bruttozeit. Dienste über 16 Stunden sind unplausibel und sollten auf fehlerhafte Zeitangaben geprüft werden.`,
+        shift.id,
+      ),
+    );
+  }
+
+  return issues;
 }
 
 function checkDailyWorkingTime(
@@ -938,22 +1015,42 @@ export function checkCompliance(
     ),
   );
 
-  for (
-    const shift of
-    complianceRelevantShifts
-  ) {
-    issues.push(
-      ...checkDailyWorkingTime(
-        shift,
-      ),
-    );
+ for (
+  const shift of
+  complianceRelevantShifts
+) {
+  const plausibilityIssues =
+    checkTimePlausibility(shift);
 
-    issues.push(
-      ...checkBreakRequirement(
-        shift,
-      ),
-    );
+  issues.push(
+    ...plausibilityIssues,
+  );
+
+  /*
+   * Bei identischer Beginn- und Endzeit wird
+   * der Dienst technisch als 24 Stunden
+   * interpretiert. Weitere Arbeitszeit- und
+   * Pausenmeldungen wären deshalb irreführend.
+   */
+  if (
+    shift.startTime ===
+    shift.endTime
+  ) {
+    continue;
   }
+
+  issues.push(
+    ...checkDailyWorkingTime(
+      shift,
+    ),
+  );
+
+  issues.push(
+    ...checkBreakRequirement(
+      shift,
+    ),
+  );
+}
 
   issues.push(
     ...checkRestTimes(
