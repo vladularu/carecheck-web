@@ -1,24 +1,25 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import CalendarHeader from "../components/calendar/CalendarHeader";
 import DayDetails from "../components/calendar/DayDetails";
 import { useAppContext } from "../context/useAppContext";
-import { filterShiftsByMonth } from "../services/calculation/monthlyHoursCalculator";
 import { createCalendar } from "../services/calendar/calendarService";
-import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
-import { checkCompliance } from "../services/compliance/complianceService";
+import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
 import {
   getHolidayByDate,
   getHolidaysForState,
   type Holiday,
 } from "../services/holiday/holidayService";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
-import type { ComplianceIssue, Shift } from "../types/index";
+import type {
+  ComplianceIssue,
+  Shift,
+} from "../types/index";
 
 const monthNames = [
   "Januar",
   "Februar",
-  "MÃ¤rz",
+  "März",
   "April",
   "Mai",
   "Juni",
@@ -30,22 +31,35 @@ const monthNames = [
   "Dezember",
 ];
 
-function groupShiftsByDate(shifts: Shift[]): Map<string, Shift[]> {
+function groupShiftsByDate(
+  shifts: Shift[],
+): Map<string, Shift[]> {
   const grouped = new Map<string, Shift[]>();
 
   for (const shift of shifts) {
-    const current = grouped.get(shift.date) ?? [];
-    grouped.set(shift.date, [...current, shift]);
+    const current =
+      grouped.get(shift.date) ?? [];
+
+    grouped.set(
+      shift.date,
+      [...current, shift],
+    );
   }
 
   return grouped;
 }
 
-function groupHolidaysByDate(holidays: Holiday[]): Map<string, Holiday> {
-  const grouped = new Map<string, Holiday>();
+function groupHolidaysByDate(
+  holidays: Holiday[],
+): Map<string, Holiday> {
+  const grouped =
+    new Map<string, Holiday>();
 
   for (const holiday of holidays) {
-    grouped.set(holiday.date, holiday);
+    grouped.set(
+      holiday.date,
+      holiday,
+    );
   }
 
   return grouped;
@@ -55,32 +69,52 @@ function groupComplianceIssuesByDate(
   issues: ComplianceIssue[],
   shifts: Shift[],
 ): Map<string, ComplianceIssue[]> {
-  const grouped = new Map<string, ComplianceIssue[]>();
-  const shiftDateById = new Map(shifts.map((shift) => [shift.id, shift.date]));
+  const grouped =
+    new Map<string, ComplianceIssue[]>();
+
+  const shiftDateById = new Map(
+    shifts.map((shift) => [
+      shift.id,
+      shift.date,
+    ]),
+  );
 
   for (const issue of issues) {
     if (!issue.relatedShiftId) {
       continue;
     }
 
-    const dateKey = shiftDateById.get(issue.relatedShiftId);
+    const dateKey =
+      shiftDateById.get(
+        issue.relatedShiftId,
+      );
 
     if (!dateKey) {
       continue;
     }
 
-    const current = grouped.get(dateKey) ?? [];
-    grouped.set(dateKey, [...current, issue]);
+    const current =
+      grouped.get(dateKey) ?? [];
+
+    grouped.set(
+      dateKey,
+      [...current, issue],
+    );
   }
 
   return grouped;
 }
 
-function createDateKey(year: number, month: number, day: number): string {
-  return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(
-    2,
-    "0",
-  )}`;
+function createDateKey(
+  year: number,
+  month: number,
+  day: number,
+): string {
+  return `${year}-${String(
+    month + 1,
+  ).padStart(2, "0")}-${String(
+    day,
+  ).padStart(2, "0")}`;
 }
 
 export default function Calendar() {
@@ -96,51 +130,85 @@ export default function Calendar() {
     nextMonth,
   } = useAppContext();
 
-  const [selectedDateKey, setSelectedDateKey] = useState(() =>
-    createDateKey(selectedYear, selectedMonth, 1),
+  const [
+    selectedDateKey,
+    setSelectedDateKey,
+  ] = useState(() =>
+    createDateKey(
+      selectedYear,
+      selectedMonth,
+      1,
+    ),
   );
 
-  const weeks = createCalendar(selectedYear, selectedMonth);
-
-  const shiftsInSelectedMonth = filterShiftsByMonth(
-    shifts,
+  const weeks = createCalendar(
     selectedYear,
     selectedMonth,
   );
 
-  const shiftsByDate = groupShiftsByDate(shifts);
-  const holidays = getHolidaysForState(selectedYear, profile.federalState);
-  const holidaysByDate = groupHolidaysByDate(holidays);
+  const monthlyCompliance =
+    calculateMonthlyCompliance(
+      shifts,
+      selectedYear,
+      selectedMonth,
+    );
 
-  const complianceRelevantShifts =
-  filterComplianceRelevantShifts(shiftsInSelectedMonth);
+  const {
+    issues: complianceIssues,
+    shiftsInSelectedMonth,
+  } = monthlyCompliance;
 
-const complianceIssues = checkCompliance(
-  complianceRelevantShifts,
-);
-const complianceIssuesByDate = groupComplianceIssuesByDate(
-  complianceIssues,
-  complianceRelevantShifts,
-);
+  const shiftsByDate =
+    groupShiftsByDate(shifts);
 
-  const selectedShifts = selectedDateKey
-    ? shiftsByDate.get(selectedDateKey) ?? []
-    : [];
+  const holidays =
+    getHolidaysForState(
+      selectedYear,
+      profile.federalState,
+    );
 
-  const selectedHoliday = selectedDateKey
-    ? getHolidayByDate(selectedDateKey, profile.federalState)
-    : null;
+  const holidaysByDate =
+    groupHolidaysByDate(holidays);
 
-  const selectedComplianceIssues = selectedDateKey
-    ? complianceIssuesByDate.get(selectedDateKey) ?? []
-    : [];
+  const complianceIssuesByDate =
+    groupComplianceIssuesByDate(
+      complianceIssues,
+      shiftsInSelectedMonth,
+    );
 
-  const premiumHourlyRate = getTvoedPPremiumHourlyRate(profile.payGroup);
+  const selectedShifts =
+    selectedDateKey
+      ? shiftsByDate.get(
+          selectedDateKey,
+        ) ?? []
+      : [];
+
+  const selectedHoliday =
+    selectedDateKey
+      ? getHolidayByDate(
+          selectedDateKey,
+          profile.federalState,
+        )
+      : null;
+
+  const selectedComplianceIssues =
+    selectedDateKey
+      ? complianceIssuesByDate.get(
+          selectedDateKey,
+        ) ?? []
+      : [];
+
+  const premiumHourlyRate =
+    getTvoedPPremiumHourlyRate(
+      profile.payGroup,
+    );
 
   return (
     <section className="page calendar-page">
       <CalendarHeader
-        monthLabel={`${monthNames[selectedMonth]} ${selectedYear}`}
+        monthLabel={
+          `${monthNames[selectedMonth]} ${selectedYear}`
+        }
         onPrevious={previousMonth}
         onNext={nextMonth}
       />
@@ -149,20 +217,29 @@ const complianceIssuesByDate = groupComplianceIssuesByDate(
         weeks={weeks}
         shiftsByDate={shiftsByDate}
         holidaysByDate={holidaysByDate}
-        complianceIssuesByDate={complianceIssuesByDate}
-        selectedDateKey={selectedDateKey}
-        onSelectDate={setSelectedDateKey}
+        complianceIssuesByDate={
+          complianceIssuesByDate
+        }
+        selectedDateKey={
+          selectedDateKey
+        }
+        onSelectDate={
+          setSelectedDateKey
+        }
       />
 
-      <div className="calendar-legend" aria-label="Kalender-Legende">
+      <div
+        className="calendar-legend"
+        aria-label="Kalender-Legende"
+      >
         <span>
           <i className="calendar-legend-dot calendar-shift-type-early" />
-          FrÃ¼h
+          Früh
         </span>
 
         <span>
           <i className="calendar-legend-dot calendar-shift-type-late" />
-          SpÃ¤t
+          Spät
         </span>
 
         <span>
@@ -196,9 +273,15 @@ const complianceIssuesByDate = groupComplianceIssuesByDate(
           dateKey={selectedDateKey}
           shifts={selectedShifts}
           holiday={selectedHoliday}
-          complianceIssues={selectedComplianceIssues}
-          federalState={profile.federalState}
-          baseHourlyRate={premiumHourlyRate}
+          complianceIssues={
+            selectedComplianceIssues
+          }
+          federalState={
+            profile.federalState
+          }
+          baseHourlyRate={
+            premiumHourlyRate
+          }
           onAddShift={addShift}
           onUpdateShift={updateShift}
           onDeleteShift={deleteShift}

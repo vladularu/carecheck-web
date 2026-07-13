@@ -11,8 +11,7 @@ import {
   filterShiftsByMonth,
 } from "../services/calculation/monthlyHoursCalculator";
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
-import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
-import { checkCompliance } from "../services/compliance/complianceService";
+import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
 import { downloadMonthlyReportCsv } from "../services/export/monthlyReportCsvService";
 import { downloadMonthlyReportXlsx } from "../services/export/monthlyReportXlsxService";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
@@ -45,7 +44,9 @@ function formatPercent(value: number): string {
   })}%`;
 }
 
-function getBalanceText(balanceHours: number): string {
+function getBalanceText(
+  balanceHours: number,
+): string {
   if (balanceHours > 0) {
     return `+${formatHours(balanceHours)}`;
   }
@@ -97,48 +98,66 @@ export default function Dashboard() {
     `${monthNames[selectedMonth]} ${selectedYear}`;
 
   const premiumHourlyRate =
-    getTvoedPPremiumHourlyRate(profile.payGroup);
-
-  const shiftsInSelectedMonth = filterShiftsByMonth(
-    shifts,
-    selectedYear,
-    selectedMonth,
-  );
-
-  const complianceRelevantShifts =
-    filterComplianceRelevantShifts(
-      shiftsInSelectedMonth,
+    getTvoedPPremiumHourlyRate(
+      profile.payGroup,
     );
 
-  const complianceIssues = checkCompliance(
-    complianceRelevantShifts,
-  );
+  const shiftsInSelectedMonth =
+    filterShiftsByMonth(
+      shifts,
+      selectedYear,
+      selectedMonth,
+    );
 
-  const criticalCount = complianceIssues.filter(
-    (issue) => issue.severity === "critical",
-  ).length;
+  const monthlyCompliance =
+    calculateMonthlyCompliance(
+      shifts,
+      selectedYear,
+      selectedMonth,
+    );
 
-  const warningCount = complianceIssues.filter(
-    (issue) => issue.severity === "warning",
-  ).length;
+  const {
+    issues: complianceIssues,
+    complianceRelevantShiftsInSelectedMonth,
+  } = monthlyCompliance;
 
-  const monthlyHours = calculateMonthlyHours(
-    shifts,
-    profile,
-    selectedYear,
-    selectedMonth,
-  );
+  const criticalCount =
+    complianceIssues.filter(
+      (issue) =>
+        issue.severity === "critical",
+    ).length;
 
-  const monthlyPremiums = calculateMonthlyPremiums(
-    shifts,
-    selectedYear,
-    selectedMonth,
-    {
-      federalState: profile.federalState,
-      baseHourlyRate: premiumHourlyRate,
-      holidayMode: "WITH_TIME_OFF",
-    },
-  );
+  const warningCount =
+    complianceIssues.filter(
+      (issue) =>
+        issue.severity === "warning",
+    ).length;
+
+  const monthlyHours =
+    calculateMonthlyHours(
+      shifts,
+      profile,
+      selectedYear,
+      selectedMonth,
+    );
+
+  const monthlyPremiums =
+    calculateMonthlyPremiums(
+      shifts,
+      selectedYear,
+      selectedMonth,
+      {
+        federalState:
+          profile.federalState,
+        baseHourlyRate:
+          premiumHourlyRate,
+        holidayMode:
+          "WITH_TIME_OFF",
+      },
+    );
+
+  const checkedShiftCount =
+    complianceRelevantShiftsInSelectedMonth.length;
 
   const progress =
     monthlyHours.targetHours > 0
@@ -200,14 +219,28 @@ export default function Dashboard() {
         />
 
         <WorkSummary
-          actualHours={monthlyHours.actualHours}
-          targetHours={monthlyHours.targetHours}
-          balanceHours={monthlyHours.balanceHours}
-          remainingHours={remainingHours}
-          overtimeHours={monthlyHours.overtimeHours}
+          actualHours={
+            monthlyHours.actualHours
+          }
+          targetHours={
+            monthlyHours.targetHours
+          }
+          balanceHours={
+            monthlyHours.balanceHours
+          }
+          remainingHours={
+            remainingHours
+          }
+          overtimeHours={
+            monthlyHours.overtimeHours
+          }
           progress={progress}
-          workingDayCount={monthlyHours.workingDayCount}
-          publicHolidayCount={monthlyHours.publicHolidayCount}
+          workingDayCount={
+            monthlyHours.workingDayCount
+          }
+          publicHolidayCount={
+            monthlyHours.publicHolidayCount
+          }
           holidayReductionHours={
             monthlyHours.holidayReductionHours
           }
@@ -219,40 +252,58 @@ export default function Dashboard() {
         <StatusCard
           criticalCount={criticalCount}
           warningCount={warningCount}
-          issueCount={complianceIssues.length}
+          issueCount={
+            complianceIssues.length
+          }
           checkedShiftCount={
-            monthlyHours.complianceRelevantShiftCount
+            checkedShiftCount
           }
         />
 
         <MonthlyPremiumSummary
-          monthlyPremiums={monthlyPremiums}
-          hasHourlyRate={premiumHourlyRate > 0}
+          monthlyPremiums={
+            monthlyPremiums
+          }
+          hasHourlyRate={
+            premiumHourlyRate > 0
+          }
         />
 
         <ExportCard
           onExportCsv={handleExportCsv}
-          onExportXlsx={handleExportXlsx}
-          onOpenReport={() => navigate("/bericht")}
+          onExportXlsx={
+            handleExportXlsx
+          }
+          onOpenReport={() =>
+            navigate("/bericht")
+          }
         />
 
         <ShiftSummary
-          workShiftCount={monthlyHours.workShiftCount}
+          workShiftCount={
+            monthlyHours.workShiftCount
+          }
           planningEntryCount={
             monthlyHours.planningEntryCount
           }
-          plannedDayCount={monthlyHours.plannedDayCount}
+          plannedDayCount={
+            monthlyHours.plannedDayCount
+          }
           calendarEntryCount={
             monthlyHours.calendarEntryCount
           }
           vacationDayCount={
             monthlyHours.vacationDayCount
           }
-          sickDayCount={monthlyHours.sickDayCount}
+          sickDayCount={
+            monthlyHours.sickDayCount
+          }
           trainingDayCount={
             monthlyHours.trainingDayCount
           }
-          freeDayCount={monthlyHours.freeDayCount}
+          freeDayCount={
+            monthlyHours.freeDayCount
+          }
           shiftTypeCounts={
             monthlyHours.shiftTypeCounts
           }
@@ -279,10 +330,12 @@ export default function Dashboard() {
             </div>
 
             <span
-              className={getCockpitStatusClassName(
-                criticalCount,
-                warningCount,
-              )}
+              className={
+                getCockpitStatusClassName(
+                  criticalCount,
+                  warningCount,
+                )
+              }
             >
               {getCockpitStatusLabel(
                 criticalCount,
@@ -294,20 +347,27 @@ export default function Dashboard() {
           <div className="cockpit-main-values">
             <div>
               <span>Iststunden</span>
+
               <strong>
-                {formatHours(monthlyHours.actualHours)}
+                {formatHours(
+                  monthlyHours.actualHours,
+                )}
               </strong>
             </div>
 
             <div>
               <span>Sollstunden</span>
+
               <strong>
-                {formatHours(monthlyHours.targetHours)}
+                {formatHours(
+                  monthlyHours.targetHours,
+                )}
               </strong>
             </div>
 
             <div>
               <span>Saldo</span>
+
               <strong>
                 {getBalanceText(
                   monthlyHours.balanceHours,
@@ -318,13 +378,20 @@ export default function Dashboard() {
 
           <div className="cockpit-progress-area">
             <div className="cockpit-progress-label">
-              <span>Monatsfortschritt</span>
-              <strong>{formatPercent(progress)}</strong>
+              <span>
+                Monatsfortschritt
+              </span>
+
+              <strong>
+                {formatPercent(progress)}
+              </strong>
             </div>
 
             <div className="cockpit-progress-track">
               <span
-                style={{ width: `${progress}%` }}
+                style={{
+                  width: `${progress}%`,
+                }}
               />
             </div>
           </div>
@@ -332,13 +399,17 @@ export default function Dashboard() {
           <div className="cockpit-mini-grid">
             <article>
               <span>Reststunden</span>
+
               <strong>
-                {formatHours(remainingHours)}
+                {formatHours(
+                  remainingHours,
+                )}
               </strong>
             </article>
 
             <article>
               <span>Überstunden</span>
+
               <strong>
                 {formatHours(
                   monthlyHours.overtimeHours,
@@ -348,18 +419,20 @@ export default function Dashboard() {
 
             <article>
               <span>Arbeitsdienste</span>
+
               <strong>
-                {monthlyHours.workShiftCount}
+                {
+                  monthlyHours
+                    .workShiftCount
+                }
               </strong>
             </article>
 
             <article>
               <span>Geprüft</span>
+
               <strong>
-                {
-                  monthlyHours
-                    .complianceRelevantShiftCount
-                }
+                {checkedShiftCount}
               </strong>
             </article>
           </div>
@@ -368,10 +441,18 @@ export default function Dashboard() {
         <section className="cockpit-content-grid">
           <div className="cockpit-content-main">
             <WorkSummary
-              actualHours={monthlyHours.actualHours}
-              targetHours={monthlyHours.targetHours}
-              balanceHours={monthlyHours.balanceHours}
-              remainingHours={remainingHours}
+              actualHours={
+                monthlyHours.actualHours
+              }
+              targetHours={
+                monthlyHours.targetHours
+              }
+              balanceHours={
+                monthlyHours.balanceHours
+              }
+              remainingHours={
+                remainingHours
+              }
               overtimeHours={
                 monthlyHours.overtimeHours
               }
@@ -391,20 +472,29 @@ export default function Dashboard() {
             />
 
             <StatusCard
-              criticalCount={criticalCount}
-              warningCount={warningCount}
-              issueCount={complianceIssues.length}
+              criticalCount={
+                criticalCount
+              }
+              warningCount={
+                warningCount
+              }
+              issueCount={
+                complianceIssues.length
+              }
               checkedShiftCount={
-                monthlyHours
-                  .complianceRelevantShiftCount
+                checkedShiftCount
               }
             />
           </div>
 
           <div className="cockpit-content-side">
             <MonthlyPremiumSummary
-              monthlyPremiums={monthlyPremiums}
-              hasHourlyRate={premiumHourlyRate > 0}
+              monthlyPremiums={
+                monthlyPremiums
+              }
+              hasHourlyRate={
+                premiumHourlyRate > 0
+              }
             />
           </div>
         </section>
@@ -442,9 +532,15 @@ export default function Dashboard() {
         </div>
 
         <ExportCard
-          onExportCsv={handleExportCsv}
-          onExportXlsx={handleExportXlsx}
-          onOpenReport={() => navigate("/bericht")}
+          onExportCsv={
+            handleExportCsv
+          }
+          onExportXlsx={
+            handleExportXlsx
+          }
+          onOpenReport={() =>
+            navigate("/bericht")
+          }
         />
       </section>
     </>
