@@ -13,7 +13,6 @@ import {
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
 import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
 import { downloadMonthlyReportCsv } from "../services/export/monthlyReportCsvService";
-import { downloadMonthlyReportXlsx } from "../services/export/monthlyReportXlsxService";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
 
 const monthNames = [
@@ -208,7 +207,14 @@ export default function Dashboard() {
     });
   }
 
-  function handleExportXlsx() {
+async function handleExportXlsx(): Promise<void> {
+  try {
+    const {
+      downloadMonthlyReportXlsx,
+    } = await import(
+      "../services/export/monthlyReportXlsxService"
+    );
+
     downloadMonthlyReportXlsx({
       monthLabel,
       profile,
@@ -217,7 +223,17 @@ export default function Dashboard() {
       monthlyPremiums,
       complianceIssues,
     });
+  } catch (error) {
+    console.error(
+      "Excel-Export konnte nicht geladen werden.",
+      error,
+    );
+
+    window.alert(
+      "Der Excel-Export konnte nicht gestartet werden. Bitte versuche es erneut.",
+    );
   }
+}
 
   return (
     <>

@@ -3,7 +3,7 @@ import Card from "../ui/Card";
 
 interface ExportCardProps {
   onExportCsv: () => void;
-  onExportXlsx: () => void;
+  onExportXlsx: () => Promise<void>;
   onOpenReport: () => void;
 }
 
@@ -29,12 +29,14 @@ export default function ExportCard({
       </p>
 
       <div className="export-actions">
-        <Button
-          type="button"
-          onClick={onExportXlsx}
-        >
-          Excel-Datei exportieren
-        </Button>
+<Button
+  type="button"
+  onClick={() => {
+    void onExportXlsx();
+  }}
+>
+  Excel-Datei exportieren
+</Button>
 
         <Button
           type="button"
