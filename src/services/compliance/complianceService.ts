@@ -995,6 +995,124 @@ function checkConsecutiveNightShifts(
   return issues;
 }
 
+function checkRecoveryAfterNightSeries(
+  shifts: Shift[],
+): ComplianceIssue[] {
+  const sortedShifts = sortShifts(
+    shifts.filter(isComplianceRelevant),
+  );
+
+  const issues: ComplianceIssue[] = [];
+
+  for (
+    let index = 0;
+    index < sortedShifts.length;
+    index++
+  ) {
+    const firstNight = sortedShifts[index];
+
+    if (firstNight.type !== "NIGHT") {
+      continue;
+    }
+
+    let lastNightIndex = index;
+
+    while (
+      lastNightIndex + 1 <
+      sortedShifts.length
+    ) {
+      const currentNight =
+        sortedShifts[lastNightIndex];
+
+      const possibleNextNight =
+        sortedShifts[lastNightIndex + 1];
+
+      if (
+        possibleNextNight.type !== "NIGHT"
+      ) {
+        break;
+      }
+
+      const currentDate =
+        dateFromDateKey(
+          currentNight.date,
+        );
+
+      const nextDate =
+        dateFromDateKey(
+          possibleNextNight.date,
+        );
+
+      if (
+        daysBetween(
+          currentDate,
+          nextDate,
+        ) !== 1
+      ) {
+        break;
+      }
+
+      lastNightIndex++;
+    }
+
+    const nightSeriesLength =
+      lastNightIndex - index + 1;
+
+    if (nightSeriesLength < 2) {
+      continue;
+    }
+
+    const nextShift =
+      sortedShifts[lastNightIndex + 1];
+
+    if (!nextShift) {
+      break;
+    }
+
+    if (
+      nextShift.type !== "EARLY" &&
+      nextShift.type !== "DAY"
+    ) {
+      index = lastNightIndex;
+      continue;
+    }
+
+    const lastNight =
+      sortedShifts[lastNightIndex];
+
+    const restHours = hoursBetween(
+      getShiftEnd(lastNight),
+      getShiftStart(nextShift),
+    );
+
+    /*
+     * Ruhezeiten unter 11 Stunden werden bereits
+     * von der allgemeinen Ruhezeitprüfung gemeldet.
+     */
+    if (
+      restHours >= 11 &&
+      restHours < 24
+    ) {
+      issues.push(
+        createIssue(
+          "warning",
+          "Kurze Erholung nach Nachtserie",
+          `Nach ${nightSeriesLength} aufeinanderfolgenden Nachtdiensten endet die Nachtserie mit ${formatShiftLabel(
+            lastNight,
+          )}. Danach folgt ${formatShiftLabel(
+            nextShift,
+          )} mit nur ${restHours} Stunden Erholungszeit. Nach Nachtserien sollte eine längere Regenerationsphase planerisch geprüft werden.`,
+          nextShift.id,
+        ),
+      );
+    }
+
+    index = lastNightIndex;
+  }
+
+  return issues;
+}
+
 export function checkCompliance(
   shifts: Shift[],
 ): ComplianceIssue[] {
@@ -1078,6 +1196,12 @@ issues.push(
 
 issues.push(
   ...checkConsecutiveNightShifts(
+    complianceRelevantShifts,
+  ),
+);
+
+issues.push(
+  ...checkRecoveryAfterNightSeries(
     complianceRelevantShifts,
   ),
 );
