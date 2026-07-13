@@ -1,6 +1,10 @@
-﻿import { useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useAppContext } from "../context/useAppContext";
-import type { Shift, ShiftType } from "../types/index";
+import {
+  calculateDailyTargetHours,
+  calculateNetHours,
+} from "../services/calculation/workingTimeCalculator";
+import type { HourCreditSource, Shift, ShiftType } from "../types/index";
 
 interface ShiftFormProps {
   onAddShift?: (shift: Shift) => void;
@@ -18,15 +22,15 @@ const shiftOptions: {
 }[] = [
   {
     value: "EARLY",
-    label: "FrÃ¼hdienst",
-    shortLabel: "FrÃ¼h",
-    description: "FrÃ¼her Dienst",
+    label: "Frühdienst",
+    shortLabel: "Früh",
+    description: "Früher Dienst",
   },
   {
     value: "LATE",
-    label: "SpÃ¤tdienst",
-    shortLabel: "SpÃ¤t",
-    description: "SpÃ¤ter Dienst",
+    label: "Spätdienst",
+    shortLabel: "Spät",
+    description: "Später Dienst",
   },
   {
     value: "NIGHT",
@@ -72,6 +76,21 @@ const shiftOptions: {
   },
 ];
 
+const plannedShiftTypes = new Set<ShiftType>([
+  "EARLY",
+  "LATE",
+  "NIGHT",
+  "DAY",
+  "TRAINING",
+  "CUSTOM",
+]);
+
+function isAbsenceType(shiftType: ShiftType): boolean {
+  return (
+    shiftType === "VACATION" || shiftType === "SICK" || shiftType === "FREE"
+  );
+}
+
 function getShiftTileClassName(
   optionType: ShiftType,
   selectedType: ShiftType,
@@ -85,6 +104,13 @@ function getShiftTileClassName(
   return classNames.filter(Boolean).join(" ");
 }
 
+function formatHours(hours: number): string {
+  return hours.toLocaleString("de-DE", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+}
+
 export default function ShiftForm({
   onAddShift,
   onUpdateShift,
@@ -92,15 +118,15 @@ export default function ShiftForm({
   initialShift,
   onDone,
 }: ShiftFormProps) {
-  const { shiftTemplates } = useAppContext();
+  const { shiftTemplates, profile, shifts } = useAppContext();
+
   const isEditing = Boolean(initialShift);
 
   const initialType = initialShift?.type ?? "EARLY";
+
   const initialTemplate = shiftTemplates[initialType];
 
-  const [date, setDate] = useState(
-    initialShift?.date ?? initialDate ?? "",
-  );
+  const [date, setDate] = useState(initialShift?.date ?? initialDate ?? "");
 
   const [startTime, setStartTime] = useState(
     initialShift?.startTime ?? initialTemplate.startTime,
@@ -115,18 +141,55 @@ export default function ShiftForm({
   );
 
   const [type, setType] = useState<ShiftType>(initialType);
+
   const [note, setNote] = useState(initialShift?.note ?? "");
+
+  const dailyTargetHours = calculateDailyTargetHours(profile);
+
+  const sameDayPlannedShifts = shifts.filter(
+    (shift) =>
+      shift.id !== initialShift?.id &&
+      shift.date === date &&
+      plannedShiftTypes.has(shift.type),
+  );
+
+  const plannedSickSourceShifts =
+    initialShift && plannedShiftTypes.has(initialShift.type)
+      ? [initialShift, ...sameDayPlannedShifts]
+      : sameDayPlannedShifts;
+
+  const plannedSickHours =
+    plannedSickSourceShifts.length > 0
+      ? plannedSickSourceShifts.reduce(
+          (total, shift) => total + calculateNetHours(shift),
+          0,
+        )
+      : undefined;
 
   function applyTemplate(nextType: ShiftType) {
     const template = shiftTemplates[nextType];
 
     setStartTime(template.startTime);
+
     setEndTime(template.endTime);
+
     setBreakMinutes(template.breakMinutes);
+  }
+
+  function applyAbsenceTimes() {
+    setStartTime("00:00");
+    setEndTime("00:00");
+    setBreakMinutes(0);
   }
 
   function handleTypeChange(nextType: ShiftType) {
     setType(nextType);
+
+    if (isAbsenceType(nextType)) {
+      applyAbsenceTimes();
+      return;
+    }
+
     applyTemplate(nextType);
   }
 
@@ -134,29 +197,94 @@ export default function ShiftForm({
     const template = shiftTemplates.EARLY;
 
     setDate(initialDate ?? "");
+
     setStartTime(template.startTime);
+
     setEndTime(template.endTime);
+
     setBreakMinutes(template.breakMinutes);
+
     setType("EARLY");
     setNote("");
+  }
+
+  function getHourCredit(): {
+    creditedHours?: number;
+    hourCreditSource?: HourCreditSource;
+    sourceShiftId?: string;
+  } {
+    if (type === "VACATION") {
+      return {
+        creditedHours: dailyTargetHours,
+        hourCreditSource: "DAILY_TARGET",
+      };
+    }
+
+    if (type !== "SICK") {
+      return {
+        creditedHours: undefined,
+        hourCreditSource: undefined,
+        sourceShiftId: undefined,
+      };
+    }
+
+    if (plannedSickHours !== undefined && plannedSickSourceShifts.length > 0) {
+      return {
+        creditedHours: plannedSickHours,
+        hourCreditSource: "PLANNED_SHIFT",
+        sourceShiftId: plannedSickSourceShifts[0]?.id,
+      };
+    }
+
+    if (
+      initialShift?.type === "SICK" &&
+      typeof initialShift.creditedHours === "number"
+    ) {
+      return {
+        creditedHours:
+          initialShift.hourCreditSource === "DAILY_TARGET"
+            ? dailyTargetHours
+            : initialShift.creditedHours,
+        hourCreditSource: initialShift.hourCreditSource ?? "DAILY_TARGET",
+        sourceShiftId: initialShift.sourceShiftId,
+      };
+    }
+
+    return {
+      creditedHours: dailyTargetHours,
+      hourCreditSource: "DAILY_TARGET",
+    };
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!date || !startTime || !endTime) {
+    if (!date) {
       return;
     }
+
+    if (!isAbsenceType(type) && (!startTime || !endTime)) {
+      return;
+    }
+
+    const absenceType = isAbsenceType(type);
+
+    const hourCredit = getHourCredit();
+
+    const shiftValues = {
+      date,
+      startTime: absenceType ? "00:00" : startTime,
+      endTime: absenceType ? "00:00" : endTime,
+      breakMinutes: absenceType ? 0 : breakMinutes,
+      type,
+      note: note.trim() || undefined,
+      ...hourCredit,
+    };
 
     if (initialShift && onUpdateShift) {
       onUpdateShift({
         ...initialShift,
-        date,
-        startTime,
-        endTime,
-        breakMinutes,
-        type,
-        note: note.trim() || undefined,
+        ...shiftValues,
       });
 
       onDone?.();
@@ -169,12 +297,7 @@ export default function ShiftForm({
 
     onAddShift({
       id: crypto.randomUUID(),
-      date,
-      startTime,
-      endTime,
-      breakMinutes,
-      type,
-      note: note.trim() || undefined,
+      ...shiftValues,
     });
 
     resetAddForm();
@@ -185,6 +308,22 @@ export default function ShiftForm({
     (option) => option.value === type,
   );
 
+  const existingSickCredit =
+    initialShift?.type === "SICK" &&
+    typeof initialShift.creditedHours === "number"
+      ? initialShift.hourCreditSource === "DAILY_TARGET"
+        ? dailyTargetHours
+        : initialShift.creditedHours
+      : undefined;
+
+  const displayedCreditHours =
+    plannedSickHours ?? existingSickCredit ?? dailyTargetHours;
+
+  const usesPlannedSickCredit =
+    plannedSickHours !== undefined ||
+    (initialShift?.type === "SICK" &&
+      initialShift.hourCreditSource === "PLANNED_SHIFT");
+
   return (
     <form
       className="form-grid shift-form-premium"
@@ -192,15 +331,13 @@ export default function ShiftForm({
       lang="de-DE"
     >
       <div className="shift-form-header">
-        <span>
-          {isEditing ? "Dienst bearbeiten" : "Dienst hinzufÃ¼gen"}
-        </span>
+        <span>{isEditing ? "Dienst bearbeiten" : "Dienst hinzufügen"}</span>
 
         <strong>{selectedShiftOption?.label ?? "Dienst"}</strong>
 
         <p>
-          WÃ¤hle zuerst die Dienstart. Beginn, Ende und Pause werden aus deinen
-          Dienstvorlagen Ã¼bernommen und kÃ¶nnen angepasst werden.
+          Wähle zuerst die Dienstart. Reguläre Dienstzeiten werden aus deinen
+          Vorlagen übernommen. Abwesenheitsstunden werden automatisch berechnet.
         </p>
       </div>
 
@@ -217,7 +354,9 @@ export default function ShiftForm({
               onClick={() => handleTypeChange(option.value)}
             >
               <span>{option.shortLabel}</span>
+
               <strong>{option.label}</strong>
+
               <small>{option.description}</small>
             </button>
           ))}
@@ -237,46 +376,86 @@ export default function ShiftForm({
           />
         </label>
 
-        <div className="shift-time-grid">
-          <label className="field">
-            <span>Beginn</span>
+        {isAbsenceType(type) ? (
+          <div className="shift-form-field-full">
+            {type === "VACATION" && (
+              <div className="shift-form-absence-info">
+                <strong>Urlaub: {formatHours(dailyTargetHours)} Std.</strong>
 
-            <input
-              type="time"
-              lang="de-DE"
-              step="60"
-              value={startTime}
-              onChange={(event) => setStartTime(event.target.value)}
-              required
-            />
-          </label>
+                <p>
+                  Die tägliche Sollarbeitszeit wird automatisch aus
+                  {` ${profile.weeklyHours} `}
+                  Wochenstunden und einer 5-Tage-Woche berechnet. Zeiten und
+                  Pause sind nicht manuell veränderbar.
+                </p>
+              </div>
+            )}
 
-          <label className="field">
-            <span>Ende</span>
+            {type === "SICK" && (
+              <div className="shift-form-absence-info">
+                <strong>Krank: {formatHours(displayedCreditHours)} Std.</strong>
 
-            <input
-              type="time"
-              lang="de-DE"
-              step="60"
-              value={endTime}
-              onChange={(event) => setEndTime(event.target.value)}
-              required
-            />
-          </label>
+                <p>
+                  {usesPlannedSickCredit
+                    ? "Die Netto-Stunden der geplanten Einträge werden übernommen. Diese geplanten Einträge werden durch den Krank-Eintrag ersetzt."
+                    : "Ohne zuvor geplanten Dienst wird die tägliche Sollarbeitszeit verwendet."}
+                </p>
+              </div>
+            )}
 
-          <label className="field">
-            <span>Pause</span>
+            {type === "FREE" && (
+              <div className="shift-form-absence-info">
+                <strong>Frei: 0 Std.</strong>
 
-            <input
-              type="number"
-              min="0"
-              value={breakMinutes}
-              onChange={(event) =>
-                setBreakMinutes(Number(event.target.value))
-              }
-            />
-          </label>
-        </div>
+                <p>
+                  Frei bleibt ein Null-Stunden-Eintrag und zählt nicht als
+                  Arbeitstag.
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="shift-time-grid">
+            <label className="field">
+              <span>Beginn</span>
+
+              <input
+                type="time"
+                lang="de-DE"
+                step="60"
+                value={startTime}
+                onChange={(event) => setStartTime(event.target.value)}
+                required
+              />
+            </label>
+
+            <label className="field">
+              <span>Ende</span>
+
+              <input
+                type="time"
+                lang="de-DE"
+                step="60"
+                value={endTime}
+                onChange={(event) => setEndTime(event.target.value)}
+                required
+              />
+            </label>
+
+            <label className="field">
+              <span>Pause</span>
+
+              <input
+                type="number"
+                min="0"
+                value={breakMinutes}
+                onChange={(event) =>
+                  setBreakMinutes(Number(event.target.value))
+                }
+              />
+            </label>
+          </div>
+        )}
 
         <label className="field shift-form-field-full">
           <span>Notiz</span>
@@ -289,11 +468,8 @@ export default function ShiftForm({
         </label>
       </div>
 
-      <button
-        className="primary-button shift-form-submit"
-        type="submit"
-      >
-        {isEditing ? "Ã„nderung speichern" : "Dienst speichern"}
+      <button className="primary-button shift-form-submit" type="submit">
+        {isEditing ? "Änderung speichern" : "Dienst speichern"}
       </button>
     </form>
   );

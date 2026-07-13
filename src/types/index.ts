@@ -1,7 +1,20 @@
 export type FederalState =
-  | "BW" | "BY" | "BE" | "BB" | "HB" | "HH"
-  | "HE" | "MV" | "NI" | "NW" | "RP" | "SL"
-  | "SN" | "ST" | "SH" | "TH";
+  | "BW"
+  | "BY"
+  | "BE"
+  | "BB"
+  | "HB"
+  | "HH"
+  | "HE"
+  | "MV"
+  | "NI"
+  | "NW"
+  | "RP"
+  | "SL"
+  | "SN"
+  | "ST"
+  | "SH"
+  | "TH";
 
 export type ShiftType =
   | "EARLY"
@@ -15,9 +28,11 @@ export type ShiftType =
   | "CUSTOM";
 
 export type PayGroup =
-  | "P7" | "P8" | "P9" | "P10" | "P11" | "P12" | "P13" | "P14" | "P15" | "P16";
+  "P7" | "P8" | "P9" | "P10" | "P11" | "P12" | "P13" | "P14" | "P15" | "P16";
 
 export type PayLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+export type HourCreditSource = "DAILY_TARGET" | "PLANNED_SHIFT";
 
 export interface UserProfile {
   federalState: FederalState;
@@ -43,6 +58,29 @@ export interface Shift {
   breakMinutes: number;
   type: ShiftType;
   note?: string;
+
+  /**
+   * Stunden-Gutschrift für Abwesenheiten.
+   *
+   * VACATION:
+   * klassische tägliche Sollarbeitszeit.
+   *
+   * SICK:
+   * geplante Nettoarbeitszeit oder, falls keine
+   * Planung vorhanden war, tägliche Sollarbeitszeit.
+   */
+  creditedHours?: number;
+
+  /**
+   * Herkunft der Stunden-Gutschrift.
+   */
+  hourCreditSource?: HourCreditSource;
+
+  /**
+   * Ursprünglicher Dienst, dessen Nettoarbeitszeit
+   * für einen Krank-Eintrag übernommen wurde.
+   */
+  sourceShiftId?: string;
 }
 
 export interface ShiftCalculation {

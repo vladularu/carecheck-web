@@ -44,12 +44,7 @@ describe("monthlyHoursCalculator", () => {
       }),
     ];
 
-    const result = calculateMonthlyHours(
-      shifts,
-      profile,
-      2026,
-      6,
-    );
+    const result = calculateMonthlyHours(shifts, profile, 2026, 6);
 
     expect(result.shiftCount).toBe(1);
     expect(result.planningEntryCount).toBe(1);
@@ -92,6 +87,7 @@ describe("monthlyHoursCalculator", () => {
     ];
 
     expect(filterCountedShifts(shifts)).toHaveLength(3);
+
     expect(countPlannedDays(shifts)).toBe(3);
 
     expect(countShiftTypes(shifts)).toEqual([
@@ -127,15 +123,12 @@ describe("monthlyHoursCalculator", () => {
       }),
     ];
 
-    const result = calculateMonthlyHours(
-      shifts,
-      profile,
-      2026,
-      6,
-    );
+    const result = calculateMonthlyHours(shifts, profile, 2026, 6);
 
     expect(result.shiftCount).toBe(2);
+
     expect(result.planningEntryCount).toBe(2);
+
     expect(result.plannedDayCount).toBe(1);
   });
 
@@ -171,12 +164,9 @@ describe("monthlyHoursCalculator", () => {
       }),
     ];
 
-    const relevantShifts =
-      filterComplianceRelevantShifts(shifts);
+    const relevantShifts = filterComplianceRelevantShifts(shifts);
 
-    expect(
-      relevantShifts.map((shift) => shift.type),
-    ).toEqual([
+    expect(relevantShifts.map((shift) => shift.type)).toEqual([
       "EARLY",
       "TRAINING",
     ]);
@@ -196,15 +186,12 @@ describe("monthlyHoursCalculator", () => {
       }),
     ];
 
-    const result = calculateMonthlyHours(
-      shifts,
-      profile,
-      2026,
-      6,
-    );
+    const result = calculateMonthlyHours(shifts, profile, 2026, 6);
 
     expect(result.calendarEntryCount).toBe(1);
+
     expect(result.shiftCount).toBe(1);
+
     expect(result.workShiftCount).toBe(1);
 
     expect(result.shiftTypeCounts).toEqual([
@@ -254,23 +241,24 @@ describe("monthlyHoursCalculator", () => {
       }),
     ];
 
-    const result = calculateMonthlyHours(
-      shifts,
-      profile,
-      2026,
-      6,
-    );
+    const result = calculateMonthlyHours(shifts, profile, 2026, 6);
 
     expect(result.calendarEntryCount).toBe(6);
+
     expect(result.planningEntryCount).toBe(5);
+
     expect(result.shiftCount).toBe(5);
 
     expect(result.workShiftCount).toBe(2);
+
     expect(result.complianceRelevantShiftCount).toBe(3);
 
     expect(result.trainingDayCount).toBe(1);
+
     expect(result.vacationDayCount).toBe(1);
+
     expect(result.sickDayCount).toBe(1);
+
     expect(result.freeDayCount).toBe(1);
 
     expect(result.plannedDayCount).toBe(5);
@@ -300,18 +288,96 @@ describe("monthlyHoursCalculator", () => {
       }),
     ];
 
-    const result = calculateMonthlyHours(
-      shifts,
-      profile,
-      2026,
-      6,
-    );
+    const result = calculateMonthlyHours(shifts, profile, 2026, 6);
 
     expect(result.calendarEntryCount).toBe(4);
+
     expect(result.planningEntryCount).toBe(4);
 
     expect(result.vacationDayCount).toBe(1);
+
     expect(result.sickDayCount).toBe(1);
+
     expect(result.plannedDayCount).toBe(2);
+  });
+
+  it("bewertet Urlaub immer mit der täglichen Sollarbeitszeit", () => {
+    const vacation = createShift({
+      id: "vacation-1",
+      date: "2026-07-01",
+      type: "VACATION",
+      startTime: "00:00",
+      endTime: "23:59",
+      breakMinutes: 0,
+    });
+
+    const result = calculateMonthlyHours([vacation], profile, 2026, 6);
+
+    expect(result.averageDailyHours).toBe(7.7);
+
+    expect(result.actualHours).toBe(7.7);
+  });
+
+  it("übernimmt bei Krank die gespeicherten Stunden der geplanten Schicht", () => {
+    const sick = createShift({
+      id: "sick-1",
+      date: "2026-07-02",
+      type: "SICK",
+      startTime: "00:00",
+      endTime: "00:00",
+      breakMinutes: 0,
+      creditedHours: 9.25,
+      hourCreditSource: "PLANNED_SHIFT",
+      sourceShiftId: "night-1",
+    });
+
+    const result = calculateMonthlyHours([sick], profile, 2026, 6);
+
+    expect(result.actualHours).toBe(9.25);
+  });
+
+  it("verwendet bei Krank ohne geplante Schicht die tägliche Sollarbeitszeit", () => {
+    const sick = createShift({
+      id: "sick-1",
+      date: "2026-07-02",
+      type: "SICK",
+      startTime: "00:00",
+      endTime: "00:00",
+      breakMinutes: 0,
+    });
+
+    const result = calculateMonthlyHours([sick], profile, 2026, 6);
+
+    expect(result.actualHours).toBe(7.7);
+  });
+
+  it("passt die Urlaubsgutschrift an die Wochenarbeitszeit des Profils an", () => {
+    const partTimeProfile: UserProfile = {
+      ...profile,
+      weeklyHours: 30,
+    };
+
+    const vacation = createShift({
+      id: "vacation-1",
+      date: "2026-07-01",
+      type: "VACATION",
+      startTime: "00:00",
+      endTime: "00:00",
+      breakMinutes: 0,
+      creditedHours: 7.7,
+      hourCreditSource: "DAILY_TARGET",
+    });
+
+    const result = calculateMonthlyHours([vacation], partTimeProfile, 2026, 6);
+
+    expect(result.averageDailyHours).toBe(6);
+
+    /*
+     * Monatsberechnung verwendet bei VACATION
+     * grundsätzlich die aktuelle tägliche
+     * Sollarbeitszeit. Der AppContext aktualisiert
+     * zusätzlich den gespeicherten Wert.
+     */
+    expect(result.actualHours).toBe(6);
   });
 });

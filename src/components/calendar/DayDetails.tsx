@@ -51,6 +51,33 @@ function getComplianceClassName(severity: ComplianceIssue["severity"]): string {
   return `day-details-compliance-item day-details-compliance-${severity}`;
 }
 
+function isCreditedAbsence(shift: Shift): boolean {
+  return shift.type === "VACATION" || shift.type === "SICK";
+}
+
+function showsTimedDetails(shift: Shift): boolean {
+  return shift.type !== "FREE" && !isCreditedAbsence(shift);
+}
+
+function formatHours(hours: number): string {
+  return hours.toLocaleString("de-DE", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+}
+
+function getCreditDescription(shift: Shift): string {
+  if (shift.type === "VACATION") {
+    return "tägliche Sollarbeitszeit";
+  }
+
+  if (shift.hourCreditSource === "PLANNED_SHIFT") {
+    return "aus geplantem Dienst übernommen";
+  }
+
+  return "tägliche Sollarbeitszeit verwendet";
+}
+
 export default function DayDetails({
   dateKey,
   shifts,
@@ -63,13 +90,16 @@ export default function DayDetails({
   onDeleteShift,
 }: DayDetailsProps) {
   const [showForm, setShowForm] = useState(false);
+
   const [editingShiftId, setEditingShiftId] = useState<string | null>(null);
 
   return (
     <Card className="day-details">
       <div className="day-details-header">
         <span>Tagesdetails</span>
+
         <strong>{formatDateGerman(dateKey)}</strong>
+
         {holiday && (
           <p className="day-details-holiday">Feiertag: {holiday.name}</p>
         )}
@@ -85,7 +115,9 @@ export default function DayDetails({
               key={issue.id}
             >
               <span>{severityLabels[issue.severity]}</span>
+
               <strong>{issue.title}</strong>
+
               <p>{issue.description}</p>
             </article>
           ))}
@@ -98,7 +130,12 @@ export default function DayDetails({
         <div className="day-details-list">
           {shifts.map((shift) => {
             const isEditing = editingShiftId === shift.id;
-            const premium = calculateShiftPremiumHours(shift, federalState);
+
+            const showTimedDetails = showsTimedDetails(shift);
+
+            const premium = showTimedDetails
+              ? calculateShiftPremiumHours(shift, federalState)
+              : null;
 
             return (
               <article className="day-details-shift" key={shift.id}>
@@ -123,7 +160,7 @@ export default function DayDetails({
                     <div className="day-details-shift-main">
                       <strong>{shiftLabels[shift.type]}</strong>
 
-                      {shift.type !== "FREE" && (
+                      {showTimedDetails && premium && (
                         <>
                           <div className="day-details-shift-meta">
                             <span>
@@ -132,7 +169,10 @@ export default function DayDetails({
                                 shift.endTime,
                               )}
                             </span>
-                            <span>{calculateNetHours(shift)} h netto</span>
+
+                            <span>
+                              {formatHours(calculateNetHours(shift))} h netto
+                            </span>
                           </div>
 
                           <ShiftPremiumSummary
@@ -140,6 +180,17 @@ export default function DayDetails({
                             baseHourlyRate={baseHourlyRate}
                           />
                         </>
+                      )}
+
+                      {isCreditedAbsence(shift) && (
+                        <div className="day-details-shift-meta">
+                          <span>
+                            {formatHours(calculateNetHours(shift))} h
+                            Zeitgutschrift
+                          </span>
+
+                          <span>{getCreditDescription(shift)}</span>
+                        </div>
                       )}
 
                       {shift.note && <p>{shift.note}</p>}
@@ -151,6 +202,7 @@ export default function DayDetails({
                         variant="secondary"
                         onClick={() => {
                           setShowForm(false);
+
                           setEditingShiftId(shift.id);
                         }}
                       >
@@ -179,6 +231,7 @@ export default function DayDetails({
           variant="secondary"
           onClick={() => {
             setEditingShiftId(null);
+
             setShowForm((current) => !current);
           }}
         >
