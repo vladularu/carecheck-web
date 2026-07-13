@@ -91,3 +91,9 @@ export function countsAsHours(shift: Shift): boolean {
 export function isComplianceRelevant(shift: Shift): boolean {
   return getShiftTypeRule(shift.type).complianceRelevant;
 }
+
+export function filterComplianceRelevantShifts(
+  shifts: Shift[],
+): Shift[] {
+  return shifts.filter(isComplianceRelevant);
+}

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { filterComplianceRelevantShifts } from "./shiftTypeRules";
 import type { Shift, UserProfile } from "../../types/index";
 import {
   calculateMonthlyHours,
@@ -135,6 +136,47 @@ describe("monthlyHoursCalculator", () => {
     expect(result.shiftCount).toBe(2);
     expect(result.plannedDayCount).toBe(1);
   });
+
+  it("schließt FREE, Urlaub und Krank aus der Compliance-Prüfmenge aus", () => {
+  const shifts: Shift[] = [
+    createShift({
+      id: "early-1",
+      date: "2026-07-01",
+      type: "EARLY",
+    }),
+    createShift({
+      id: "training-1",
+      date: "2026-07-02",
+      type: "TRAINING",
+    }),
+    createShift({
+      id: "vacation-1",
+      date: "2026-07-03",
+      type: "VACATION",
+    }),
+    createShift({
+      id: "sick-1",
+      date: "2026-07-04",
+      type: "SICK",
+    }),
+    createShift({
+      id: "free-1",
+      date: "2026-07-05",
+      type: "FREE",
+      startTime: "00:00",
+      endTime: "00:00",
+      breakMinutes: 0,
+    }),
+  ];
+
+  const relevantShifts =
+    filterComplianceRelevantShifts(shifts);
+
+  expect(relevantShifts.map((shift) => shift.type)).toEqual([
+    "EARLY",
+    "TRAINING",
+  ]);
+});
 
   it("ignoriert Einträge aus anderen Monaten", () => {
     const shifts: Shift[] = [

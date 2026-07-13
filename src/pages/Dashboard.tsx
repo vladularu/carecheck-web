@@ -15,6 +15,7 @@ import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremium
 import { checkCompliance } from "../services/compliance/complianceService";
 import { downloadMonthlyReportCsv } from "../services/export/monthlyReportCsvService";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
+import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
 
 const monthNames = [
   "Januar",
@@ -95,7 +96,12 @@ export default function Dashboard() {
     selectedMonth,
   );
 
-  const complianceIssues = checkCompliance(shiftsInSelectedMonth);
+  const complianceRelevantShifts =
+  filterComplianceRelevantShifts(shiftsInSelectedMonth);
+
+const complianceIssues = checkCompliance(
+  complianceRelevantShifts,
+);
 
   const criticalCount = complianceIssues.filter(
     (issue) => issue.severity === "critical",
@@ -186,7 +192,7 @@ export default function Dashboard() {
           criticalCount={criticalCount}
           warningCount={warningCount}
           issueCount={complianceIssues.length}
-          checkedShiftCount={shiftsInSelectedMonth.length}
+          checkedShiftCount={complianceRelevantShifts.length}
         />
 
         <MonthlyPremiumSummary
@@ -270,10 +276,10 @@ export default function Dashboard() {
               <strong>{monthlyHours.shiftCount}</strong>
             </article>
 
-            <article>
-              <span>GeprÃ¼ft</span>
-              <strong>{shiftsInSelectedMonth.length}</strong>
-            </article>
+<article>
+  <span>Geprüft</span>
+  <strong>{complianceRelevantShifts.length}</strong>
+</article>
           </div>
         </section>
 
@@ -296,7 +302,7 @@ export default function Dashboard() {
               criticalCount={criticalCount}
               warningCount={warningCount}
               issueCount={complianceIssues.length}
-              checkedShiftCount={shiftsInSelectedMonth.length}
+              checkedShiftCount={complianceRelevantShifts.length}
             />
           </div>
 
