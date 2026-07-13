@@ -144,6 +144,14 @@ describe(
       });
 
       expect(
+        getReportTimeLabel(free),
+      ).toBe("—");
+
+      expect(
+        getReportBreakLabel(free),
+      ).toBe("—");
+
+      expect(
         getReportNetHours(
           free,
           7.7,
@@ -155,6 +163,24 @@ describe(
           free,
         ),
       ).toBe("Keine Stunden");
+    });
+
+    it("verwendet bei ungültiger täglicher Sollzeit sicher null", () => {
+      const sick = createShift({
+        type: "SICK",
+        startTime: "00:00",
+        endTime: "00:00",
+        breakMinutes: 0,
+        hourCreditSource:
+          "DAILY_TARGET",
+      });
+
+      expect(
+        getReportNetHours(
+          sick,
+          Number.NaN,
+        ),
+      ).toBe(0);
     });
   },
 );

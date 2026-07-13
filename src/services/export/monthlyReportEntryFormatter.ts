@@ -29,9 +29,15 @@ export function getReportNetHours(
   shift: Shift,
   dailyTargetHours: number,
 ): number {
+  const safeDailyTargetHours =
+    Number.isFinite(dailyTargetHours) &&
+    dailyTargetHours >= 0
+      ? dailyTargetHours
+      : 0;
+
   return calculateNetHours(
     shift,
-    dailyTargetHours,
+    safeDailyTargetHours,
   );
 }
 

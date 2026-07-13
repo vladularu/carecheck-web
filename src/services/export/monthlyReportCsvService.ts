@@ -6,16 +6,16 @@ import type {
 import type { MonthlyHoursResult } from "../calculation/monthlyHoursCalculator";
 import type { MonthlyPremiumResult } from "../calculation/monthlyPremiumCalculator";
 import {
+  formatDateGerman,
+} from "../format/dateTimeFormat";
+import {
   getReportBreakLabel,
   getReportHourSourceLabel,
   getReportNetHours,
   getReportTimeLabel,
 } from "./monthlyReportEntryFormatter";
-import {
-  formatDateGerman,
-} from "../format/dateTimeFormat";
 
-interface MonthlyReportCsvInput {
+export interface MonthlyReportCsvInput {
   monthLabel: string;
   profile: UserProfile;
   shifts: Shift[];
@@ -45,10 +45,28 @@ const severityLabels: Record<
   critical: "Kritisch",
 };
 
+function protectSpreadsheetFormula(
+  value: string,
+): string {
+  if (
+    /^[=+@]/.test(value) ||
+    /^-\D/.test(value) ||
+    /^[\t\r]/.test(value)
+  ) {
+    return `'${value}`;
+  }
+
+  return value;
+}
+
 function escapeCsv(
   value: string | number | null | undefined,
 ): string {
-  const text = String(value ?? "");
+  const text =
+    typeof value === "string"
+      ? protectSpreadsheetFormula(value)
+      : String(value ?? "");
+
   const escaped = text.replace(/"/g, '""');
 
   return `"${escaped}"`;
@@ -77,12 +95,41 @@ function formatEuro(value: number | null): string {
   }).format(value);
 }
 
-function createDownloadFileName(
+function removeControlCharacters(
+  value: string,
+): string {
+  return Array.from(value)
+    .filter((character) => {
+      const codePoint =
+        character.codePointAt(0) ?? 0;
+
+      return (
+        codePoint >= 32 &&
+        codePoint !== 127
+      );
+    })
+    .join("");
+}
+
+function sanitizeFileNamePart(
+  value: string,
+): string {
+  const sanitized =
+    removeControlCharacters(value)
+      .trim()
+      .replace(/[<>:"/\\|?*]/g, "")
+      .replace(/\s+/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/^\.+|\.+$/g, "");
+
+  return sanitized || "Monatsbericht";
+}
+
+export function createMonthlyReportCsvFileName(
   monthLabel: string,
 ): string {
-  return `CareCheck_Monatsbericht_${monthLabel.replace(
-    /\s+/g,
-    "_",
+  return `CareCheck_Monatsbericht_${sanitizeFileNamePart(
+    monthLabel,
   )}.csv`;
 }
 
@@ -359,35 +406,52 @@ export function createMonthlyReportCsv({
     ]),
   );
 
-  for (const shift of shifts) {
+  if (shifts.length === 0) {
     rows.push(
       createRow([
-        formatDateGerman(shift.date),
-        shiftLabels[shift.type],
-        getReportTimeLabel(shift),
-        getReportBreakLabel(shift),
-        `${formatNumber(
-          getReportNetHours(
-            shift,
-            monthlyHours.averageDailyHours,
-          ),
-        )} h`,
-        getReportHourSourceLabel(shift),
-        shift.note ?? "",
+        "Keine Kalendereinträge",
       ]),
     );
+  } else {
+    for (const shift of shifts) {
+      rows.push(
+        createRow([
+          formatDateGerman(shift.date),
+          shiftLabels[shift.type],
+          getReportTimeLabel(shift),
+          getReportBreakLabel(shift),
+          `${formatNumber(
+            getReportNetHours(
+              shift,
+              monthlyHours.averageDailyHours,
+            ),
+          )} h`,
+          getReportHourSourceLabel(shift),
+          shift.note ?? "",
+        ]),
+      );
+    }
   }
 
-  return rows.join("\n");
+  return rows.join("\r\n");
+}
+
+export function createMonthlyReportCsvFileContent(
+  input: MonthlyReportCsvInput,
+): string {
+  return `\uFEFF${createMonthlyReportCsv(input)}`;
 }
 
 export function downloadMonthlyReportCsv(
   input: MonthlyReportCsvInput,
 ): void {
-  const csv = createMonthlyReportCsv(input);
+  const content =
+    createMonthlyReportCsvFileContent(
+      input,
+    );
 
   const blob = new Blob(
-    [`\uFEFF${csv}`],
+    [content],
     {
       type: "text/csv;charset=utf-8;",
     },
@@ -397,9 +461,10 @@ export function downloadMonthlyReportCsv(
   const link = document.createElement("a");
 
   link.href = url;
-  link.download = createDownloadFileName(
-    input.monthLabel,
-  );
+  link.download =
+    createMonthlyReportCsvFileName(
+      input.monthLabel,
+    );
 
   document.body.appendChild(link);
   link.click();
