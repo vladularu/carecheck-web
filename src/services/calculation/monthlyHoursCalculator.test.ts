@@ -380,4 +380,41 @@ describe("monthlyHoursCalculator", () => {
      */
     expect(result.actualHours).toBe(6);
   });
+  it("weist Urlaubs- und Krankstunden getrennt aus", () => {
+    const shifts: Shift[] = [
+      createShift({
+        id: "vacation-1",
+        date: "2026-07-01",
+        type: "VACATION",
+        startTime: "00:00",
+        endTime: "00:00",
+        breakMinutes: 0,
+        creditedHours: 7.7,
+        hourCreditSource: "DAILY_TARGET",
+      }),
+      createShift({
+        id: "sick-1",
+        date: "2026-07-02",
+        type: "SICK",
+        startTime: "00:00",
+        endTime: "00:00",
+        breakMinutes: 0,
+        creditedHours: 9.25,
+        hourCreditSource: "PLANNED_SHIFT",
+        sourceShiftId: "night-1",
+      }),
+    ];
+
+    const result = calculateMonthlyHours(
+      shifts,
+      profile,
+      2026,
+      6,
+    );
+
+    expect(result.vacationHours).toBe(7.7);
+    expect(result.sickHours).toBe(9.25);
+    expect(result.absenceHours).toBe(16.95);
+  });
+
 });

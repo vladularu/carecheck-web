@@ -71,6 +71,21 @@ export interface MonthlyHoursResult {
   sickDayCount: number;
 
   /**
+   * Gutgeschriebene Urlaubsstunden.
+   */
+  vacationHours: number;
+
+  /**
+   * Gutgeschriebene Krankstunden.
+   */
+  sickHours: number;
+
+  /**
+   * Summe aller Urlaubs- und Krankstunden.
+   */
+  absenceHours: number;
+
+  /**
    * Anzahl eindeutiger Fortbildungstage.
    */
   trainingDayCount: number;
@@ -254,6 +269,29 @@ export function calculateMonthlyHours(
     target.averageDailyHours,
   );
 
+  const vacationHours =
+    calculateTotalNetHours(
+      shiftsInMonth.filter(
+        (shift) =>
+          shift.type === "VACATION",
+      ),
+      target.averageDailyHours,
+    );
+
+  const sickHours =
+    calculateTotalNetHours(
+      shiftsInMonth.filter(
+        (shift) =>
+          shift.type === "SICK",
+      ),
+      target.averageDailyHours,
+    );
+
+  const absenceHours =
+    roundToTwoDecimals(
+      vacationHours + sickHours,
+    );
+
   const balanceHours = roundToTwoDecimals(actualHours - target.targetHours);
 
   return {
@@ -286,6 +324,12 @@ export function calculateMonthlyHours(
     sickDayCount: countUniqueDays(shiftsInMonth, (shift) =>
       hasShiftCategory(shift, "SICK"),
     ),
+
+    vacationHours,
+
+    sickHours,
+
+    absenceHours,
 
     trainingDayCount: countUniqueDays(shiftsInMonth, (shift) =>
       hasShiftCategory(shift, "TRAINING"),

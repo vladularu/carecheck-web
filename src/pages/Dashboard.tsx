@@ -188,6 +188,15 @@ export default function Dashboard() {
     `${profile.payGroup} Stufe ${profile.payLevel} · ` +
     `Zuschlagsbasis ${premiumHourlyRate} €/h`;
 
+  const absenceLabel =
+    `Urlaub ${formatHours(
+      monthlyHours.vacationHours,
+    )} · Krank ${formatHours(
+      monthlyHours.sickHours,
+    )} · Abwesenheiten gesamt ${formatHours(
+      monthlyHours.absenceHours,
+    )}`;
+
   function handleExportCsv() {
     downloadMonthlyReportCsv({
       monthLabel,
@@ -216,6 +225,7 @@ export default function Dashboard() {
         <DashboardHero
           monthLabel={monthLabel}
           profileLabel={profileLabel}
+          absenceLabel={absenceLabel}
         />
 
         <WorkSummary
@@ -314,6 +324,7 @@ export default function Dashboard() {
         <DashboardHero
           monthLabel={monthLabel}
           profileLabel={profileLabel}
+          absenceLabel={absenceLabel}
         />
 
         <section

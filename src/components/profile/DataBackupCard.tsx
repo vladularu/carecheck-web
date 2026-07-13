@@ -1,4 +1,7 @@
-﻿import { useRef, useState } from "react";
+import {
+  useRef,
+  useState,
+} from "react";
 import { useAppContext } from "../../context/useAppContext";
 import {
   downloadCareCheckBackup,
@@ -9,9 +12,19 @@ import Button from "../ui/Button";
 import Card from "../ui/Card";
 
 export default function DataBackupCard() {
-  const { profile, shifts, shiftTemplates } = useAppContext();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [message, setMessage] = useState<string>("");
+  const {
+    profile,
+    shifts,
+    shiftTemplates,
+  } = useAppContext();
+
+  const fileInputRef =
+    useRef<HTMLInputElement | null>(
+      null,
+    );
+
+  const [message, setMessage] =
+    useState<string>("");
 
   function handleExportBackup() {
     downloadCareCheckBackup({
@@ -20,28 +33,40 @@ export default function DataBackupCard() {
       shiftTemplates,
     });
 
-    setMessage("Backup wurde erstellt.");
+    setMessage(
+      "Backup wurde erstellt.",
+    );
   }
 
-  async function handleImportBackup(file: File | undefined) {
+  async function handleImportBackup(
+    file: File | undefined,
+  ) {
     if (!file) {
       return;
     }
 
     try {
-      const backup = await readBackupFile(file);
+      const backup =
+        await readBackupFile(file);
 
-      const shouldRestore = window.confirm(
-        "Dieses Backup ersetzt dein aktuelles Profil, deine Dienste und deine Dienstvorlagen. Fortfahren?",
-      );
+      const shouldRestore =
+        window.confirm(
+          "Dieses Backup ersetzt dein aktuelles Profil, deine Dienste und deine Dienstvorlagen. Fortfahren?",
+        );
 
       if (!shouldRestore) {
-        setMessage("Import abgebrochen.");
+        setMessage(
+          "Import abgebrochen.",
+        );
+
         return;
       }
 
       restoreCareCheckBackup(backup);
-      setMessage("Backup wurde wiederhergestellt. Die App wird neu geladen.");
+
+      setMessage(
+        "Backup wurde wiederhergestellt. Die App wird neu geladen.",
+      );
 
       window.setTimeout(() => {
         window.location.reload();
@@ -55,7 +80,8 @@ export default function DataBackupCard() {
       setMessage(errorMessage);
     } finally {
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+        fileInputRef.current.value =
+          "";
       }
     }
   }
@@ -63,36 +89,56 @@ export default function DataBackupCard() {
   return (
     <Card className="profile-section-card data-backup-card">
       <div className="profile-section-header">
-        <span className="card-label">Datensicherung</span>
-        <strong>Backup & Wiederherstellung</strong>
+        <span className="card-label">
+          Datensicherung
+        </span>
+
+        <strong>
+          Backup & Wiederherstellung
+        </strong>
+
         <p>
-          Sichere Profil, Dienste und Dienstvorlagen als JSON-Datei. Diese Datei
-          kannst du spÃ¤ter wieder importieren, zum Beispiel nach einem
-          GerÃ¤tewechsel oder wenn Browserdaten gelÃ¶scht wurden.
+          Sichere Profil, Dienste,
+          Zeitgutschriften und Dienstvorlagen als
+          JSON-Datei. Alte CareCheck-Backups der
+          Version 1 können weiterhin importiert
+          werden.
         </p>
       </div>
 
       <div className="data-backup-stats">
         <div>
-          <span>Dienste gespeichert</span>
+          <span>
+            Kalendereinträge gespeichert
+          </span>
+
           <strong>{shifts.length}</strong>
         </div>
 
         <div>
-          <span>Backup enthÃ¤lt</span>
-          <strong>Profil Â· Dienste Â· Vorlagen</strong>
+          <span>Backup enthält</span>
+
+          <strong>
+            Profil · Einträge · Gutschriften ·
+            Vorlagen
+          </strong>
         </div>
       </div>
 
       <div className="data-backup-actions">
-        <Button type="button" onClick={handleExportBackup}>
+        <Button
+          type="button"
+          onClick={handleExportBackup}
+        >
           Backup exportieren
         </Button>
 
         <Button
           type="button"
           variant="secondary"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() =>
+            fileInputRef.current?.click()
+          }
         >
           Backup importieren
         </Button>
@@ -102,14 +148,23 @@ export default function DataBackupCard() {
           type="file"
           accept="application/json,.json"
           className="visually-hidden-input"
-          onChange={(event) => handleImportBackup(event.target.files?.[0])}
+          onChange={(event) =>
+            handleImportBackup(
+              event.target.files?.[0],
+            )
+          }
         />
       </div>
 
-      {message && <p className="data-backup-message">{message}</p>}
+      {message && (
+        <p className="data-backup-message">
+          {message}
+        </p>
+      )}
 
       <p className="profile-helper">
-        Hinweis: Die Wiederherstellung Ã¼berschreibt die aktuell lokal
+        Hinweis: Die Wiederherstellung
+        überschreibt die aktuell lokal
         gespeicherten Daten dieser App.
       </p>
     </Card>

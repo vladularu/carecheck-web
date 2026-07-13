@@ -14,24 +14,41 @@ export default function ExportCard({
 }: ExportCardProps) {
   return (
     <Card>
-      <span className="card-label">Export</span>
-      <strong className="status-title">Monatsbericht</strong>
+      <span className="card-label">
+        Export
+      </span>
+
+      <strong className="status-title">
+        Monatsbericht
+      </strong>
 
       <p>
-        Exportiert den ausgewählten Monat als Excel-Datei, CSV-Datei oder öffnet
-        eine druckbare PDF-Ansicht.
+        Exportiert den ausgewählten Monat inklusive
+        Urlaubs- und Krankstunden als Excel-Datei,
+        CSV-Datei oder druckbare PDF-Ansicht.
       </p>
 
       <div className="export-actions">
-        <Button type="button" onClick={onExportXlsx}>
+        <Button
+          type="button"
+          onClick={onExportXlsx}
+        >
           Excel-Datei exportieren
         </Button>
 
-        <Button type="button" variant="secondary" onClick={onExportCsv}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onExportCsv}
+        >
           CSV exportieren
         </Button>
 
-        <Button type="button" variant="secondary" onClick={onOpenReport}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onOpenReport}
+        >
           PDF-/Druckansicht öffnen
         </Button>
       </div>

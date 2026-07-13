@@ -6,10 +6,14 @@ import type {
 } from "../../types/index";
 import type { MonthlyHoursResult } from "../calculation/monthlyHoursCalculator";
 import type { MonthlyPremiumResult } from "../calculation/monthlyPremiumCalculator";
-import { calculateNetHours } from "../calculation/workingTimeCalculator";
+import {
+  getReportBreakLabel,
+  getReportHourSourceLabel,
+  getReportNetHours,
+  getReportTimeLabel,
+} from "./monthlyReportEntryFormatter";
 import {
   formatDateGerman,
-  formatTimeRange24,
 } from "../format/dateTimeFormat";
 
 interface MonthlyReportXlsxInput {
@@ -154,6 +158,18 @@ export function downloadMonthlyReportXlsx({
       monthlyHours.sickDayCount,
     ],
     [
+      "Urlaubsstunden",
+      monthlyHours.vacationHours,
+    ],
+    [
+      "Krankstunden",
+      monthlyHours.sickHours,
+    ],
+    [
+      "Abwesenheitsstunden",
+      monthlyHours.absenceHours,
+    ],
+    [
       "Fortbildungstage",
       monthlyHours.trainingDayCount,
     ],
@@ -251,19 +267,21 @@ export function downloadMonthlyReportXlsx({
       "Datum",
       "Eintragsart",
       "Zeit",
-      "Pause Minuten",
-      "Netto Stunden",
+      "Pause",
+      "Stunden",
+      "Stundenquelle",
       "Notiz",
     ],
     ...shifts.map((shift) => [
       formatDateGerman(shift.date),
       shiftLabels[shift.type],
-      formatTimeRange24(
-        shift.startTime,
-        shift.endTime,
+      getReportTimeLabel(shift),
+      getReportBreakLabel(shift),
+      getReportNetHours(
+        shift,
+        monthlyHours.averageDailyHours,
       ),
-      shift.breakMinutes,
-      calculateNetHours(shift),
+      getReportHourSourceLabel(shift),
       shift.note ?? "",
     ]),
   ];
@@ -273,7 +291,7 @@ export function downloadMonthlyReportXlsx({
 
   setColumnWidths(
     shiftsSheet,
-    [14, 18, 18, 16, 16, 36],
+    [14, 18, 18, 16, 16, 28, 36],
   );
 
   XLSX.utils.book_append_sheet(

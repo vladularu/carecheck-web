@@ -8,10 +8,14 @@ import {
 } from "../services/calculation/monthlyHoursCalculator";
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
 import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
-import { calculateNetHours } from "../services/calculation/workingTimeCalculator";
+import {
+  getReportBreakLabel,
+  getReportHourSourceLabel,
+  getReportNetHours,
+  getReportTimeLabel,
+} from "../services/export/monthlyReportEntryFormatter";
 import {
   formatDateGerman,
-  formatTimeRange24,
 } from "../services/format/dateTimeFormat";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
 import type { ComplianceIssue, ShiftType } from "../types/index";
@@ -113,17 +117,17 @@ export default function MonthlyReport() {
     },
   );
 
-const monthlyCompliance =
-  calculateMonthlyCompliance(
+  const monthlyCompliance =
+    calculateMonthlyCompliance(
     shifts,
     selectedYear,
     selectedMonth,
   );
 
-const {
-  issues: complianceIssues,
-  complianceRelevantShiftsInSelectedMonth,
-} = monthlyCompliance;
+  const {
+    issues: complianceIssues,
+    complianceRelevantShiftsInSelectedMonth,
+  } = monthlyCompliance;
 
   const criticalCount = complianceIssues.filter(
     (issue) => issue.severity === "critical",
@@ -339,6 +343,33 @@ const {
             </div>
 
             <div>
+              <span>Urlaubsstunden</span>
+              <strong>
+                {formatHours(
+                  monthlyHours.vacationHours,
+                )}
+              </strong>
+            </div>
+
+            <div>
+              <span>Krankstunden</span>
+              <strong>
+                {formatHours(
+                  monthlyHours.sickHours,
+                )}
+              </strong>
+            </div>
+
+            <div>
+              <span>Abwesenheitsstunden</span>
+              <strong>
+                {formatHours(
+                  monthlyHours.absenceHours,
+                )}
+              </strong>
+            </div>
+
+            <div>
               <span>Fortbildungstage</span>
               <strong>
                 {monthlyHours.trainingDayCount}
@@ -466,7 +497,8 @@ const {
                   <th>Eintragsart</th>
                   <th>Zeit</th>
                   <th>Pause</th>
-                  <th>Netto</th>
+                  <th>Stunden</th>
+                  <th>Stundenquelle</th>
                   <th>Notiz</th>
                 </tr>
               </thead>
@@ -481,18 +513,21 @@ const {
                       {shiftLabels[shift.type]}
                     </td>
                     <td>
-                      {formatTimeRange24(
-                        shift.startTime,
-                        shift.endTime,
-                      )}
+                      {getReportTimeLabel(shift)}
                     </td>
                     <td>
-                      {shift.breakMinutes} min
+                      {getReportBreakLabel(shift)}
                     </td>
                     <td>
                       {formatHours(
-                        calculateNetHours(shift),
+                        getReportNetHours(
+                          shift,
+                          monthlyHours.averageDailyHours,
+                        ),
                       )}
+                    </td>
+                    <td>
+                      {getReportHourSourceLabel(shift)}
                     </td>
                     <td>{shift.note ?? ""}</td>
                   </tr>

@@ -5,10 +5,14 @@ import type {
 } from "../../types/index";
 import type { MonthlyHoursResult } from "../calculation/monthlyHoursCalculator";
 import type { MonthlyPremiumResult } from "../calculation/monthlyPremiumCalculator";
-import { calculateNetHours } from "../calculation/workingTimeCalculator";
+import {
+  getReportBreakLabel,
+  getReportHourSourceLabel,
+  getReportNetHours,
+  getReportTimeLabel,
+} from "./monthlyReportEntryFormatter";
 import {
   formatDateGerman,
-  formatTimeRange24,
 } from "../format/dateTimeFormat";
 
 interface MonthlyReportCsvInput {
@@ -229,6 +233,30 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
+      "Urlaubsstunden",
+      `${formatNumber(
+        monthlyHours.vacationHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Krankstunden",
+      `${formatNumber(
+        monthlyHours.sickHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
+      "Abwesenheitsstunden",
+      `${formatNumber(
+        monthlyHours.absenceHours,
+      )} h`,
+    ]),
+  );
+  rows.push(
+    createRow([
       "Fortbildungstage",
       monthlyHours.trainingDayCount,
     ]),
@@ -323,9 +351,10 @@ export function createMonthlyReportCsv({
     createRow([
       "Datum",
       "Eintragsart",
-      "Beginn-Ende",
-      "Pause Minuten",
-      "Netto Stunden",
+      "Zeit",
+      "Pause",
+      "Stunden",
+      "Stundenquelle",
       "Notiz",
     ]),
   );
@@ -335,14 +364,15 @@ export function createMonthlyReportCsv({
       createRow([
         formatDateGerman(shift.date),
         shiftLabels[shift.type],
-        formatTimeRange24(
-          shift.startTime,
-          shift.endTime,
-        ),
-        shift.breakMinutes,
+        getReportTimeLabel(shift),
+        getReportBreakLabel(shift),
         `${formatNumber(
-          calculateNetHours(shift),
+          getReportNetHours(
+            shift,
+            monthlyHours.averageDailyHours,
+          ),
         )} h`,
+        getReportHourSourceLabel(shift),
         shift.note ?? "",
       ]),
     );
