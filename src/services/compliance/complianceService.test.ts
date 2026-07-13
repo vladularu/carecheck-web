@@ -396,3 +396,168 @@ describe("complianceService", () => {
     ).toBe("shift-2");
   });
 });
+  it("erkennt einen exakt doppelten Kalendereintrag", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-06",
+      startTime: "08:00",
+      endTime: "16:30",
+      breakMinutes: 30,
+      type: "EARLY",
+    });
+
+    const duplicateShift = createShift({
+      id: "shift-2",
+      date: "2026-07-06",
+      startTime: "08:00",
+      endTime: "16:30",
+      breakMinutes: 30,
+      type: "EARLY",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      duplicateShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Doppelter Kalendereintrag",
+      ),
+    ).toBe(true);
+  });
+
+  it("ordnet einen doppelten Eintrag dem später gefundenen Eintrag zu", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-06",
+      startTime: "08:00",
+      endTime: "16:30",
+      breakMinutes: 30,
+      type: "EARLY",
+    });
+
+    const duplicateShift = createShift({
+      id: "shift-2",
+      date: "2026-07-06",
+      startTime: "08:00",
+      endTime: "16:30",
+      breakMinutes: 30,
+      type: "EARLY",
+    });
+
+    const duplicateIssue =
+      checkCompliance([
+        firstShift,
+        duplicateShift,
+      ]).find(
+        (issue) =>
+          issue.title ===
+          "Doppelter Kalendereintrag",
+      );
+
+    expect(
+      duplicateIssue?.relatedShiftId,
+    ).toBe("shift-2");
+  });
+
+  it("erkennt zwei zeitlich überlappende Dienste", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-06",
+      startTime: "08:00",
+      endTime: "16:00",
+      breakMinutes: 30,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-06",
+      startTime: "15:00",
+      endTime: "22:00",
+      breakMinutes: 30,
+      type: "LATE",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Dienste überschneiden sich",
+      ),
+    ).toBe(true);
+  });
+
+  it("erkennt Überschneidungen bei einem Dienst über Mitternacht", () => {
+    const nightShift = createShift({
+      id: "night",
+      date: "2026-07-06",
+      startTime: "21:00",
+      endTime: "06:00",
+      breakMinutes: 30,
+      type: "NIGHT",
+    });
+
+    const earlyShift = createShift({
+      id: "early",
+      date: "2026-07-07",
+      startTime: "05:30",
+      endTime: "13:30",
+      breakMinutes: 30,
+      type: "EARLY",
+    });
+
+    const issues = checkCompliance([
+      nightShift,
+      earlyShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Dienste überschneiden sich",
+      ),
+    ).toBe(true);
+  });
+
+  it("meldet direkt aneinandergrenzende Dienste nicht als Überschneidung", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-06",
+      startTime: "08:00",
+      endTime: "12:00",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-06",
+      startTime: "12:00",
+      endTime: "16:00",
+      breakMinutes: 0,
+      type: "LATE",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Dienste überschneiden sich",
+      ),
+    ).toBe(false);
+  });

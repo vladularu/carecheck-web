@@ -456,6 +456,158 @@ function checkConsecutiveWeekends(
   return issues;
 }
 
+function createDuplicateKey(
+  shift: Shift,
+): string {
+  return [
+    shift.date,
+    shift.startTime,
+    shift.endTime,
+    shift.breakMinutes,
+    shift.type,
+  ].join("|");
+}
+
+function checkDuplicateEntries(
+  shifts: Shift[],
+): ComplianceIssue[] {
+  const seenEntries = new Map<string, Shift>();
+  const issues: ComplianceIssue[] = [];
+
+  for (const shift of sortShifts(shifts)) {
+    const duplicateKey =
+      createDuplicateKey(shift);
+
+    const existingShift =
+      seenEntries.get(duplicateKey);
+
+    if (!existingShift) {
+      seenEntries.set(
+        duplicateKey,
+        shift,
+      );
+
+      continue;
+    }
+
+    issues.push(
+      createIssue(
+        "critical",
+        "Doppelter Kalendereintrag",
+        `${formatShiftLabel(
+          shift,
+        )} wurde mehrfach mit derselben Eintragsart, Zeit und Pause erfasst.`,
+        shift.id,
+      ),
+    );
+  }
+
+  return issues;
+}
+
+function areExactDuplicates(
+  firstShift: Shift,
+  secondShift: Shift,
+): boolean {
+  return (
+    createDuplicateKey(firstShift) ===
+    createDuplicateKey(secondShift)
+  );
+}
+
+function shiftsOverlap(
+  firstShift: Shift,
+  secondShift: Shift,
+): boolean {
+  const firstStart =
+    getShiftStart(firstShift);
+
+  const firstEnd =
+    getShiftEnd(firstShift);
+
+  const secondStart =
+    getShiftStart(secondShift);
+
+  const secondEnd =
+    getShiftEnd(secondShift);
+
+  return (
+    firstStart < secondEnd &&
+    secondStart < firstEnd
+  );
+}
+
+function checkShiftOverlaps(
+  shifts: Shift[],
+): ComplianceIssue[] {
+  const sortedShifts = sortShifts(
+    shifts.filter(
+      isComplianceRelevant,
+    ),
+  );
+
+  const issues: ComplianceIssue[] = [];
+
+  for (
+    let firstIndex = 0;
+    firstIndex < sortedShifts.length;
+    firstIndex++
+  ) {
+    const firstShift =
+      sortedShifts[firstIndex];
+
+    const firstEnd =
+      getShiftEnd(firstShift);
+
+    for (
+      let secondIndex = firstIndex + 1;
+      secondIndex < sortedShifts.length;
+      secondIndex++
+    ) {
+      const secondShift =
+        sortedShifts[secondIndex];
+
+      const secondStart =
+        getShiftStart(secondShift);
+
+      if (secondStart >= firstEnd) {
+        break;
+      }
+
+      if (
+        areExactDuplicates(
+          firstShift,
+          secondShift,
+        )
+      ) {
+        continue;
+      }
+
+      if (
+        shiftsOverlap(
+          firstShift,
+          secondShift,
+        )
+      ) {
+        issues.push(
+          createIssue(
+            "critical",
+            "Dienste überschneiden sich",
+            `${formatShiftLabel(
+              firstShift,
+            )} überschneidet sich mit ${formatShiftLabel(
+              secondShift,
+            )}. Zeiten und Einträge prüfen.`,
+            secondShift.id,
+          ),
+        );
+      }
+    }
+  }
+
+  return issues;
+}
+
 export function checkCompliance(
   shifts: Shift[],
 ): ComplianceIssue[] {
@@ -465,6 +617,16 @@ export function checkCompliance(
     );
 
   const issues: ComplianceIssue[] = [];
+
+  issues.push(
+    ...checkDuplicateEntries(shifts),
+  );
+
+  issues.push(
+    ...checkShiftOverlaps(
+      complianceRelevantShifts,
+    ),
+  );
 
   for (
     const shift of
