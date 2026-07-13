@@ -3,8 +3,14 @@ import type {
   ShiftTemplates,
   UserProfile,
 } from "../../types/index";
-import { saveProfile } from "../storage/profileStorage";
-import { saveShifts } from "../storage/shiftStorage";
+import {
+  isUserProfile,
+  saveProfile,
+} from "../storage/profileStorage";
+import {
+  isShift,
+  saveShifts,
+} from "../storage/shiftStorage";
 import { saveShiftTemplates } from "../storage/shiftTemplateStorage";
 
 const CURRENT_BACKUP_VERSION = 2 as const;
@@ -72,8 +78,9 @@ function isBackupStructure(
       value.backupVersion,
     ) &&
     typeof value.exportedAt === "string" &&
-    isRecord(value.profile) &&
+    isUserProfile(value.profile) &&
     Array.isArray(value.shifts) &&
+    value.shifts.every(isShift) &&
     isRecord(value.shiftTemplates)
   );
 }

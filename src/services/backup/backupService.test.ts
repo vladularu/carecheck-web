@@ -36,6 +36,21 @@ const sickShift: Shift = {
   sourceShiftId: "night-1",
 };
 
+function createValidBackup(
+  overrides: Record<string, unknown> = {},
+) {
+  return {
+    app: "CareCheck TVöD",
+    backupVersion: 2,
+    exportedAt:
+      "2026-07-14T10:00:00.000Z",
+    profile,
+    shifts: [sickShift],
+    shiftTemplates,
+    ...overrides,
+  };
+}
+
 describe("backupService", () => {
   it("erstellt Backups der Version 2", () => {
     const backup =
@@ -90,6 +105,69 @@ describe("backupService", () => {
 
     expect(parsed.shifts).toHaveLength(
       1,
+    );
+  });
+
+  it("erhält bei einer Migration Profil und Exportdatum", () => {
+    const parsed =
+      parseCareCheckBackup({
+        ...createValidBackup({
+          backupVersion: 1,
+        }),
+      });
+
+    expect(parsed.profile).toEqual(
+      profile,
+    );
+
+    expect(parsed.exportedAt).toBe(
+      "2026-07-14T10:00:00.000Z",
+    );
+  });
+
+  it("weist nicht unterstützte zukünftige Backup-Versionen zurück", () => {
+    expect(() =>
+      parseCareCheckBackup(
+        createValidBackup({
+          backupVersion: 3,
+        }),
+      ),
+    ).toThrow(
+      "Die Datei ist kein gültiges CareCheck-Backup.",
+    );
+  });
+
+  it("weist Backups mit ungültigem Profil zurück", () => {
+    expect(() =>
+      parseCareCheckBackup(
+        createValidBackup({
+          profile: {
+            federalState: "XX",
+            weeklyHours: -5,
+            payGroup: "P99",
+            payLevel: 9,
+          },
+        }),
+      ),
+    ).toThrow(
+      "Die Datei ist kein gültiges CareCheck-Backup.",
+    );
+  });
+
+  it("weist Backups mit beschädigten Diensten zurück", () => {
+    expect(() =>
+      parseCareCheckBackup(
+        createValidBackup({
+          shifts: [
+            {
+              ...sickShift,
+              date: "2026-99-99",
+            },
+          ],
+        }),
+      ),
+    ).toThrow(
+      "Die Datei ist kein gültiges CareCheck-Backup.",
     );
   });
 
