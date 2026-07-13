@@ -608,6 +608,124 @@ function checkShiftOverlaps(
   return issues;
 }
 
+function getUniqueWorkingDays(
+  shifts: Shift[],
+): Array<{
+  dateKey: string;
+  relatedShift: Shift;
+}> {
+  const shiftsByDate = new Map<string, Shift[]>();
+
+  for (
+    const shift of
+    sortShifts(shifts).filter(
+      isComplianceRelevant,
+    )
+  ) {
+    const current =
+      shiftsByDate.get(shift.date) ?? [];
+
+    shiftsByDate.set(
+      shift.date,
+      [...current, shift],
+    );
+  }
+
+  return Array.from(
+    shiftsByDate.entries(),
+  )
+    .sort(([firstDate], [secondDate]) =>
+      firstDate.localeCompare(secondDate),
+    )
+    .map(([dateKey, dayShifts]) => ({
+      dateKey,
+      relatedShift:
+        dayShifts[dayShifts.length - 1],
+    }));
+}
+
+function checkConsecutiveWorkingDays(
+  shifts: Shift[],
+): ComplianceIssue[] {
+  const workingDays =
+    getUniqueWorkingDays(shifts);
+
+  const issues: ComplianceIssue[] = [];
+
+  if (workingDays.length < 7) {
+    return issues;
+  }
+
+  let streakStartIndex = 0;
+
+  function evaluateStreak(
+    streakEndIndex: number,
+  ) {
+    const streakLength =
+      streakEndIndex -
+      streakStartIndex +
+      1;
+
+    if (streakLength < 7) {
+      return;
+    }
+
+    const firstWorkingDay =
+      workingDays[streakStartIndex];
+
+    const lastWorkingDay =
+      workingDays[streakEndIndex];
+
+    issues.push(
+      createIssue(
+        "warning",
+        "Sieben oder mehr Arbeitstage in Folge",
+        `Vom ${formatDateGerman(
+          firstWorkingDay.dateKey,
+        )} bis ${formatDateGerman(
+          lastWorkingDay.dateKey,
+        )} wurden ${streakLength} aufeinanderfolgende Arbeitstage erkannt. Dies ist ein Planungshinweis; Erholungszeiten und freie Tage prüfen.`,
+        lastWorkingDay.relatedShift.id,
+      ),
+    );
+  }
+
+  for (
+    let index = 1;
+    index < workingDays.length;
+    index++
+  ) {
+    const previousDate =
+      dateFromDateKey(
+        workingDays[index - 1].dateKey,
+      );
+
+    const currentDate =
+      dateFromDateKey(
+        workingDays[index].dateKey,
+      );
+
+    const difference =
+      daysBetween(
+        previousDate,
+        currentDate,
+      );
+
+    if (difference === 1) {
+      continue;
+    }
+
+    evaluateStreak(index - 1);
+    streakStartIndex = index;
+  }
+
+  evaluateStreak(
+    workingDays.length - 1,
+  );
+
+  return issues;
+}
+
 export function checkCompliance(
   shifts: Shift[],
 ): ComplianceIssue[] {
@@ -651,11 +769,17 @@ export function checkCompliance(
     ),
   );
 
-  issues.push(
-    ...checkConsecutiveWeekends(
-      complianceRelevantShifts,
-    ),
-  );
+ issues.push(
+  ...checkConsecutiveWeekends(
+    complianceRelevantShifts,
+  ),
+);
 
-  return issues;
+issues.push(
+  ...checkConsecutiveWorkingDays(
+    complianceRelevantShifts,
+  ),
+);
+
+return issues;
 }
