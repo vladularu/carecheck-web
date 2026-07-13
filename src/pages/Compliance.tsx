@@ -1,7 +1,11 @@
-﻿import Card from "../components/ui/Card";
+import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
 import { useAppContext } from "../context/useAppContext";
-import { filterShiftsByMonth } from "../services/calculation/monthlyHoursCalculator";
+import {
+  calculateMonthlyHours,
+  filterShiftsByMonth,
+} from "../services/calculation/monthlyHoursCalculator";
+import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
 import { checkCompliance } from "../services/compliance/complianceService";
 import type { ComplianceIssue } from "../types/index";
 
@@ -14,7 +18,7 @@ const severityLabels: Record<ComplianceIssue["severity"], string> = {
 const monthNames = [
   "Januar",
   "Februar",
-  "MÃ¤rz",
+  "März",
   "April",
   "Mai",
   "Juni",
@@ -26,14 +30,22 @@ const monthNames = [
   "Dezember",
 ];
 
-function getIssueClassName(severity: ComplianceIssue["severity"]): string {
+function getIssueClassName(
+  severity: ComplianceIssue["severity"],
+): string {
   return `compliance-issue compliance-issue-${severity}`;
 }
 
 export default function Compliance() {
-  const { shifts, selectedYear, selectedMonth } = useAppContext();
+  const {
+    profile,
+    shifts,
+    selectedYear,
+    selectedMonth,
+  } = useAppContext();
 
-  const selectedMonthLabel = `${monthNames[selectedMonth]} ${selectedYear}`;
+  const selectedMonthLabel =
+    `${monthNames[selectedMonth]} ${selectedYear}`;
 
   const shiftsInSelectedMonth = filterShiftsByMonth(
     shifts,
@@ -41,7 +53,21 @@ export default function Compliance() {
     selectedMonth,
   );
 
-  const issues = checkCompliance(shiftsInSelectedMonth);
+  const complianceRelevantShifts =
+    filterComplianceRelevantShifts(
+      shiftsInSelectedMonth,
+    );
+
+  const monthlyHours = calculateMonthlyHours(
+    shifts,
+    profile,
+    selectedYear,
+    selectedMonth,
+  );
+
+  const issues = checkCompliance(
+    complianceRelevantShifts,
+  );
 
   const criticalCount = issues.filter(
     (issue) => issue.severity === "critical",
@@ -54,9 +80,9 @@ export default function Compliance() {
   return (
     <section className="page">
       <PageHeader
-        eyebrow="PrÃ¼fung"
-        title={`Arbeitszeitgesetz Â· ${selectedMonthLabel}`}
-        description="BasisprÃ¼fung fÃ¼r Ruhezeit, Pausen und tÃ¤gliche Arbeitszeit im ausgewÃ¤hlten Monat."
+        eyebrow="Prüfung"
+        title={`Arbeitszeitgesetz · ${selectedMonthLabel}`}
+        description="Basisprüfung für Ruhezeit, Pausen, tägliche Arbeitszeit und Wochenendfolge im ausgewählten Monat."
       />
 
       <Card>
@@ -72,32 +98,52 @@ export default function Compliance() {
           </div>
 
           <div>
-            <span>Dienste geprÃ¼ft</span>
-            <strong>{shiftsInSelectedMonth.length}</strong>
+            <span>Einträge geprüft</span>
+            <strong>
+              {
+                monthlyHours
+                  .complianceRelevantShiftCount
+              }
+            </strong>
           </div>
         </div>
 
-<p className="compliance-note">
-  Es werden nur Dienste aus dem aktuell ausgewÃ¤hlten Monat geprÃ¼ft:{" "}
-  <strong>{selectedMonthLabel}</strong>. GeprÃ¼ft werden Ruhezeit, Pausen,
-  Tagesarbeitszeit und Wochenendfolge. Den Monat Ã¤nderst du Ã¼ber die Kalender-
-  oder Dashboard-Navigation.
-</p>
+        <p className="compliance-note">
+          Es werden nur compliance-relevante Einträge
+          aus dem aktuell ausgewählten Monat geprüft:{" "}
+          <strong>{selectedMonthLabel}</strong>. Urlaub,
+          Krank und Frei werden nicht als Arbeitsdienste
+          geprüft. Fortbildungen bleiben
+          compliance-relevant. Den Monat änderst du über
+          die Kalender- oder Dashboard-Navigation.
+        </p>
       </Card>
 
       {issues.length === 0 ? (
         <Card>
-          <strong>Keine AuffÃ¤lligkeiten gefunden</strong>
+          <strong>
+            Keine Auffälligkeiten gefunden
+          </strong>
+
           <p>
-            FÃ¼r {selectedMonthLabel} wurden keine BasisverstÃ¶ÃŸe gegen die
-            hinterlegten PrÃ¼fregeln erkannt.
+            Für {selectedMonthLabel} wurden keine
+            Basisverstöße gegen die hinterlegten
+            Prüfregeln erkannt.
           </p>
         </Card>
       ) : (
         <div className="compliance-list">
           {issues.map((issue) => (
-            <article className={getIssueClassName(issue.severity)} key={issue.id}>
-              <span>{severityLabels[issue.severity]}</span>
+            <article
+              className={getIssueClassName(
+                issue.severity,
+              )}
+              key={issue.id}
+            >
+              <span>
+                {severityLabels[issue.severity]}
+              </span>
+
               <strong>{issue.title}</strong>
               <p>{issue.description}</p>
             </article>
