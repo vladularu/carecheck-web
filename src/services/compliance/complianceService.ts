@@ -274,32 +274,121 @@ function checkBreakRequirement(
   return issues;
 }
 
+interface WorkingDayBoundary {
+  dateKey: string;
+  firstStart: Date;
+  lastEnd: Date;
+  firstShift: Shift;
+  lastEndingShift: Shift;
+}
+
+function createWorkingDayBoundaries(
+  shifts: Shift[],
+): WorkingDayBoundary[] {
+  const shiftsByDate =
+    new Map<string, Shift[]>();
+
+  for (
+    const shift of
+    shifts.filter(isComplianceRelevant)
+  ) {
+    /*
+     * Identische Beginn- und Endzeit wird bereits
+     * als unplausible Eingabe gemeldet. Für eine
+     * Ruhezeitberechnung wäre die technische
+     * 24-Stunden-Interpretation irreführend.
+     */
+    if (
+      shift.startTime ===
+      shift.endTime
+    ) {
+      continue;
+    }
+
+    const current =
+      shiftsByDate.get(shift.date) ?? [];
+
+    shiftsByDate.set(
+      shift.date,
+      [...current, shift],
+    );
+  }
+
+  return Array.from(
+    shiftsByDate.entries(),
+  )
+    .map(([dateKey, dayShifts]) => {
+      const sortedByStart =
+        [...dayShifts].sort(
+          (firstShift, secondShift) =>
+            getShiftStart(
+              firstShift,
+            ).getTime() -
+            getShiftStart(
+              secondShift,
+            ).getTime(),
+        );
+
+      const sortedByEnd =
+        [...dayShifts].sort(
+          (firstShift, secondShift) =>
+            getShiftEnd(
+              firstShift,
+            ).getTime() -
+            getShiftEnd(
+              secondShift,
+            ).getTime(),
+        );
+
+      const firstShift =
+        sortedByStart[0];
+
+      const lastEndingShift =
+        sortedByEnd[
+          sortedByEnd.length - 1
+        ];
+
+      return {
+        dateKey,
+        firstStart:
+          getShiftStart(firstShift),
+        lastEnd:
+          getShiftEnd(
+            lastEndingShift,
+          ),
+        firstShift,
+        lastEndingShift,
+      };
+    })
+    .sort(
+      (firstDay, secondDay) =>
+        firstDay.firstStart.getTime() -
+        secondDay.firstStart.getTime(),
+    );
+}
+
 function checkRestTimes(
   shifts: Shift[],
 ): ComplianceIssue[] {
-  const sorted = sortShifts(shifts).filter(
-    isComplianceRelevant,
-  );
+  const workingDays =
+    createWorkingDayBoundaries(shifts);
 
   const issues: ComplianceIssue[] = [];
 
   for (
     let index = 0;
-    index < sorted.length - 1;
+    index < workingDays.length - 1;
     index++
   ) {
-    const currentShift = sorted[index];
-    const nextShift = sorted[index + 1];
+    const currentDay =
+      workingDays[index];
 
-    const currentEnd =
-      getShiftEnd(currentShift);
-
-    const nextStart =
-      getShiftStart(nextShift);
+    const nextDay =
+      workingDays[index + 1];
 
     const restHours = hoursBetween(
-      currentEnd,
-      nextStart,
+      currentDay.lastEnd,
+      nextDay.firstStart,
     );
 
     if (restHours < 10) {
@@ -308,11 +397,11 @@ function checkRestTimes(
           "critical",
           "Ruhezeit unter 10 Stunden",
           `Zwischen ${formatShiftLabel(
-            currentShift,
+            currentDay.lastEndingShift,
           )} und ${formatShiftLabel(
-            nextShift,
+            nextDay.firstShift,
           )} liegen nur ${restHours} h Ruhezeit. Auch im Krankenhaus- und Pflegebereich ist das kritisch.`,
-          nextShift.id,
+          nextDay.firstShift.id,
         ),
       );
 
@@ -325,11 +414,11 @@ function checkRestTimes(
           "warning",
           "Ruhezeit unter 11 Stunden",
           `Zwischen ${formatShiftLabel(
-            currentShift,
+            currentDay.lastEndingShift,
           )} und ${formatShiftLabel(
-            nextShift,
+            nextDay.firstShift,
           )} liegen ${restHours} h Ruhezeit. Im Krankenhaus- und Pflegebereich kann eine Verkürzung auf mindestens 10 Stunden möglich sein, wenn innerhalb eines Monats oder innerhalb von vier Wochen ein Ausgleich durch eine Ruhezeit von mindestens 12 Stunden erfolgt.`,
-          nextShift.id,
+          nextDay.firstShift.id,
         ),
       );
     }
@@ -1085,10 +1174,6 @@ function checkRecoveryAfterNightSeries(
       getShiftStart(nextShift),
     );
 
-    /*
-     * Ruhezeiten unter 11 Stunden werden bereits
-     * von der allgemeinen Ruhezeitprüfung gemeldet.
-     */
     if (
       restHours >= 11 &&
       restHours < 24
