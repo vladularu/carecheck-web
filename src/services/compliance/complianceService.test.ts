@@ -1071,4 +1071,165 @@ describe("complianceService", () => {
     ).toBe(false);
   });
 
+
+  it("meldet bei genau 6 Stunden keine ununterbrochene Überschreitung", () => {
+    const shift = createShift({
+      id: "shift-1",
+      date: "2026-07-18",
+      startTime: "08:00",
+      endTime: "14:00",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    expect(
+      hasIssue(
+        [shift],
+        "Mehr als 6 Stunden ohne dokumentierte Pause",
+      ),
+    ).toBe(false);
+  });
+
+  it("meldet einen einzelnen Dienst über 6 Stunden ohne dokumentierte Pause", () => {
+    const shift = createShift({
+      id: "shift-1",
+      date: "2026-07-18",
+      startTime: "08:00",
+      endTime: "14:01",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    expect(
+      hasIssue(
+        [shift],
+        "Mehr als 6 Stunden ohne dokumentierte Pause",
+      ),
+    ).toBe(true);
+  });
+
+  it("fasst direkt aneinandergrenzende Dienste zu einer ununterbrochenen Arbeitsphase zusammen", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-18",
+      startTime: "08:00",
+      endTime: "11:30",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-18",
+      startTime: "11:30",
+      endTime: "14:30",
+      breakMinutes: 0,
+      type: "TRAINING",
+    });
+
+    const issue = checkCompliance([
+      firstShift,
+      secondShift,
+    ]).find(
+      (currentIssue) =>
+        currentIssue.title ===
+        "Mehr als 6 Stunden ohne dokumentierte Pause",
+    );
+
+    expect(issue).toBeDefined();
+    expect(
+      issue?.relatedShiftId,
+    ).toBe("shift-2");
+  });
+
+  it("wertet eine Unterbrechung unter 15 Minuten nicht als ausreichende Pause", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-18",
+      startTime: "08:00",
+      endTime: "11:30",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-18",
+      startTime: "11:40",
+      endTime: "14:20",
+      breakMinutes: 0,
+      type: "TRAINING",
+    });
+
+    expect(
+      hasIssue(
+        [firstShift, secondShift],
+        "Mehr als 6 Stunden ohne dokumentierte Pause",
+      ),
+    ).toBe(true);
+  });
+
+  it("unterbricht die bekannte Arbeitsphase bei mindestens 15 Minuten Abstand", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-18",
+      startTime: "08:00",
+      endTime: "11:30",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-18",
+      startTime: "11:45",
+      endTime: "14:45",
+      breakMinutes: 0,
+      type: "TRAINING",
+    });
+
+    expect(
+      hasIssue(
+        [firstShift, secondShift],
+        "Mehr als 6 Stunden ohne dokumentierte Pause",
+      ),
+    ).toBe(false);
+  });
+
+  it("meldet bei hinterlegter Pause keine sicher feststellbare ununterbrochene Überschreitung", () => {
+    const shift = createShift({
+      id: "shift-1",
+      date: "2026-07-18",
+      startTime: "08:00",
+      endTime: "16:30",
+      breakMinutes: 30,
+      type: "EARLY",
+    });
+
+    expect(
+      hasIssue(
+        [shift],
+        "Mehr als 6 Stunden ohne dokumentierte Pause",
+      ),
+    ).toBe(false);
+  });
+
+  it("erkennt einen Nachtdienst über 6 Stunden ohne dokumentierte Pause", () => {
+    const nightShift = createShift({
+      id: "night-shift",
+      date: "2026-07-18",
+      startTime: "21:00",
+      endTime: "06:00",
+      breakMinutes: 0,
+      type: "NIGHT",
+    });
+
+    expect(
+      hasIssue(
+        [nightShift],
+        "Mehr als 6 Stunden ohne dokumentierte Pause",
+      ),
+    ).toBe(true);
+  });
+
 });

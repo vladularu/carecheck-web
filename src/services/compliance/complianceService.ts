@@ -543,6 +543,144 @@ function checkDailyBreakRequirements(
   return issues;
 }
 
+
+interface ContinuousWorkBlock {
+  start: Date;
+  end: Date;
+  firstShift: Shift;
+  lastShift: Shift;
+}
+
+function checkContinuousWorkWithoutDocumentedBreak(
+  shifts: Shift[],
+): ComplianceIssue[] {
+  const sortedShifts = sortShifts(
+    shifts.filter(isComplianceRelevant),
+  ).filter(
+    (shift) =>
+      shift.startTime !== shift.endTime,
+  );
+
+  const issues: ComplianceIssue[] = [];
+
+  let currentBlock:
+    | ContinuousWorkBlock
+    | null = null;
+
+  function evaluateCurrentBlock(): void {
+    if (!currentBlock) {
+      return;
+    }
+
+    const durationMinutes =
+      minutesBetween(
+        currentBlock.start,
+        currentBlock.end,
+      );
+
+    if (durationMinutes <= 360) {
+      return;
+    }
+
+    const durationHours =
+      roundToTwoDecimals(
+        durationMinutes / 60,
+      );
+
+    const blockDescription =
+      currentBlock.firstShift.id ===
+      currentBlock.lastShift.id
+        ? `${formatShiftLabel(
+            currentBlock.firstShift,
+          )} umfasst ${durationHours} Stunden ohne dokumentierte Ruhepause von mindestens 15 Minuten.`
+        : `Zwischen dem Beginn von ${formatShiftLabel(
+            currentBlock.firstShift,
+          )} und dem Ende von ${formatShiftLabel(
+            currentBlock.lastShift,
+          )} liegen ${durationHours} Stunden ohne dokumentierte Ruhepause von mindestens 15 Minuten.`;
+
+    issues.push(
+      createIssue(
+        "critical",
+        "Mehr als 6 Stunden ohne dokumentierte Pause",
+        `${blockDescription} Nach § 4 ArbZG darf nicht länger als sechs Stunden hintereinander ohne Ruhepause gearbeitet werden.`,
+        currentBlock.lastShift.id,
+      ),
+    );
+  }
+
+  for (const shift of sortedShifts) {
+    /*
+     * Ab 15 hinterlegten Pausenminuten kann eine
+     * gesetzlich relevante Pausenunterbrechung
+     * vorhanden sein. Da die genaue Pausenlage im
+     * aktuellen Datenmodell nicht gespeichert wird,
+     * endet hier die sicher feststellbare
+     * ununterbrochene Arbeitsphase.
+     */
+    if (shift.breakMinutes >= 15) {
+      evaluateCurrentBlock();
+      currentBlock = null;
+      continue;
+    }
+
+    const shiftStart =
+      getShiftStart(shift);
+
+    const shiftEnd =
+      getShiftEnd(shift);
+
+    if (!currentBlock) {
+      currentBlock = {
+        start: shiftStart,
+        end: shiftEnd,
+        firstShift: shift,
+        lastShift: shift,
+      };
+
+      continue;
+    }
+
+    const gapMinutes =
+      minutesBetween(
+        currentBlock.end,
+        shiftStart,
+      );
+
+    /*
+     * Eine Unterbrechung ab 15 Minuten kann eine
+     * Ruhepause darstellen. Kürzere Lücken und
+     * Überschneidungen unterbrechen den bekannten
+     * Arbeitsblock nicht.
+     */
+    if (gapMinutes >= 15) {
+      evaluateCurrentBlock();
+
+      currentBlock = {
+        start: shiftStart,
+        end: shiftEnd,
+        firstShift: shift,
+        lastShift: shift,
+      };
+
+      continue;
+    }
+
+    if (
+      shiftEnd.getTime() >
+      currentBlock.end.getTime()
+    ) {
+      currentBlock.end = shiftEnd;
+    }
+
+    currentBlock.lastShift = shift;
+  }
+
+  evaluateCurrentBlock();
+
+  return issues;
+}
+
 interface WorkingDayBoundary {
   dateKey: string;
   firstStart: Date;
@@ -1500,6 +1638,12 @@ export function checkCompliance(
 
   issues.push(
     ...checkDailyBreakRequirements(
+      complianceRelevantShifts,
+    ),
+  );
+
+  issues.push(
+    ...checkContinuousWorkWithoutDocumentedBreak(
       complianceRelevantShifts,
     ),
   );
