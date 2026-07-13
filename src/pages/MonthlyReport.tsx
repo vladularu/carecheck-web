@@ -7,9 +7,8 @@ import {
   filterShiftsByMonth,
 } from "../services/calculation/monthlyHoursCalculator";
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
-import { filterComplianceRelevantShifts } from "../services/calculation/shiftTypeRules";
+import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
 import { calculateNetHours } from "../services/calculation/workingTimeCalculator";
-import { checkCompliance } from "../services/compliance/complianceService";
 import {
   formatDateGerman,
   formatTimeRange24,
@@ -114,14 +113,17 @@ export default function MonthlyReport() {
     },
   );
 
-  const complianceRelevantShifts =
-    filterComplianceRelevantShifts(
-      shiftsInSelectedMonth,
-    );
-
-  const complianceIssues = checkCompliance(
-    complianceRelevantShifts,
+const monthlyCompliance =
+  calculateMonthlyCompliance(
+    shifts,
+    selectedYear,
+    selectedMonth,
   );
+
+const {
+  issues: complianceIssues,
+  complianceRelevantShiftsInSelectedMonth,
+} = monthlyCompliance;
 
   const criticalCount = complianceIssues.filter(
     (issue) => issue.severity === "critical",
@@ -351,13 +353,10 @@ export default function MonthlyReport() {
             </div>
 
             <div>
-              <span>Compliance-relevant</span>
-              <strong>
-                {
-                  monthlyHours
-                    .complianceRelevantShiftCount
-                }
-              </strong>
+<span>Compliance-relevant</span>
+<strong>
+  {complianceRelevantShiftsInSelectedMonth.length}
+</strong>
             </div>
           </div>
         </section>
