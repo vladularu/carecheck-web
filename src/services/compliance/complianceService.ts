@@ -726,6 +726,198 @@ function checkConsecutiveWorkingDays(
   return issues;
 }
 
+function checkLateToEarlySequences(
+  shifts: Shift[],
+): ComplianceIssue[] {
+  const sortedShifts = sortShifts(
+    shifts.filter(isComplianceRelevant),
+  );
+
+  const issues: ComplianceIssue[] = [];
+
+  for (
+    let index = 0;
+    index < sortedShifts.length - 1;
+    index++
+  ) {
+    const currentShift = sortedShifts[index];
+    const nextShift = sortedShifts[index + 1];
+
+    if (
+      currentShift.type !== "LATE" ||
+      nextShift.type !== "EARLY"
+    ) {
+      continue;
+    }
+
+    const currentDate =
+      dateFromDateKey(currentShift.date);
+
+    const nextDate =
+      dateFromDateKey(nextShift.date);
+
+    if (
+      daysBetween(
+        currentDate,
+        nextDate,
+      ) !== 1
+    ) {
+      continue;
+    }
+
+    const restHours = hoursBetween(
+      getShiftEnd(currentShift),
+      getShiftStart(nextShift),
+    );
+
+    /*
+     * Unter 11 Stunden wird bereits durch die
+     * Ruhezeitprüfung gemeldet. Dadurch vermeiden
+     * wir eine doppelte Warnung.
+     */
+    if (restHours < 11) {
+      continue;
+    }
+
+    issues.push(
+      createIssue(
+        "warning",
+        "Ungünstige Dienstfolge Spät zu Früh",
+        `Auf den Spätdienst ${formatShiftLabel(
+          currentShift,
+        )} folgt am nächsten Tag der Frühdienst ${formatShiftLabel(
+          nextShift,
+        )}. Die Ruhezeit beträgt ${restHours} Stunden. Die gesetzliche Mindestprüfung ist unauffällig, die kurze Vorwärtsrotation sollte planerisch dennoch geprüft werden.`,
+        nextShift.id,
+      ),
+    );
+  }
+
+  return issues;
+}
+
+function getUniqueNightShiftDays(
+  shifts: Shift[],
+): Array<{
+  dateKey: string;
+  relatedShift: Shift;
+}> {
+  const nightShiftsByDate =
+    new Map<string, Shift[]>();
+
+  for (
+    const shift of
+    sortShifts(shifts).filter(
+      (currentShift) =>
+        currentShift.type === "NIGHT" &&
+        isComplianceRelevant(currentShift),
+    )
+  ) {
+    const current =
+      nightShiftsByDate.get(
+        shift.date,
+      ) ?? [];
+
+    nightShiftsByDate.set(
+      shift.date,
+      [...current, shift],
+    );
+  }
+
+  return Array.from(
+    nightShiftsByDate.entries(),
+  )
+    .sort(([firstDate], [secondDate]) =>
+      firstDate.localeCompare(secondDate),
+    )
+    .map(([dateKey, dayShifts]) => ({
+      dateKey,
+      relatedShift:
+        dayShifts[dayShifts.length - 1],
+    }));
+}
+
+function checkConsecutiveNightShifts(
+  shifts: Shift[],
+): ComplianceIssue[] {
+  const nightShiftDays =
+    getUniqueNightShiftDays(shifts);
+
+  const issues: ComplianceIssue[] = [];
+
+  if (nightShiftDays.length < 4) {
+    return issues;
+  }
+
+  let streakStartIndex = 0;
+
+  function evaluateNightStreak(
+    streakEndIndex: number,
+  ) {
+    const streakLength =
+      streakEndIndex -
+      streakStartIndex +
+      1;
+
+    if (streakLength < 4) {
+      return;
+    }
+
+    const firstNight =
+      nightShiftDays[streakStartIndex];
+
+    const lastNight =
+      nightShiftDays[streakEndIndex];
+
+    issues.push(
+      createIssue(
+        "warning",
+        "Vier oder mehr Nachtdienste in Folge",
+        `Vom ${formatDateGerman(
+          firstNight.dateKey,
+        )} bis ${formatDateGerman(
+          lastNight.dateKey,
+        )} wurden ${streakLength} aufeinanderfolgende Nachtdienste erkannt. Belastung, Erholung und anschließende Dienstfolge prüfen.`,
+        lastNight.relatedShift.id,
+      ),
+    );
+  }
+
+  for (
+    let index = 1;
+    index < nightShiftDays.length;
+    index++
+  ) {
+    const previousDate =
+      dateFromDateKey(
+        nightShiftDays[index - 1].dateKey,
+      );
+
+    const currentDate =
+      dateFromDateKey(
+        nightShiftDays[index].dateKey,
+      );
+
+    if (
+      daysBetween(
+        previousDate,
+        currentDate,
+      ) === 1
+    ) {
+      continue;
+    }
+
+    evaluateNightStreak(index - 1);
+    streakStartIndex = index;
+  }
+
+  evaluateNightStreak(
+    nightShiftDays.length - 1,
+  );
+
+  return issues;
+}
+
 export function checkCompliance(
   shifts: Shift[],
 ): ComplianceIssue[] {
@@ -777,6 +969,18 @@ export function checkCompliance(
 
 issues.push(
   ...checkConsecutiveWorkingDays(
+    complianceRelevantShifts,
+  ),
+);
+
+issues.push(
+  ...checkLateToEarlySequences(
+    complianceRelevantShifts,
+  ),
+);
+
+issues.push(
+  ...checkConsecutiveNightShifts(
     complianceRelevantShifts,
   ),
 );
