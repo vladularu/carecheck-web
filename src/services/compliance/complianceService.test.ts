@@ -840,7 +840,7 @@ describe("complianceService", () => {
     ).toBe(true);
   });
 
-  it("berücksichtigt eine Unterbrechung von mindestens 15 Minuten als Pause", () => {
+  it("berücksichtigt eine Unterbrechung von mindestens 15 Minuten vorläufig als Pause", () => {
     const firstShift = createShift({
       id: "shift-1",
       date: "2026-07-16",
@@ -871,6 +871,14 @@ describe("complianceService", () => {
           "Pause zu kurz",
       ),
     ).toBe(false);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Unterbrechung als Pause prüfen",
+      ),
+    ).toBe(true);
   });
 
   it("berücksichtigt eine Unterbrechung unter 15 Minuten nicht als Pause", () => {
@@ -938,4 +946,129 @@ describe("complianceService", () => {
       ),
     ).toBe(false);
   });
+
+  it("rechnet eine sehr lange Unterbrechung nicht unbegrenzt als Pause an", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-17",
+      startTime: "06:00",
+      endTime: "11:00",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-17",
+      startTime: "15:00",
+      endTime: "18:00",
+      breakMinutes: 0,
+      type: "LATE",
+    });
+
+    const pauseStatusIssue =
+      checkCompliance([
+        firstShift,
+        secondShift,
+      ]).find(
+        (issue) =>
+          issue.title ===
+          "Unterbrechung als Pause prüfen",
+      );
+
+    expect(pauseStatusIssue).toBeDefined();
+    expect(
+      pauseStatusIssue?.description,
+    ).toContain(
+      "240 Minuten Unterbrechung",
+    );
+    expect(
+      pauseStatusIssue?.description,
+    ).toContain(
+      "davon 30 Minuten berücksichtigt",
+    );
+  });
+
+  it("wertet eine Überschneidung nicht als Pause", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-17",
+      startTime: "08:00",
+      endTime: "12:30",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-17",
+      startTime: "12:00",
+      endTime: "15:30",
+      breakMinutes: 0,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Dienste überschneiden sich",
+      ),
+    ).toBe(true);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Pause zu kurz",
+      ),
+    ).toBe(true);
+  });
+
+  it("meldet keinen Pausenstatus-Hinweis bei vollständig hinterlegter Pause", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-17",
+      startTime: "08:00",
+      endTime: "12:15",
+      breakMinutes: 15,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-17",
+      startTime: "12:15",
+      endTime: "15:30",
+      breakMinutes: 15,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Pause zu kurz",
+      ),
+    ).toBe(false);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Unterbrechung als Pause prüfen",
+      ),
+    ).toBe(false);
+  });
+
 });

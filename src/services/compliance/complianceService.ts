@@ -201,7 +201,6 @@ interface DailyWorkingTimeGroup {
   totalNetHours: number;
   recordedBreakMinutes: number;
   qualifyingGapMinutes: number;
-  totalBreakMinutes: number;
 }
 
 function minutesBetween(
@@ -357,9 +356,6 @@ function createDailyWorkingTimeGroups(
         totalNetHours,
         recordedBreakMinutes,
         qualifyingGapMinutes,
-        totalBreakMinutes:
-          recordedBreakMinutes +
-          qualifyingGapMinutes,
       };
     });
 }
@@ -452,13 +448,43 @@ function checkDailyBreakRequirements(
       requiredBreakMinutes = 30;
     }
 
+    if (requiredBreakMinutes === 0) {
+      continue;
+    }
+
+    const missingRecordedBreakMinutes =
+      Math.max(
+        0,
+        requiredBreakMinutes -
+          group.recordedBreakMinutes,
+      );
+
     if (
-      requiredBreakMinutes === 0 ||
-      group.totalBreakMinutes >=
-        requiredBreakMinutes
+      missingRecordedBreakMinutes === 0
     ) {
       continue;
     }
+
+    /*
+     * Eine zeitliche Lücke zwischen zwei Einträgen
+     * kann technisch erkannt werden. CareCheck kann
+     * aber nicht feststellen, ob diese Unterbrechung
+     * im Voraus feststand, vollständig arbeitsfrei war
+     * und frei genutzt werden konnte.
+     *
+     * Deshalb wird eine solche Lücke höchstens bis
+     * zur noch fehlenden gesetzlichen Mindestpause
+     * angerechnet und zusätzlich als fachlich zu
+     * bestätigender Pausenstatus gemeldet.
+     */
+    const creditedGapMinutes = Math.min(
+      group.qualifyingGapMinutes,
+      missingRecordedBreakMinutes,
+    );
+
+    const creditedBreakMinutes =
+      group.recordedBreakMinutes +
+      creditedGapMinutes;
 
     const relatedShift =
       group.shifts[
@@ -470,21 +496,45 @@ function checkDailyBreakRequirements(
         ? "ein compliance-relevanter Eintrag"
         : `${group.shifts.length} compliance-relevante Einträge`;
 
+    if (
+      creditedBreakMinutes <
+      requiredBreakMinutes
+    ) {
+      issues.push(
+        createIssue(
+          "critical",
+          "Pause zu kurz",
+          `Am ${formatDateGerman(
+            group.dateKey,
+          )} ergeben ${entryDescription} insgesamt ${
+            group.totalNetHours
+          } h Nettoarbeitszeit. Hinterlegt sind ${
+            group.recordedBreakMinutes
+          } Minuten Pause. Zusätzlich wurden ${
+            group.qualifyingGapMinutes
+          } Minuten zeitliche Unterbrechung von mindestens 15 Minuten zwischen Einträgen erkannt. Davon können für diese Mindestprüfung höchstens ${
+            creditedGapMinutes
+          } Minuten berücksichtigt werden. Erforderlich sind mindestens ${requiredBreakMinutes} Minuten.`,
+          relatedShift.id,
+        ),
+      );
+
+      continue;
+    }
+
     issues.push(
       createIssue(
-        "critical",
-        "Pause zu kurz",
+        "warning",
+        "Unterbrechung als Pause prüfen",
         `Am ${formatDateGerman(
           group.dateKey,
-        )} ergeben ${entryDescription} insgesamt ${
-          group.totalNetHours
-        } h Nettoarbeitszeit. Berücksichtigt werden ${
-          group.totalBreakMinutes
-        } Minuten Pause: ${
+        )} reichen die hinterlegten ${
           group.recordedBreakMinutes
-        } Minuten hinterlegte Pause und ${
+        } Minuten Pause allein nicht aus. Zwischen den Einträgen wurden ${
           group.qualifyingGapMinutes
-        } Minuten an Unterbrechungen von mindestens 15 Minuten zwischen Einträgen. Erforderlich sind mindestens ${requiredBreakMinutes} Minuten.`,
+        } Minuten Unterbrechung von mindestens 15 Minuten erkannt; für die Mindestprüfung werden davon ${
+          creditedGapMinutes
+        } Minuten berücksichtigt. Bitte bestätigen, dass diese Unterbrechung im Voraus feststand, arbeitsfrei war und frei genutzt werden konnte.`,
         relatedShift.id,
       ),
     );
