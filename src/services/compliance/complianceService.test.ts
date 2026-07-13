@@ -395,7 +395,7 @@ describe("complianceService", () => {
       issue?.relatedShiftId,
     ).toBe("shift-2");
   });
-});
+
   it("erkennt einen exakt doppelten Kalendereintrag", () => {
     const firstShift = createShift({
       id: "shift-1",
@@ -563,209 +563,379 @@ describe("complianceService", () => {
   });
 
 
-it("summiert mehrere Dienste desselben Tages auf genau 8 Stunden", () => {
-  const firstShift = createShift({
-    id: "shift-1",
-    date: "2026-07-15",
-    startTime: "08:00",
-    endTime: "12:00",
-    breakMinutes: 0,
-    type: "EARLY",
-  });
+  it("summiert mehrere Dienste desselben Tages auf genau 8 Stunden", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-15",
+      startTime: "08:00",
+      endTime: "12:00",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
 
-  const secondShift = createShift({
-    id: "shift-2",
-    date: "2026-07-15",
-    startTime: "13:00",
-    endTime: "17:00",
-    breakMinutes: 0,
-    type: "LATE",
-  });
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-15",
+      startTime: "13:00",
+      endTime: "17:00",
+      breakMinutes: 0,
+      type: "LATE",
+    });
 
-  const issues = checkCompliance([
-    firstShift,
-    secondShift,
-  ]);
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
 
-  expect(
-    issues.some((issue) =>
-      issue.title.includes(
-        "Tagesarbeitszeit",
+    expect(
+      issues.some((issue) =>
+        issue.title.includes(
+          "Tagesarbeitszeit",
+        ),
       ),
-    ),
-  ).toBe(false);
-});
-
-it("warnt bei mehr als 8 Stunden aus mehreren Diensten desselben Tages", () => {
-  const firstShift = createShift({
-    id: "shift-1",
-    date: "2026-07-15",
-    startTime: "08:00",
-    endTime: "12:30",
-    breakMinutes: 0,
-    type: "EARLY",
+    ).toBe(false);
   });
 
-  const secondShift = createShift({
-    id: "shift-2",
-    date: "2026-07-15",
-    startTime: "13:30",
-    endTime: "18:00",
-    breakMinutes: 0,
-    type: "LATE",
-  });
+  it("warnt bei mehr als 8 Stunden aus mehreren Diensten desselben Tages", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-15",
+      startTime: "08:00",
+      endTime: "12:30",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
 
-  const issues = checkCompliance([
-    firstShift,
-    secondShift,
-  ]);
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-15",
+      startTime: "13:30",
+      endTime: "18:00",
+      breakMinutes: 0,
+      type: "LATE",
+    });
 
-  expect(
-    issues.some(
-      (issue) =>
-        issue.title ===
-          "Tagesarbeitszeit über 8 Stunden" &&
-        issue.severity === "warning" &&
-        issue.relatedShiftId ===
-          "shift-2",
-    ),
-  ).toBe(true);
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
 
-  expect(
-    issues.some(
-      (issue) =>
-        issue.title ===
-        "Tagesarbeitszeit über 10 Stunden",
-    ),
-  ).toBe(false);
-});
-
-it("meldet mehr als 10 Stunden aus mehreren Diensten desselben Tages als kritisch", () => {
-  const firstShift = createShift({
-    id: "shift-1",
-    date: "2026-07-15",
-    startTime: "06:00",
-    endTime: "11:30",
-    breakMinutes: 0,
-    type: "EARLY",
-  });
-
-  const secondShift = createShift({
-    id: "shift-2",
-    date: "2026-07-15",
-    startTime: "12:30",
-    endTime: "18:00",
-    breakMinutes: 0,
-    type: "LATE",
-  });
-
-  const issues = checkCompliance([
-    firstShift,
-    secondShift,
-  ]);
-
-  expect(
-    issues.some(
-      (issue) =>
-        issue.title ===
-          "Tagesarbeitszeit über 10 Stunden" &&
-        issue.severity === "critical" &&
-        issue.relatedShiftId ===
-          "shift-2",
-    ),
-  ).toBe(true);
-
-  expect(
-    issues.some(
-      (issue) =>
-        issue.title ===
-        "Tagesarbeitszeit über 8 Stunden",
-    ),
-  ).toBe(false);
-});
-
-it("berücksichtigt Fortbildung in der Tagesgesamtarbeitszeit", () => {
-  const workShift = createShift({
-    id: "work-shift",
-    date: "2026-07-15",
-    startTime: "08:00",
-    endTime: "14:00",
-    breakMinutes: 0,
-    type: "EARLY",
-  });
-
-  const trainingShift = createShift({
-    id: "training-shift",
-    date: "2026-07-15",
-    startTime: "15:00",
-    endTime: "18:00",
-    breakMinutes: 0,
-    type: "TRAINING",
-  });
-
-  const issues = checkCompliance([
-    workShift,
-    trainingShift,
-  ]);
-
-  expect(
-    issues.some(
-      (issue) =>
-        issue.title ===
-        "Tagesarbeitszeit über 8 Stunden",
-    ),
-  ).toBe(true);
-});
-
-it("berücksichtigt Urlaub Krank und Frei nicht in der Tagesgesamtarbeitszeit", () => {
-  const workShift = createShift({
-    id: "work-shift",
-    date: "2026-07-15",
-    startTime: "08:00",
-    endTime: "16:00",
-    breakMinutes: 0,
-    type: "EARLY",
-  });
-
-  const vacationShift = createShift({
-    id: "vacation-shift",
-    date: "2026-07-15",
-    startTime: "16:00",
-    endTime: "20:00",
-    breakMinutes: 0,
-    type: "VACATION",
-  });
-
-  const sickShift = createShift({
-    id: "sick-shift",
-    date: "2026-07-15",
-    startTime: "20:00",
-    endTime: "22:00",
-    breakMinutes: 0,
-    type: "SICK",
-  });
-
-  const freeShift = createShift({
-    id: "free-shift",
-    date: "2026-07-15",
-    startTime: "22:00",
-    endTime: "23:00",
-    breakMinutes: 0,
-    type: "FREE",
-  });
-
-  const issues = checkCompliance([
-    workShift,
-    vacationShift,
-    sickShift,
-    freeShift,
-  ]);
-
-  expect(
-    issues.some((issue) =>
-      issue.title.includes(
-        "Tagesarbeitszeit",
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+            "Tagesarbeitszeit über 8 Stunden" &&
+          issue.severity === "warning" &&
+          issue.relatedShiftId ===
+            "shift-2",
       ),
-    ),
-  ).toBe(false);
+    ).toBe(true);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Tagesarbeitszeit über 10 Stunden",
+      ),
+    ).toBe(false);
+  });
+
+  it("meldet mehr als 10 Stunden aus mehreren Diensten desselben Tages als kritisch", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-15",
+      startTime: "06:00",
+      endTime: "11:30",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-15",
+      startTime: "12:30",
+      endTime: "18:00",
+      breakMinutes: 0,
+      type: "LATE",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+            "Tagesarbeitszeit über 10 Stunden" &&
+          issue.severity === "critical" &&
+          issue.relatedShiftId ===
+            "shift-2",
+      ),
+    ).toBe(true);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Tagesarbeitszeit über 8 Stunden",
+      ),
+    ).toBe(false);
+  });
+
+  it("berücksichtigt Fortbildung in der Tagesgesamtarbeitszeit", () => {
+    const workShift = createShift({
+      id: "work-shift",
+      date: "2026-07-15",
+      startTime: "08:00",
+      endTime: "14:00",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const trainingShift = createShift({
+      id: "training-shift",
+      date: "2026-07-15",
+      startTime: "15:00",
+      endTime: "18:00",
+      breakMinutes: 0,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      workShift,
+      trainingShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Tagesarbeitszeit über 8 Stunden",
+      ),
+    ).toBe(true);
+  });
+
+  it("berücksichtigt Urlaub Krank und Frei nicht in der Tagesgesamtarbeitszeit", () => {
+    const workShift = createShift({
+      id: "work-shift",
+      date: "2026-07-15",
+      startTime: "08:00",
+      endTime: "16:00",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const vacationShift = createShift({
+      id: "vacation-shift",
+      date: "2026-07-15",
+      startTime: "16:00",
+      endTime: "20:00",
+      breakMinutes: 0,
+      type: "VACATION",
+    });
+
+    const sickShift = createShift({
+      id: "sick-shift",
+      date: "2026-07-15",
+      startTime: "20:00",
+      endTime: "22:00",
+      breakMinutes: 0,
+      type: "SICK",
+    });
+
+    const freeShift = createShift({
+      id: "free-shift",
+      date: "2026-07-15",
+      startTime: "22:00",
+      endTime: "23:00",
+      breakMinutes: 0,
+      type: "FREE",
+    });
+
+    const issues = checkCompliance([
+      workShift,
+      vacationShift,
+      sickShift,
+      freeShift,
+    ]);
+
+    expect(
+      issues.some((issue) =>
+        issue.title.includes(
+          "Tagesarbeitszeit",
+        ),
+      ),
+    ).toBe(false);
+  });
+
+  it("summiert hinterlegte Pausen mehrerer Tageseinträge", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-16",
+      startTime: "08:00",
+      endTime: "12:15",
+      breakMinutes: 15,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-16",
+      startTime: "12:15",
+      endTime: "15:30",
+      breakMinutes: 15,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Pause zu kurz",
+      ),
+    ).toBe(false);
+  });
+
+  it("meldet eine zu kurze Tagesgesamtpause bei mehreren Einträgen", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-16",
+      startTime: "08:00",
+      endTime: "12:00",
+      breakMinutes: 10,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-16",
+      startTime: "12:00",
+      endTime: "15:00",
+      breakMinutes: 10,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+            "Pause zu kurz" &&
+          issue.severity ===
+            "critical" &&
+          issue.relatedShiftId ===
+            "shift-2",
+      ),
+    ).toBe(true);
+  });
+
+  it("berücksichtigt eine Unterbrechung von mindestens 15 Minuten als Pause", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-16",
+      startTime: "08:00",
+      endTime: "12:00",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-16",
+      startTime: "12:30",
+      endTime: "15:30",
+      breakMinutes: 0,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Pause zu kurz",
+      ),
+    ).toBe(false);
+  });
+
+  it("berücksichtigt eine Unterbrechung unter 15 Minuten nicht als Pause", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-16",
+      startTime: "08:00",
+      endTime: "12:00",
+      breakMinutes: 0,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-16",
+      startTime: "12:10",
+      endTime: "15:10",
+      breakMinutes: 0,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Pause zu kurz",
+      ),
+    ).toBe(true);
+  });
+
+  it("erkennt bei mehr als 9 Tagesstunden insgesamt 45 Minuten Pause als ausreichend", () => {
+    const firstShift = createShift({
+      id: "shift-1",
+      date: "2026-07-16",
+      startTime: "06:00",
+      endTime: "11:15",
+      breakMinutes: 15,
+      type: "EARLY",
+    });
+
+    const secondShift = createShift({
+      id: "shift-2",
+      date: "2026-07-16",
+      startTime: "11:30",
+      endTime: "16:15",
+      breakMinutes: 15,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Pause zu kurz",
+      ),
+    ).toBe(false);
+  });
 });

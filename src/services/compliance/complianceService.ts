@@ -199,6 +199,75 @@ interface DailyWorkingTimeGroup {
   dateKey: string;
   shifts: Shift[];
   totalNetHours: number;
+  recordedBreakMinutes: number;
+  qualifyingGapMinutes: number;
+  totalBreakMinutes: number;
+}
+
+function minutesBetween(
+  start: Date,
+  end: Date,
+): number {
+  const difference =
+    end.getTime() - start.getTime();
+
+  return Math.max(
+    0,
+    Math.round(
+      difference / 1000 / 60,
+    ),
+  );
+}
+
+function calculateQualifyingGapMinutes(
+  shifts: Shift[],
+): number {
+  if (shifts.length < 2) {
+    return 0;
+  }
+
+  const sortedShifts =
+    [...shifts].sort(
+      (firstShift, secondShift) =>
+        getShiftStart(
+          firstShift,
+        ).getTime() -
+        getShiftStart(
+          secondShift,
+        ).getTime(),
+    );
+
+  let qualifyingGapMinutes = 0;
+
+  for (
+    let index = 1;
+    index < sortedShifts.length;
+    index++
+  ) {
+    const previousShift =
+      sortedShifts[index - 1];
+
+    const currentShift =
+      sortedShifts[index];
+
+    const gapMinutes =
+      minutesBetween(
+        getShiftEnd(previousShift),
+        getShiftStart(currentShift),
+      );
+
+    /*
+     * Nach § 4 ArbZG können Pausen grundsätzlich
+     * nur in Abschnitten von mindestens
+     * 15 Minuten berücksichtigt werden.
+     */
+    if (gapMinutes >= 15) {
+      qualifyingGapMinutes +=
+        gapMinutes;
+    }
+  }
+
+  return qualifyingGapMinutes;
 }
 
 function createDailyWorkingTimeGroups(
@@ -216,7 +285,8 @@ function createDailyWorkingTimeGroups(
      * als unplausible Eingabe gemeldet.
      *
      * Der Dienst darf deshalb nicht technisch als
-     * 24-Stunden-Dienst in die Tagessumme einfließen.
+     * 24-Stunden-Dienst in die Tagessummen
+     * einfließen.
      */
     if (
       shift.startTime ===
@@ -245,7 +315,15 @@ function createDailyWorkingTimeGroups(
     )
     .map(([dateKey, dayShifts]) => {
       const sortedDayShifts =
-        sortShifts(dayShifts);
+        [...dayShifts].sort(
+          (firstShift, secondShift) =>
+            getShiftStart(
+              firstShift,
+            ).getTime() -
+            getShiftStart(
+              secondShift,
+            ).getTime(),
+        );
 
       const totalNetHours =
         roundToTwoDecimals(
@@ -257,10 +335,31 @@ function createDailyWorkingTimeGroups(
           ),
         );
 
+      const recordedBreakMinutes =
+        sortedDayShifts.reduce(
+          (total, shift) =>
+            total +
+            Math.max(
+              0,
+              shift.breakMinutes,
+            ),
+          0,
+        );
+
+      const qualifyingGapMinutes =
+        calculateQualifyingGapMinutes(
+          sortedDayShifts,
+        );
+
       return {
         dateKey,
         shifts: sortedDayShifts,
         totalNetHours,
+        recordedBreakMinutes,
+        qualifyingGapMinutes,
+        totalBreakMinutes:
+          recordedBreakMinutes +
+          qualifyingGapMinutes,
       };
     });
 }
@@ -329,37 +428,64 @@ function checkDailyWorkingTime(
   return issues;
 }
 
-function checkBreakRequirement(
-  shift: Shift,
+function checkDailyBreakRequirements(
+  shifts: Shift[],
 ): ComplianceIssue[] {
-  if (!isComplianceRelevant(shift)) {
-    return [];
-  }
+  const workingTimeGroups =
+    createDailyWorkingTimeGroups(
+      shifts,
+    );
 
   const issues: ComplianceIssue[] = [];
-  const netHours = calculateNetHours(shift);
 
-  let requiredBreakMinutes = 0;
-
-  if (netHours > 9) {
-    requiredBreakMinutes = 45;
-  } else if (netHours > 6) {
-    requiredBreakMinutes = 30;
-  }
-
-  if (
-    requiredBreakMinutes > 0 &&
-    shift.breakMinutes <
-      requiredBreakMinutes
+  for (
+    const group of
+    workingTimeGroups
   ) {
+    let requiredBreakMinutes = 0;
+
+    if (group.totalNetHours > 9) {
+      requiredBreakMinutes = 45;
+    } else if (
+      group.totalNetHours > 6
+    ) {
+      requiredBreakMinutes = 30;
+    }
+
+    if (
+      requiredBreakMinutes === 0 ||
+      group.totalBreakMinutes >=
+        requiredBreakMinutes
+    ) {
+      continue;
+    }
+
+    const relatedShift =
+      group.shifts[
+        group.shifts.length - 1
+      ];
+
+    const entryDescription =
+      group.shifts.length === 1
+        ? "ein compliance-relevanter Eintrag"
+        : `${group.shifts.length} compliance-relevante Einträge`;
+
     issues.push(
       createIssue(
         "critical",
         "Pause zu kurz",
-        `${formatShiftLabel(
-          shift,
-        )} hat ${netHours} h Nettoarbeitszeit und ${shift.breakMinutes} Minuten Pause. Erforderlich wären mindestens ${requiredBreakMinutes} Minuten.`,
-        shift.id,
+        `Am ${formatDateGerman(
+          group.dateKey,
+        )} ergeben ${entryDescription} insgesamt ${
+          group.totalNetHours
+        } h Nettoarbeitszeit. Berücksichtigt werden ${
+          group.totalBreakMinutes
+        } Minuten Pause: ${
+          group.recordedBreakMinutes
+        } Minuten hinterlegte Pause und ${
+          group.qualifyingGapMinutes
+        } Minuten an Unterbrechungen von mindestens 15 Minuten zwischen Einträgen. Erforderlich sind mindestens ${requiredBreakMinutes} Minuten.`,
+        relatedShift.id,
       ),
     );
   }
@@ -1311,48 +1437,33 @@ export function checkCompliance(
     ),
   );
 
- /*
- * Die Tagesarbeitszeit wird nicht mehr pro
- * Eintrag, sondern als Summe aller
- * compliance-relevanten Einträge desselben
- * gespeicherten Kalendertages geprüft.
- */
-issues.push(
-  ...checkDailyWorkingTime(
-    complianceRelevantShifts,
-  ),
-);
-
-for (
-  const shift of
-  complianceRelevantShifts
-) {
-  const plausibilityIssues =
-    checkTimePlausibility(shift);
-
-  issues.push(
-    ...plausibilityIssues,
-  );
-
   /*
-   * Bei identischer Beginn- und Endzeit wird
-   * der Dienst technisch als 24 Stunden
-   * interpretiert. Weitere Pausenmeldungen
-   * wären deshalb irreführend.
+   * Tagesarbeitszeit und Pausen werden als Summe
+   * aller compliance-relevanten Einträge desselben
+   * gespeicherten Kalendertages geprüft.
    */
-  if (
-    shift.startTime ===
-    shift.endTime
-  ) {
-    continue;
-  }
-
   issues.push(
-    ...checkBreakRequirement(
-      shift,
+    ...checkDailyWorkingTime(
+      complianceRelevantShifts,
     ),
   );
-}
+
+  issues.push(
+    ...checkDailyBreakRequirements(
+      complianceRelevantShifts,
+    ),
+  );
+
+  for (
+    const shift of
+    complianceRelevantShifts
+  ) {
+    issues.push(
+      ...checkTimePlausibility(
+        shift,
+      ),
+    );
+  }
 
   issues.push(
     ...checkRestTimes(
@@ -1360,35 +1471,35 @@ for (
     ),
   );
 
- issues.push(
-  ...checkConsecutiveWeekends(
-    complianceRelevantShifts,
-  ),
-);
+  issues.push(
+    ...checkConsecutiveWeekends(
+      complianceRelevantShifts,
+    ),
+  );
 
-issues.push(
-  ...checkConsecutiveWorkingDays(
-    complianceRelevantShifts,
-  ),
-);
+  issues.push(
+    ...checkConsecutiveWorkingDays(
+      complianceRelevantShifts,
+    ),
+  );
 
-issues.push(
-  ...checkLateToEarlySequences(
-    complianceRelevantShifts,
-  ),
-);
+  issues.push(
+    ...checkLateToEarlySequences(
+      complianceRelevantShifts,
+    ),
+  );
 
-issues.push(
-  ...checkConsecutiveNightShifts(
-    complianceRelevantShifts,
-  ),
-);
+  issues.push(
+    ...checkConsecutiveNightShifts(
+      complianceRelevantShifts,
+    ),
+  );
 
-issues.push(
-  ...checkRecoveryAfterNightSeries(
-    complianceRelevantShifts,
-  ),
-);
+  issues.push(
+    ...checkRecoveryAfterNightSeries(
+      complianceRelevantShifts,
+    ),
+  );
 
-return issues;
+  return issues;
 }
