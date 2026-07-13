@@ -28,11 +28,19 @@ export default function StatusCard({
         : "Keine Auffälligkeiten";
 
   const statusIcon =
-    criticalCount > 0 ? "🔴" : warningCount > 0 ? "🟠" : "🟢";
+    criticalCount > 0
+      ? "\u{1F534}"
+      : warningCount > 0
+        ? "\u{1F7E0}"
+        : "\u{1F7E2}";
 
   return (
-    <Card className={`dashboard-status-card ${statusClass}`}>
-      <span className="card-label">Prüfstatus</span>
+    <Card
+      className={`dashboard-status-card ${statusClass}`}
+    >
+      <span className="card-label">
+        Prüfstatus
+      </span>
 
       <strong className="status-title">
         {statusIcon} {statusText}
@@ -50,7 +58,7 @@ export default function StatusCard({
         </div>
 
         <div>
-          <span>Dienste geprüft</span>
+          <span>Einträge geprüft</span>
           <strong>{checkedShiftCount}</strong>
         </div>
       </div>
