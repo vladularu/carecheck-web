@@ -3,6 +3,9 @@ import { getHolidaysForState } from "../holiday/holidayService";
 import {
   countsAsPlanningDay,
   countsAsShift,
+  filterComplianceRelevantShifts,
+  filterWorkShifts,
+  hasShiftCategory,
 } from "./shiftTypeRules";
 import { calculateTotalNetHours } from "./workingTimeCalculator";
 
@@ -20,19 +23,63 @@ export interface MonthlyHoursResult {
 
   /**
    * Anzahl der planungsrelevanten Einträge.
-   * FREE wird ausdrücklich nicht mitgezählt.
+   * FREE wird nicht mitgezählt.
    */
   shiftCount: number;
 
   /**
-   * Verteilung aller planungsrelevanten Dienstarten.
-   * FREE wird ausdrücklich nicht mitgezählt.
+   * Verteilung der planungsrelevanten Dienstarten.
+   * FREE wird nicht mitgezählt.
    */
   shiftTypeCounts: ShiftTypeCount[];
 
   /**
+   * Alle gespeicherten Kalendereinträge des Monats,
+   * einschließlich FREE.
+   */
+  calendarEntryCount: number;
+
+  /**
+   * Planungsrelevante Einträge ohne FREE.
+   * Entspricht derzeit auch shiftCount.
+   */
+  planningEntryCount: number;
+
+  /**
+   * Tatsächliche Arbeitsdienste:
+   * EARLY, LATE, NIGHT, DAY und CUSTOM.
+   */
+  workShiftCount: number;
+
+  /**
+   * Anzahl der Einträge, die in der
+   * Compliance-Prüfung berücksichtigt werden.
+   */
+  complianceRelevantShiftCount: number;
+
+  /**
+   * Anzahl eindeutiger Urlaubstage.
+   */
+  vacationDayCount: number;
+
+  /**
+   * Anzahl eindeutiger Krankheitstage.
+   */
+  sickDayCount: number;
+
+  /**
+   * Anzahl eindeutiger Fortbildungstage.
+   */
+  trainingDayCount: number;
+
+  /**
+   * Anzahl eindeutiger Frei-Tage.
+   */
+  freeDayCount: number;
+
+  /**
    * Tatsächlich belegte planungsrelevante Kalendertage.
-   * Mehrere Dienste am selben Tag zählen nur als ein Planungstag.
+   * Mehrere Einträge am selben Tag zählen nur einmal.
    */
   plannedDayCount: number;
 
@@ -59,7 +106,11 @@ function roundToTwoDecimals(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-function formatDateKey(year: number, month: number, day: number): string {
+function formatDateKey(
+  year: number,
+  month: number,
+  day: number,
+): string {
   return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
     2,
     "0",
@@ -72,23 +123,54 @@ function isWeekday(date: Date): boolean {
   return day >= 1 && day <= 5;
 }
 
+function countUniqueDays(
+  shifts: Shift[],
+  predicate: (shift: Shift) => boolean,
+): number {
+  const dateKeys = new Set(
+    shifts
+      .filter(predicate)
+      .map((shift) => shift.date),
+  );
+
+  return dateKeys.size;
+}
+
 export function calculateMonthlyTargetHours(
   profile: UserProfile,
   year: number,
   monthIndex: number,
 ): MonthlyTargetResult {
-  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
-  const averageDailyHours = roundToTwoDecimals(profile.weeklyHours / 5);
+  const daysInMonth = new Date(
+    year,
+    monthIndex + 1,
+    0,
+  ).getDate();
 
-  const holidays = getHolidaysForState(year, profile.federalState);
-  const holidayDates = new Set(holidays.map((holiday) => holiday.date));
+  const averageDailyHours = roundToTwoDecimals(
+    profile.weeklyHours / 5,
+  );
+
+  const holidays = getHolidaysForState(
+    year,
+    profile.federalState,
+  );
+
+  const holidayDates = new Set(
+    holidays.map((holiday) => holiday.date),
+  );
 
   let weekdayCount = 0;
   let publicHolidayCount = 0;
 
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, monthIndex, day);
-    const dateKey = formatDateKey(year, monthIndex + 1, day);
+
+    const dateKey = formatDateKey(
+      year,
+      monthIndex + 1,
+      day,
+    );
 
     if (!isWeekday(date)) {
       continue;
@@ -101,10 +183,13 @@ export function calculateMonthlyTargetHours(
     }
   }
 
-  const workingDayCount = weekdayCount - publicHolidayCount;
+  const workingDayCount =
+    weekdayCount - publicHolidayCount;
+
   const targetHours = roundToTwoDecimals(
     workingDayCount * averageDailyHours,
   );
+
   const holidayReductionHours = roundToTwoDecimals(
     publicHolidayCount * averageDailyHours,
   );
@@ -123,7 +208,11 @@ export function calculateTargetHours(
   year: number,
   monthIndex: number,
 ): number {
-  return calculateMonthlyTargetHours(profile, year, monthIndex).targetHours;
+  return calculateMonthlyTargetHours(
+    profile,
+    year,
+    monthIndex,
+  ).targetHours;
 }
 
 export function filterShiftsByMonth(
@@ -134,28 +223,42 @@ export function filterShiftsByMonth(
   return shifts.filter((shift) => {
     const date = new Date(`${shift.date}T00:00:00`);
 
-    return date.getFullYear() === year && date.getMonth() === monthIndex;
+    return (
+      date.getFullYear() === year &&
+      date.getMonth() === monthIndex
+    );
   });
 }
 
-export function filterCountedShifts(shifts: Shift[]): Shift[] {
+export function filterCountedShifts(
+  shifts: Shift[],
+): Shift[] {
   return shifts.filter(countsAsShift);
 }
 
-export function countShiftTypes(shifts: Shift[]): ShiftTypeCount[] {
+export function countShiftTypes(
+  shifts: Shift[],
+): ShiftTypeCount[] {
   const counts = new Map<ShiftType, number>();
 
   for (const shift of filterCountedShifts(shifts)) {
-    counts.set(shift.type, (counts.get(shift.type) ?? 0) + 1);
+    counts.set(
+      shift.type,
+      (counts.get(shift.type) ?? 0) + 1,
+    );
   }
 
-  return Array.from(counts.entries()).map(([type, count]) => ({
-    type,
-    count,
-  }));
+  return Array.from(counts.entries()).map(
+    ([type, count]) => ({
+      type,
+      count,
+    }),
+  );
 }
 
-export function countPlannedDays(shifts: Shift[]): number {
+export function countPlannedDays(
+  shifts: Shift[],
+): number {
   const dateKeys = new Set(
     shifts
       .filter(countsAsPlanningDay)
@@ -171,11 +274,30 @@ export function calculateMonthlyHours(
   year: number,
   monthIndex: number,
 ): MonthlyHoursResult {
-  const shiftsInMonth = filterShiftsByMonth(shifts, year, monthIndex);
-  const countedShifts = filterCountedShifts(shiftsInMonth);
+  const shiftsInMonth = filterShiftsByMonth(
+    shifts,
+    year,
+    monthIndex,
+  );
 
-  const target = calculateMonthlyTargetHours(profile, year, monthIndex);
-  const actualHours = calculateTotalNetHours(countedShifts);
+  const countedShifts =
+    filterCountedShifts(shiftsInMonth);
+
+  const workShifts =
+    filterWorkShifts(shiftsInMonth);
+
+  const complianceRelevantShifts =
+    filterComplianceRelevantShifts(shiftsInMonth);
+
+  const target = calculateMonthlyTargetHours(
+    profile,
+    year,
+    monthIndex,
+  );
+
+  const actualHours =
+    calculateTotalNetHours(countedShifts);
+
   const balanceHours = roundToTwoDecimals(
     actualHours - target.targetHours,
   );
@@ -184,19 +306,60 @@ export function calculateMonthlyHours(
     targetHours: target.targetHours,
     actualHours,
     balanceHours,
-    overtimeHours: Math.max(0, balanceHours),
+
+    overtimeHours: Math.max(
+      0,
+      balanceHours,
+    ),
+
     undertimeHours: Math.max(
       0,
-      roundToTwoDecimals(target.targetHours - actualHours),
+      roundToTwoDecimals(
+        target.targetHours - actualHours,
+      ),
     ),
 
     shiftCount: countedShifts.length,
     shiftTypeCounts: countShiftTypes(countedShifts),
-    plannedDayCount: countPlannedDays(countedShifts),
+
+    calendarEntryCount: shiftsInMonth.length,
+    planningEntryCount: countedShifts.length,
+    workShiftCount: workShifts.length,
+
+    complianceRelevantShiftCount:
+      complianceRelevantShifts.length,
+
+    vacationDayCount: countUniqueDays(
+      shiftsInMonth,
+      (shift) =>
+        hasShiftCategory(shift, "VACATION"),
+    ),
+
+    sickDayCount: countUniqueDays(
+      shiftsInMonth,
+      (shift) =>
+        hasShiftCategory(shift, "SICK"),
+    ),
+
+    trainingDayCount: countUniqueDays(
+      shiftsInMonth,
+      (shift) =>
+        hasShiftCategory(shift, "TRAINING"),
+    ),
+
+    freeDayCount: countUniqueDays(
+      shiftsInMonth,
+      (shift) =>
+        hasShiftCategory(shift, "FREE"),
+    ),
+
+    plannedDayCount:
+      countPlannedDays(countedShifts),
 
     workingDayCount: target.workingDayCount,
     publicHolidayCount: target.publicHolidayCount,
-    holidayReductionHours: target.holidayReductionHours,
+    holidayReductionHours:
+      target.holidayReductionHours,
     averageDailyHours: target.averageDailyHours,
   };
 }

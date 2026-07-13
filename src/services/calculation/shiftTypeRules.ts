@@ -1,6 +1,14 @@
 import type { Shift, ShiftType } from "../../types/index";
 
+export type ShiftCategory =
+  | "WORK"
+  | "TRAINING"
+  | "VACATION"
+  | "SICK"
+  | "FREE";
+
 export interface ShiftTypeRule {
+  category: ShiftCategory;
   countsAsShift: boolean;
   countsAsPlanningDay: boolean;
   countsAsHours: boolean;
@@ -9,6 +17,7 @@ export interface ShiftTypeRule {
 
 export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   EARLY: {
+    category: "WORK",
     countsAsShift: true,
     countsAsPlanningDay: true,
     countsAsHours: true,
@@ -16,6 +25,7 @@ export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   },
 
   LATE: {
+    category: "WORK",
     countsAsShift: true,
     countsAsPlanningDay: true,
     countsAsHours: true,
@@ -23,6 +33,7 @@ export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   },
 
   NIGHT: {
+    category: "WORK",
     countsAsShift: true,
     countsAsPlanningDay: true,
     countsAsHours: true,
@@ -30,6 +41,7 @@ export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   },
 
   DAY: {
+    category: "WORK",
     countsAsShift: true,
     countsAsPlanningDay: true,
     countsAsHours: true,
@@ -37,6 +49,7 @@ export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   },
 
   TRAINING: {
+    category: "TRAINING",
     countsAsShift: true,
     countsAsPlanningDay: true,
     countsAsHours: true,
@@ -44,6 +57,7 @@ export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   },
 
   VACATION: {
+    category: "VACATION",
     countsAsShift: true,
     countsAsPlanningDay: true,
     countsAsHours: true,
@@ -51,6 +65,7 @@ export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   },
 
   SICK: {
+    category: "SICK",
     countsAsShift: true,
     countsAsPlanningDay: true,
     countsAsHours: true,
@@ -58,6 +73,7 @@ export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   },
 
   FREE: {
+    category: "FREE",
     countsAsShift: false,
     countsAsPlanningDay: false,
     countsAsHours: false,
@@ -65,6 +81,7 @@ export const shiftTypeRules: Record<ShiftType, ShiftTypeRule> = {
   },
 
   CUSTOM: {
+    category: "WORK",
     countsAsShift: true,
     countsAsPlanningDay: true,
     countsAsHours: true,
@@ -96,4 +113,19 @@ export function filterComplianceRelevantShifts(
   shifts: Shift[],
 ): Shift[] {
   return shifts.filter(isComplianceRelevant);
+}
+
+export function hasShiftCategory(
+  shift: Shift,
+  category: ShiftCategory,
+): boolean {
+  return getShiftTypeRule(shift.type).category === category;
+}
+
+export function isWorkShift(shift: Shift): boolean {
+  return hasShiftCategory(shift, "WORK");
+}
+
+export function filterWorkShifts(shifts: Shift[]): Shift[] {
+  return shifts.filter(isWorkShift);
 }
