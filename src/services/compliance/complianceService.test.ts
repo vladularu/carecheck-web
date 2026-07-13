@@ -1232,4 +1232,171 @@ describe("complianceService", () => {
     ).toBe(true);
   });
 
+
+  it("wertet einen Nachtdienst über Mitternacht als einen Arbeitszeitraum", () => {
+    const nightShift = createShift({
+      id: "night-shift",
+      date: "2026-07-20",
+      startTime: "21:00",
+      endTime: "06:00",
+      breakMinutes: 30,
+      type: "NIGHT",
+    });
+
+    const issues = checkCompliance([
+      nightShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+            "Tagesarbeitszeit über 8 Stunden" &&
+          issue.relatedShiftId ===
+            "night-shift",
+      ),
+    ).toBe(true);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Tagesarbeitszeit über 10 Stunden",
+      ),
+    ).toBe(false);
+  });
+
+  it("kombiniert Nachtdienst und Folgedienst bei weniger als 10 Stunden Ruhe", () => {
+    const nightShift = createShift({
+      id: "night-shift",
+      date: "2026-07-20",
+      startTime: "21:00",
+      endTime: "06:00",
+      breakMinutes: 30,
+      type: "NIGHT",
+    });
+
+    const followUpShift = createShift({
+      id: "follow-up-shift",
+      date: "2026-07-21",
+      startTime: "14:00",
+      endTime: "17:00",
+      breakMinutes: 0,
+      type: "DAY",
+    });
+
+    const issues = checkCompliance([
+      nightShift,
+      followUpShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+            "Tagesarbeitszeit über 10 Stunden" &&
+          issue.relatedShiftId ===
+            "follow-up-shift",
+      ),
+    ).toBe(true);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Ruhezeit unter 10 Stunden",
+      ),
+    ).toBe(true);
+  });
+
+  it("beginnt nach genau 10 Stunden Ruhe einen neuen Arbeitszeitraum", () => {
+    const nightShift = createShift({
+      id: "night-shift",
+      date: "2026-07-20",
+      startTime: "21:00",
+      endTime: "06:00",
+      breakMinutes: 30,
+      type: "NIGHT",
+    });
+
+    const followUpShift = createShift({
+      id: "follow-up-shift",
+      date: "2026-07-21",
+      startTime: "16:00",
+      endTime: "20:00",
+      breakMinutes: 0,
+      type: "DAY",
+    });
+
+    const issues = checkCompliance([
+      nightShift,
+      followUpShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Tagesarbeitszeit über 10 Stunden",
+      ),
+    ).toBe(false);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Ruhezeit unter 11 Stunden",
+      ),
+    ).toBe(true);
+  });
+
+  it("berücksichtigt eine Pausenlücke zwischen Einträgen über Mitternacht", () => {
+    const firstShift = createShift({
+      id: "shift-before-midnight",
+      date: "2026-07-20",
+      startTime: "22:00",
+      endTime: "02:00",
+      breakMinutes: 0,
+      type: "NIGHT",
+    });
+
+    const secondShift = createShift({
+      id: "shift-after-midnight",
+      date: "2026-07-21",
+      startTime: "02:30",
+      endTime: "07:00",
+      breakMinutes: 0,
+      type: "TRAINING",
+    });
+
+    const issues = checkCompliance([
+      firstShift,
+      secondShift,
+    ]);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Tagesarbeitszeit über 8 Stunden",
+      ),
+    ).toBe(true);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Unterbrechung als Pause prüfen",
+      ),
+    ).toBe(true);
+
+    expect(
+      issues.some(
+        (issue) =>
+          issue.title ===
+          "Pause zu kurz",
+      ),
+    ).toBe(false);
+  });
+
 });

@@ -195,12 +195,27 @@ function checkTimePlausibility(
   return issues;
 }
 
+const MINIMUM_REST_FOR_NEW_WORK_PERIOD_MINUTES =
+  10 * 60;
+
 interface DailyWorkingTimeGroup {
   dateKey: string;
   shifts: Shift[];
+  periodStart: Date;
+  periodEnd: Date;
+  firstShift: Shift;
+  lastEndingShift: Shift;
   totalNetHours: number;
   recordedBreakMinutes: number;
   qualifyingGapMinutes: number;
+}
+
+interface WorkingTimeGroupDraft {
+  shifts: Shift[];
+  periodStart: Date;
+  periodEnd: Date;
+  firstShift: Shift;
+  lastEndingShift: Shift;
 }
 
 function minutesBetween(
@@ -269,95 +284,155 @@ function calculateQualifyingGapMinutes(
   return qualifyingGapMinutes;
 }
 
+function createWorkingTimeGroupDraft(
+  shift: Shift,
+): WorkingTimeGroupDraft {
+  return {
+    shifts: [shift],
+    periodStart: getShiftStart(shift),
+    periodEnd: getShiftEnd(shift),
+    firstShift: shift,
+    lastEndingShift: shift,
+  };
+}
+
 function createDailyWorkingTimeGroups(
   shifts: Shift[],
 ): DailyWorkingTimeGroup[] {
-  const shiftsByDate =
-    new Map<string, Shift[]>();
+  const sortedShifts = sortShifts(
+    shifts.filter(isComplianceRelevant),
+  ).filter(
+    (shift) =>
+      shift.startTime !== shift.endTime,
+  );
 
-  for (
-    const shift of
-    shifts.filter(isComplianceRelevant)
-  ) {
-    /*
-     * Identische Beginn- und Endzeit wird bereits
-     * als unplausible Eingabe gemeldet.
-     *
-     * Der Dienst darf deshalb nicht technisch als
-     * 24-Stunden-Dienst in die Tagessummen
-     * einfließen.
-     */
-    if (
-      shift.startTime ===
-      shift.endTime
-    ) {
+  const groupDrafts:
+    WorkingTimeGroupDraft[] = [];
+
+  let currentGroup:
+    | WorkingTimeGroupDraft
+    | null = null;
+
+  for (const shift of sortedShifts) {
+    const shiftStart =
+      getShiftStart(shift);
+
+    const shiftEnd =
+      getShiftEnd(shift);
+
+    if (!currentGroup) {
+      currentGroup =
+        createWorkingTimeGroupDraft(
+          shift,
+        );
+
       continue;
     }
 
-    const currentShifts =
-      shiftsByDate.get(shift.date) ?? [];
+    const restMinutes =
+      minutesBetween(
+        currentGroup.periodEnd,
+        shiftStart,
+      );
 
-    shiftsByDate.set(
-      shift.date,
-      [...currentShifts, shift],
+    /*
+     * CareCheck ist auf den Krankenhaus- und
+     * Pflegebereich ausgerichtet. Dort kann die
+     * tägliche Ruhezeit unter den Voraussetzungen
+     * des § 5 Abs. 2 ArbZG auf 10 Stunden verkürzt
+     * werden. Deshalb beginnt ein neuer technischer
+     * Arbeitszeitraum ab mindestens 10 Stunden Ruhe.
+     *
+     * Eine Ruhezeit zwischen 10 und 11 Stunden wird
+     * weiterhin separat durch checkRestTimes als
+     * ausgleichspflichtige Warnung gemeldet.
+     */
+    if (
+      restMinutes >=
+      MINIMUM_REST_FOR_NEW_WORK_PERIOD_MINUTES
+    ) {
+      groupDrafts.push(currentGroup);
+
+      currentGroup =
+        createWorkingTimeGroupDraft(
+          shift,
+        );
+
+      continue;
+    }
+
+    currentGroup.shifts.push(shift);
+
+    if (
+      shiftEnd.getTime() >
+      currentGroup.periodEnd.getTime()
+    ) {
+      currentGroup.periodEnd = shiftEnd;
+      currentGroup.lastEndingShift =
+        shift;
+    }
+  }
+
+  if (currentGroup) {
+    groupDrafts.push(currentGroup);
+  }
+
+  return groupDrafts.map((group) => {
+    const totalNetHours =
+      roundToTwoDecimals(
+        group.shifts.reduce(
+          (total, shift) =>
+            total +
+            calculateNetHours(shift),
+          0,
+        ),
+      );
+
+    const recordedBreakMinutes =
+      group.shifts.reduce(
+        (total, shift) =>
+          total +
+          Math.max(
+            0,
+            shift.breakMinutes,
+          ),
+        0,
+      );
+
+    const qualifyingGapMinutes =
+      calculateQualifyingGapMinutes(
+        group.shifts,
+      );
+
+    return {
+      dateKey: group.firstShift.date,
+      shifts: group.shifts,
+      periodStart: group.periodStart,
+      periodEnd: group.periodEnd,
+      firstShift: group.firstShift,
+      lastEndingShift:
+        group.lastEndingShift,
+      totalNetHours,
+      recordedBreakMinutes,
+      qualifyingGapMinutes,
+    };
+  });
+}
+
+function formatWorkingTimeGroup(
+  group: DailyWorkingTimeGroup,
+): string {
+  if (group.shifts.length === 1) {
+    return formatShiftLabel(
+      group.firstShift,
     );
   }
 
-  return Array.from(
-    shiftsByDate.entries(),
-  )
-    .sort(
-      ([firstDate], [secondDate]) =>
-        firstDate.localeCompare(
-          secondDate,
-        ),
-    )
-    .map(([dateKey, dayShifts]) => {
-      const sortedDayShifts =
-        [...dayShifts].sort(
-          (firstShift, secondShift) =>
-            getShiftStart(
-              firstShift,
-            ).getTime() -
-            getShiftStart(
-              secondShift,
-            ).getTime(),
-        );
-
-      const totalNetHours =
-        roundToTwoDecimals(
-          sortedDayShifts.reduce(
-            (total, shift) =>
-              total +
-              calculateNetHours(shift),
-            0,
-          ),
-        );
-
-      const recordedBreakMinutes =
-        sortedDayShifts.reduce(
-          (total, shift) =>
-            total +
-            Math.max(
-              0,
-              shift.breakMinutes,
-            ),
-          0,
-        );
-
-      const qualifyingGapMinutes =
-        calculateQualifyingGapMinutes(
-          sortedDayShifts,
-        );
-
-      return {
-        dateKey,
-        shifts: sortedDayShifts,
-        totalNetHours,
-        recordedBreakMinutes,
-        qualifyingGapMinutes,
-      };
-    });
+  return `vom Beginn ${formatShiftLabel(
+    group.firstShift,
+  )} bis zum Ende ${formatShiftLabel(
+    group.lastEndingShift,
+  )}`;
 }
 
 function checkDailyWorkingTime(
@@ -384,18 +459,19 @@ function checkDailyWorkingTime(
         ? "Eintrag"
         : "Einträge";
 
+    const periodDescription =
+      formatWorkingTimeGroup(group);
+
     if (group.totalNetHours > 10) {
       issues.push(
         createIssue(
           "critical",
           "Tagesarbeitszeit über 10 Stunden",
-          `Am ${formatDateGerman(
-            group.dateKey,
-          )} ergeben ${
+          `${periodDescription} ergeben ${
             group.shifts.length
           } compliance-relevante ${entryLabel} insgesamt ${
             group.totalNetHours
-          } h Nettoarbeitszeit. Das überschreitet die übliche 10-Stunden-Grenze.`,
+          } h Nettoarbeitszeit. Das überschreitet die übliche 10-Stunden-Grenze. Ein Nachtdienst wird dabei nicht an Mitternacht geteilt.`,
           relatedShift.id,
         ),
       );
@@ -408,13 +484,11 @@ function checkDailyWorkingTime(
         createIssue(
           "warning",
           "Tagesarbeitszeit über 8 Stunden",
-          `Am ${formatDateGerman(
-            group.dateKey,
-          )} ergeben ${
+          `${periodDescription} ergeben ${
             group.shifts.length
           } compliance-relevante ${entryLabel} insgesamt ${
             group.totalNetHours
-          } h Nettoarbeitszeit. Ausgleichszeitraum prüfen.`,
+          } h Nettoarbeitszeit. Ein Nachtdienst wird dabei nicht an Mitternacht geteilt. Ausgleichszeitraum prüfen.`,
           relatedShift.id,
         ),
       );
@@ -496,6 +570,9 @@ function checkDailyBreakRequirements(
         ? "ein compliance-relevanter Eintrag"
         : `${group.shifts.length} compliance-relevante Einträge`;
 
+    const periodDescription =
+      formatWorkingTimeGroup(group);
+
     if (
       creditedBreakMinutes <
       requiredBreakMinutes
@@ -504,9 +581,7 @@ function checkDailyBreakRequirements(
         createIssue(
           "critical",
           "Pause zu kurz",
-          `Am ${formatDateGerman(
-            group.dateKey,
-          )} ergeben ${entryDescription} insgesamt ${
+          `${periodDescription} ergeben ${entryDescription} insgesamt ${
             group.totalNetHours
           } h Nettoarbeitszeit. Hinterlegt sind ${
             group.recordedBreakMinutes
@@ -526,9 +601,7 @@ function checkDailyBreakRequirements(
       createIssue(
         "warning",
         "Unterbrechung als Pause prüfen",
-        `Am ${formatDateGerman(
-          group.dateKey,
-        )} reichen die hinterlegten ${
+        `${periodDescription} reichen die hinterlegten ${
           group.recordedBreakMinutes
         } Minuten Pause allein nicht aus. Zwischen den Einträgen wurden ${
           group.qualifyingGapMinutes
@@ -542,7 +615,6 @@ function checkDailyBreakRequirements(
 
   return issues;
 }
-
 
 interface ContinuousWorkBlock {
   start: Date;
@@ -1627,8 +1699,9 @@ export function checkCompliance(
 
   /*
    * Tagesarbeitszeit und Pausen werden als Summe
-   * aller compliance-relevanten Einträge desselben
-   * gespeicherten Kalendertages geprüft.
+   * eines zusammenhängenden Arbeitszeitraums
+   * geprüft. Nachtdienste werden nicht künstlich
+   * an der Kalendergrenze um 00:00 Uhr geteilt.
    */
   issues.push(
     ...checkDailyWorkingTime(
