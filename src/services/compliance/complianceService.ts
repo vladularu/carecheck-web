@@ -195,42 +195,135 @@ function checkTimePlausibility(
   return issues;
 }
 
-function checkDailyWorkingTime(
-  shift: Shift,
-): ComplianceIssue[] {
-  if (!isComplianceRelevant(shift)) {
-    return [];
+interface DailyWorkingTimeGroup {
+  dateKey: string;
+  shifts: Shift[];
+  totalNetHours: number;
+}
+
+function createDailyWorkingTimeGroups(
+  shifts: Shift[],
+): DailyWorkingTimeGroup[] {
+  const shiftsByDate =
+    new Map<string, Shift[]>();
+
+  for (
+    const shift of
+    shifts.filter(isComplianceRelevant)
+  ) {
+    /*
+     * Identische Beginn- und Endzeit wird bereits
+     * als unplausible Eingabe gemeldet.
+     *
+     * Der Dienst darf deshalb nicht technisch als
+     * 24-Stunden-Dienst in die Tagessumme einfließen.
+     */
+    if (
+      shift.startTime ===
+      shift.endTime
+    ) {
+      continue;
+    }
+
+    const currentShifts =
+      shiftsByDate.get(shift.date) ?? [];
+
+    shiftsByDate.set(
+      shift.date,
+      [...currentShifts, shift],
+    );
   }
+
+  return Array.from(
+    shiftsByDate.entries(),
+  )
+    .sort(
+      ([firstDate], [secondDate]) =>
+        firstDate.localeCompare(
+          secondDate,
+        ),
+    )
+    .map(([dateKey, dayShifts]) => {
+      const sortedDayShifts =
+        sortShifts(dayShifts);
+
+      const totalNetHours =
+        roundToTwoDecimals(
+          sortedDayShifts.reduce(
+            (total, shift) =>
+              total +
+              calculateNetHours(shift),
+            0,
+          ),
+        );
+
+      return {
+        dateKey,
+        shifts: sortedDayShifts,
+        totalNetHours,
+      };
+    });
+}
+
+function checkDailyWorkingTime(
+  shifts: Shift[],
+): ComplianceIssue[] {
+  const workingTimeGroups =
+    createDailyWorkingTimeGroups(
+      shifts,
+    );
 
   const issues: ComplianceIssue[] = [];
-  const netHours = calculateNetHours(shift);
 
-  if (netHours > 10) {
-    issues.push(
-      createIssue(
-        "critical",
-        "Tagesarbeitszeit über 10 Stunden",
-        `${formatShiftLabel(
-          shift,
-        )} hat ${netHours} h Nettoarbeitszeit. Das überschreitet die übliche 10-Stunden-Grenze.`,
-        shift.id,
-      ),
-    );
+  for (
+    const group of
+    workingTimeGroups
+  ) {
+    const relatedShift =
+      group.shifts[
+        group.shifts.length - 1
+      ];
 
-    return issues;
-  }
+    const entryLabel =
+      group.shifts.length === 1
+        ? "Eintrag"
+        : "Einträge";
 
-  if (netHours > 8) {
-    issues.push(
-      createIssue(
-        "warning",
-        "Tagesarbeitszeit über 8 Stunden",
-        `${formatShiftLabel(
-          shift,
-        )} hat ${netHours} h Nettoarbeitszeit. Ausgleichszeitraum prüfen.`,
-        shift.id,
-      ),
-    );
+    if (group.totalNetHours > 10) {
+      issues.push(
+        createIssue(
+          "critical",
+          "Tagesarbeitszeit über 10 Stunden",
+          `Am ${formatDateGerman(
+            group.dateKey,
+          )} ergeben ${
+            group.shifts.length
+          } compliance-relevante ${entryLabel} insgesamt ${
+            group.totalNetHours
+          } h Nettoarbeitszeit. Das überschreitet die übliche 10-Stunden-Grenze.`,
+          relatedShift.id,
+        ),
+      );
+
+      continue;
+    }
+
+    if (group.totalNetHours > 8) {
+      issues.push(
+        createIssue(
+          "warning",
+          "Tagesarbeitszeit über 8 Stunden",
+          `Am ${formatDateGerman(
+            group.dateKey,
+          )} ergeben ${
+            group.shifts.length
+          } compliance-relevante ${entryLabel} insgesamt ${
+            group.totalNetHours
+          } h Nettoarbeitszeit. Ausgleichszeitraum prüfen.`,
+          relatedShift.id,
+        ),
+      );
+    }
   }
 
   return issues;
@@ -1218,7 +1311,19 @@ export function checkCompliance(
     ),
   );
 
- for (
+ /*
+ * Die Tagesarbeitszeit wird nicht mehr pro
+ * Eintrag, sondern als Summe aller
+ * compliance-relevanten Einträge desselben
+ * gespeicherten Kalendertages geprüft.
+ */
+issues.push(
+  ...checkDailyWorkingTime(
+    complianceRelevantShifts,
+  ),
+);
+
+for (
   const shift of
   complianceRelevantShifts
 ) {
@@ -1232,8 +1337,8 @@ export function checkCompliance(
   /*
    * Bei identischer Beginn- und Endzeit wird
    * der Dienst technisch als 24 Stunden
-   * interpretiert. Weitere Arbeitszeit- und
-   * Pausenmeldungen wären deshalb irreführend.
+   * interpretiert. Weitere Pausenmeldungen
+   * wären deshalb irreführend.
    */
   if (
     shift.startTime ===
@@ -1241,12 +1346,6 @@ export function checkCompliance(
   ) {
     continue;
   }
-
-  issues.push(
-    ...checkDailyWorkingTime(
-      shift,
-    ),
-  );
 
   issues.push(
     ...checkBreakRequirement(
