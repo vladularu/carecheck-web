@@ -4,6 +4,7 @@ const items = [
   { to: "/", label: "Start" },
   { to: "/plan", label: "Plan" },
   { to: "/gehalt", label: "Gehalt" },
+  { to: "/jahr", label: "Jahr" },
   { to: "/pruefung", label: "Prüfung" },
   { to: "/profil", label: "Profil" },
   { to: "/kalender", label: "Kalender" },

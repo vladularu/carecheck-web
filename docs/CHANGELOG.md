@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.4.0 (unreleased)
+
+- Jahresauswertung fuer alle zwoelf Monate ergaenzt.
+- Jahressummen fuer Soll, Ist, Saldo, Abwesenheiten, Zuschlaege, Nacht-, Wochenend- und Feiertagsarbeit eingefuehrt.
+- Monatsvergleich mit Trends fuer Saldo, Iststunden und Nachtstunden ergaenzt.
+- CSV-Export fuer Jahresberichte ergaenzt.
+- Jahresweite Compliance-Zaehler aus bestehenden Monatspruefungen abgeleitet, ohne Compliance-Regeln zu aendern.
+- Mobile Jahresansicht und klassische Desktop-Uebersicht umgesetzt.
+- Regressionstests fuer Jahresauswertung, CSV-Export und Zuschlagsfilter ergaenzt.
+
 ## v1.3.0
 
 - TVoeD-P Fachmodul auf der Gehaltsseite ergaenzt.

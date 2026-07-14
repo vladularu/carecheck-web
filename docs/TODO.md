@@ -26,9 +26,21 @@
 - [x] v1.3.0 nach `main` uebernehmen.
 - [x] Release-Tag und GitHub Release fuer `v1.3.0` erstellen.
 
+## v1.4.0 - Jahresauswertung
+
+- [x] Jahresauswertungs-Service fuer alle zwoelf Monate ergaenzen.
+- [x] Jahres-Soll-, Ist- und Saldostunden berechnen.
+- [x] Urlaub, Krankheit und Fortbildung jahresweit ausweisen.
+- [x] Wochenend-, Nacht- und Feiertagsarbeit verteilen.
+- [x] Monatsvergleiche und Trends anzeigen.
+- [x] Jahresbericht als CSV exportieren.
+- [x] Jahresansicht in Routing und Navigation einbinden.
+- [x] Regressionstests fuer Jahresauswertung und Export ergaenzen.
+- [ ] v1.4.0 nach `main` uebernehmen.
+- [ ] Release-Tag und GitHub Release fuer `v1.4.0` erstellen.
+
 ## Spaetere Versionen
 
-- [ ] v1.4.0 Jahresauswertung planen.
 - [ ] v1.5.0 Regelwerk und Transparenz ausarbeiten.
 - [ ] v1.6.0 Dienstplanpruefung und Fairness konzipieren.
 - [ ] v1.7.0 Planung und Komfort erweitern.

@@ -6,6 +6,7 @@ import {
 } from "./premiumAmountCalculator";
 import { calculateShiftPremiumHours } from "./shiftPremiumCalculator";
 import { filterShiftsByMonth } from "./monthlyHoursCalculator";
+import { filterWorkShifts } from "./shiftTypeRules";
 
 export interface MonthlyPremiumLine {
   key: string;
@@ -61,7 +62,9 @@ export function calculateMonthlyPremiums(
   monthIndex: number,
   options: MonthlyPremiumOptions,
 ): MonthlyPremiumResult {
-  const shiftsInMonth = filterShiftsByMonth(shifts, year, monthIndex);
+  const shiftsInMonth = filterWorkShifts(
+    filterShiftsByMonth(shifts, year, monthIndex),
+  );
   const lineMap = new Map<string, MonthlyPremiumLine>();
 
   let shiftCountWithPremiums = 0;

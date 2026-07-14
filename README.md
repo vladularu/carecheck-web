@@ -16,6 +16,8 @@ The app focuses on practical month-by-month workflows:
 
 Latest tagged release: `v1.3.0`
 
+Active development: `v1.4.0 - Jahresauswertung` on `feature/v1.4.0-yearly-analysis`
+
 Release focus:
 
 - versioned TVoeD-P tariff values
@@ -26,6 +28,15 @@ Release focus:
 - weekend assessment for the selected month
 - explicit separation between ArbZG compliance checks and TVoeD-P tariff views
 - statistics and compliance logic unchanged
+
+Current development focus:
+
+- yearly overview across all twelve months
+- annual target, actual, balance, absence, premium, night, weekend, and holiday-work totals
+- monthly comparison table for trend review
+- yearly CSV export
+- annual compliance issue counts based on existing monthly checks
+- iPhone-first yearly dashboard while preserving desktop overview
 
 ## Tech Stack
 
@@ -95,6 +106,7 @@ npm.cmd run build
 - `/pruefung` - compliance checks
 - `/kalender` - calendar and day details
 - `/bericht` - monthly report and print view
+- `/jahr` - yearly analysis and CSV export
 - `/profil` - profile, templates, and backup
 
 ## Project Structure
@@ -113,6 +125,7 @@ docs/
   CARECHECK_DESIGN_GUIDE.md
   ROADMAP.md
   TODO.md
+  V1.4.0_YEARLY_ANALYSIS_AUDIT.md
   V1.3.0_TVOED_P_MODULE_AUDIT.md
   V1.2.9_REPORTING_EXPORT_AUDIT.md
 ```

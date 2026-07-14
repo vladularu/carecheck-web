@@ -8,6 +8,7 @@ import Compliance from "./pages/Compliance";
 import Profile from "./pages/Profile";
 import Calendar from "./pages/Calendar";
 import MonthlyReport from "./pages/MonthlyReport";
+import YearlyReport from "./pages/YearlyReport";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="/profil" element={<Profile />} />
             <Route path="/kalender" element={<Calendar />} />
             <Route path="/bericht" element={<MonthlyReport />} />
+            <Route path="/jahr" element={<YearlyReport />} />
           </Routes>
         </main>
 
