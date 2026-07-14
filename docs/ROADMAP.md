@@ -5,7 +5,6 @@ Stand: nach Release `v1.2.9`
 Aktuell stabil: `v1.2.9 - Reporting & Export`
 
 Aktiver Hauptstand: `main`
-Aktiver Entwicklungsbranch: `feature/v1.3.0-tvoed-p-module`
 
 ## Abgeschlossen
 
@@ -76,7 +75,7 @@ Bereits umgesetzt:
 
 ### v1.3.0: TVoeD-P Fachmodul
 
-Status: umgesetzt auf `feature/v1.3.0-tvoed-p-module`, noch nicht released.
+Status: in `main` uebernommen, noch nicht released.
 
 - Schicht- und Wechselschichtindikatoren
 - Nacht-, Sonntags- und Feiertagszuschlaege
@@ -91,7 +90,6 @@ Status: umgesetzt auf `feature/v1.3.0-tvoed-p-module`, noch nicht released.
 
 Noch offen vor Release:
 
-- Branch nach `main` uebernehmen
 - Tag und GitHub Release fuer `v1.3.0`
 
 Vor Release muessen die jeweils aktuellen TVoeD-P-Regeln fachlich und rechtlich geprueft werden.

@@ -16,7 +16,7 @@ The app focuses on practical month-by-month workflows:
 
 Latest tagged release: `v1.2.9`
 
-Active development: `v1.3.0 - TVoeD-P Fachmodul` on `feature/v1.3.0-tvoed-p-module`
+Active main status: `v1.3.0 - TVoeD-P Fachmodul` merged, unreleased
 
 Release focus:
 
@@ -28,7 +28,7 @@ Release focus:
 - export regression coverage for filenames, labels, preview data, and print/report consistency
 - statistics, tariff, and compliance logic unchanged
 
-Current development focus:
+Unreleased v1.3.0 scope:
 
 - versioned TVoeD-P tariff values
 - separated TVoeD-P module for tariff-oriented monthly evaluation
