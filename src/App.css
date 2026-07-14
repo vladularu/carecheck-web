@@ -6254,3 +6254,93 @@ textarea {
     border-radius: 16px;
   }
 }
+
+/* =========================================================
+   CareCheck TVöD v1.2.8 – Salary UI Consistency
+   Nur Anzeige vorhandener Tarifwerte
+   ========================================================= */
+
+.salary-overview-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.salary-section-header {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.salary-section-header strong {
+  color: var(--cc-text);
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.salary-section-header p,
+.salary-helper {
+  color: var(--cc-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.salary-value-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.salary-value-grid div {
+  min-width: 0;
+  padding: 0.95rem;
+  border: 1px solid rgba(120, 132, 158, 0.14);
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.82);
+}
+
+.salary-value-grid div.highlight {
+  border-color: rgba(37, 99, 235, 0.18);
+  background: linear-gradient(
+    180deg,
+    rgba(239, 246, 255, 0.95),
+    rgba(248, 250, 252, 0.88)
+  );
+}
+
+.salary-value-grid span {
+  display: block;
+  color: var(--cc-text-muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.salary-value-grid strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--cc-text);
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.salary-helper {
+  max-width: 42rem;
+}
+
+@media (max-width: 760px) {
+  .salary-value-grid {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .salary-value-grid div {
+    padding: 0.8rem;
+    border-radius: 16px;
+  }
+}
