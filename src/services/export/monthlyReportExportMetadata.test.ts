@@ -44,7 +44,7 @@ describe(
       );
     });
 
-    it("erstellt einheitliche Dateinamen fuer CSV und XLSX", () => {
+    it("erstellt einheitliche Dateinamen fuer CSV, XLSX und PDF", () => {
       expect(
         createMonthlyReportExportFileName(
           "Juli 2026",
@@ -61,6 +61,15 @@ describe(
         ),
       ).toBe(
         "CareCheck_Monatsbericht_2026-07_Juli.xlsx",
+      );
+
+      expect(
+        createMonthlyReportExportFileName(
+          "Juli 2026",
+          "pdf",
+        ),
+      ).toBe(
+        "CareCheck_Monatsbericht_2026-07_Juli.pdf",
       );
     });
   },

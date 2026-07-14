@@ -1,5 +1,6 @@
 export type MonthlyReportExportExtension =
   | "csv"
+  | "pdf"
   | "xlsx";
 
 export interface MonthlyReportExportMetadata {

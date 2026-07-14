@@ -19,6 +19,7 @@ export interface MonthlyReportExportPreview {
   displayMonthLabel: string;
   monthKey: string;
   fileBaseName: string;
+  pdfFileName: string;
   calendarEntryCount: number;
   workShiftCount: number;
   complianceIssueCount: number;
@@ -86,6 +87,7 @@ export function createMonthlyReportExportPreview({
     displayMonthLabel: metadata.displayMonthLabel,
     monthKey: metadata.monthKey,
     fileBaseName: metadata.fileBaseName,
+    pdfFileName: `${metadata.fileBaseName}.pdf`,
     calendarEntryCount:
       monthlyHours.calendarEntryCount,
     workShiftCount: monthlyHours.workShiftCount,

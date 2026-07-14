@@ -6837,6 +6837,25 @@ textarea {
   line-height: 1.45;
 }
 
+.monthly-report-page .report-actions {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.report-print-hint {
+  min-width: 0;
+  margin: 0;
+  color: var(--cc-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.report-print-hint strong {
+  color: var(--cc-text);
+  font-weight: 850;
+}
+
 .print-report-basis-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

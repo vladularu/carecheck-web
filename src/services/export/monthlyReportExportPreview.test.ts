@@ -70,6 +70,8 @@ describe(
         monthKey: "2026-07",
         fileBaseName:
           "CareCheck_Monatsbericht_2026-07_Juli",
+        pdfFileName:
+          "CareCheck_Monatsbericht_2026-07_Juli.pdf",
         calendarEntryCount: 16,
         workShiftCount: 10,
         complianceIssueCount: 1,

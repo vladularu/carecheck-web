@@ -189,7 +189,30 @@ export default function MonthlyReport() {
   ];
 
   function handlePrint() {
+    const previousTitle = document.title;
+    let titleRestored = false;
+
+    const restoreTitle = () => {
+      if (titleRestored) {
+        return;
+      }
+
+      titleRestored = true;
+      document.title = previousTitle;
+    };
+
+    window.addEventListener(
+      "afterprint",
+      restoreTitle,
+      { once: true },
+    );
+    document.title = exportPreview.fileBaseName;
     window.print();
+
+    // Keep the title available for browser PDF dialogs that use it as filename.
+    window.setTimeout(() => {
+      restoreTitle();
+    }, 30000);
   }
 
   return (
@@ -222,6 +245,11 @@ export default function MonthlyReport() {
             >
               Drucken / als PDF speichern
             </Button>
+
+            <p className="report-print-hint">
+              PDF-Dateiname im Druckdialog:{" "}
+              <strong>{exportPreview.pdfFileName}</strong>
+            </p>
           </div>
         </Card>
       </div>
