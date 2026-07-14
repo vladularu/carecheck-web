@@ -6767,3 +6767,78 @@ textarea {
     word-break: normal;
   }
 }
+
+/* =========================================================
+   CareCheck TVöD v1.2.9 – Reporting / Export Preview
+   Gemeinsame Vorschauwerte fuer Dashboard und Monatsbericht
+   ========================================================= */
+
+.export-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem 1rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(120, 132, 158, 0.18);
+}
+
+.export-preview-item {
+  min-width: 0;
+  display: grid;
+  gap: 0.16rem;
+}
+
+.export-preview-item span {
+  color: var(--cc-text-muted);
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.export-preview-item strong {
+  min-width: 0;
+  color: var(--cc-text);
+  font-size: 0.96rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.export-preview-file {
+  grid-column: 1 / -1;
+}
+
+.export-preview-status-ok {
+  color: var(--cc-success, #15803d) !important;
+}
+
+.export-preview-status-warning {
+  color: var(--cc-warning, #b45309) !important;
+}
+
+.export-preview-status-critical {
+  color: var(--cc-danger, #b91c1c) !important;
+}
+
+.report-action-header {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.report-action-header strong {
+  color: var(--cc-text);
+  font-size: 1.05rem;
+}
+
+.report-action-header p {
+  margin: 0;
+  color: var(--cc-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 760px) {
+  .export-preview {
+    grid-template-columns: 1fr;
+  }
+}

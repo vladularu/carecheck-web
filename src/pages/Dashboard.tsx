@@ -12,6 +12,7 @@ import {
 } from "../services/calculation/monthlyHoursCalculator";
 import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremiumCalculator";
 import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
+import { createMonthlyReportExportPreview } from "../services/export/monthlyReportExportPreview";
 import { downloadMonthlyReportCsv } from "../services/export/monthlyReportCsvService";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
 
@@ -196,6 +197,14 @@ export default function Dashboard() {
       monthlyHours.absenceHours,
     )}`;
 
+  const exportPreview =
+    createMonthlyReportExportPreview({
+      monthLabel,
+      monthlyHours,
+      monthlyPremiums,
+      complianceIssues,
+    });
+
   function handleExportCsv() {
     downloadMonthlyReportCsv({
       monthLabel,
@@ -296,6 +305,7 @@ async function handleExportXlsx(): Promise<void> {
         />
 
         <ExportCard
+          preview={exportPreview}
           onExportCsv={handleExportCsv}
           onExportXlsx={
             handleExportXlsx
@@ -559,6 +569,7 @@ async function handleExportXlsx(): Promise<void> {
         </div>
 
         <ExportCard
+          preview={exportPreview}
           onExportCsv={
             handleExportCsv
           }

@@ -1,6 +1,7 @@
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
+import ExportPreviewSummary from "../components/report/ExportPreviewSummary";
 import { useAppContext } from "../context/useAppContext";
 import {
   calculateMonthlyHours,
@@ -14,6 +15,7 @@ import {
   getReportNetHours,
   getReportTimeLabel,
 } from "../services/export/monthlyReportEntryFormatter";
+import { createMonthlyReportExportPreview } from "../services/export/monthlyReportExportPreview";
 import {
   formatDateGerman,
 } from "../services/format/dateTimeFormat";
@@ -144,6 +146,14 @@ export default function MonthlyReport() {
         ? "Warnungen vorhanden"
         : "Keine Auffälligkeiten";
 
+  const exportPreview =
+    createMonthlyReportExportPreview({
+      monthLabel,
+      monthlyHours,
+      monthlyPremiums,
+      complianceIssues,
+    });
+
   function handlePrint() {
     window.print();
   }
@@ -158,6 +168,19 @@ export default function MonthlyReport() {
         />
 
         <Card className="report-action-card">
+          <div className="report-action-header">
+            <strong>Exportvorschau</strong>
+            <p>
+              Grundlage für Druck, PDF,
+              CSV und XLSX.
+            </p>
+          </div>
+
+          <ExportPreviewSummary
+            preview={exportPreview}
+            className="report-export-preview"
+          />
+
           <div className="report-actions">
             <Button
               type="button"

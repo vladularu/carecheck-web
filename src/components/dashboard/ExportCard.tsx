@@ -1,19 +1,23 @@
+import type { MonthlyReportExportPreview } from "../../services/export/monthlyReportExportPreview";
+import ExportPreviewSummary from "../report/ExportPreviewSummary";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 
 interface ExportCardProps {
+  preview: MonthlyReportExportPreview;
   onExportCsv: () => void;
   onExportXlsx: () => Promise<void>;
   onOpenReport: () => void;
 }
 
 export default function ExportCard({
+  preview,
   onExportCsv,
   onExportXlsx,
   onOpenReport,
 }: ExportCardProps) {
   return (
-    <Card>
+    <Card className="export-card">
       <span className="card-label">
         Export
       </span>
@@ -28,15 +32,19 @@ export default function ExportCard({
         CSV-Datei oder druckbare PDF-Ansicht.
       </p>
 
+      <ExportPreviewSummary
+        preview={preview}
+      />
+
       <div className="export-actions">
-<Button
-  type="button"
-  onClick={() => {
-    void onExportXlsx();
-  }}
->
-  Excel-Datei exportieren
-</Button>
+        <Button
+          type="button"
+          onClick={() => {
+            void onExportXlsx();
+          }}
+        >
+          Excel-Datei exportieren
+        </Button>
 
         <Button
           type="button"
