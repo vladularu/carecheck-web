@@ -17,10 +17,14 @@ import {
 } from "../services/export/monthlyReportEntryFormatter";
 import { createMonthlyReportExportPreview } from "../services/export/monthlyReportExportPreview";
 import {
+  monthlyReportLabels,
+  monthlyReportSeverityLabels,
+  monthlyReportShiftLabels,
+} from "../services/export/monthlyReportLabels";
+import {
   formatDateGerman,
 } from "../services/format/dateTimeFormat";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
-import type { ComplianceIssue, ShiftType } from "../types/index";
 
 const monthNames = [
   "Januar",
@@ -36,24 +40,6 @@ const monthNames = [
   "November",
   "Dezember",
 ];
-
-const shiftLabels: Record<ShiftType, string> = {
-  EARLY: "Frühdienst",
-  LATE: "Spätdienst",
-  NIGHT: "Nachtdienst",
-  DAY: "Tagdienst",
-  TRAINING: "Fortbildung",
-  VACATION: "Urlaub",
-  SICK: "Krank",
-  FREE: "Frei",
-  CUSTOM: "Individuell",
-};
-
-const severityLabels: Record<ComplianceIssue["severity"], string> = {
-  info: "Info",
-  warning: "Warnung",
-  critical: "Kritisch",
-};
 
 function formatEuro(value: number | null): string {
   if (value === null) {
@@ -144,7 +130,8 @@ export default function MonthlyReport() {
       ? "Kritische Hinweise vorhanden"
       : warningCount > 0
         ? "Warnungen vorhanden"
-        : "Keine Auffälligkeiten";
+        : monthlyReportLabels.emptyStates
+            .compliance;
 
   const exportPreview =
     createMonthlyReportExportPreview({
@@ -221,21 +208,36 @@ export default function MonthlyReport() {
           </div>
 
           <div>
-            <span>Saldo</span>
+            <span>
+              {
+                monthlyReportLabels.workingTime
+                  .balance
+              }
+            </span>
             <strong>
               {formatHours(monthlyHours.balanceHours)}
             </strong>
           </div>
 
           <div>
-            <span>Zuschläge</span>
+            <span>
+              {
+                monthlyReportLabels.sections
+                  .premiums
+              }
+            </span>
             <strong>
               {formatEuro(monthlyPremiums.totalAmount)}
             </strong>
           </div>
 
           <div>
-            <span>Prüfhinweise</span>
+            <span>
+              {
+                monthlyReportLabels.sections
+                  .compliance
+              }
+            </span>
             <strong>{complianceIssues.length}</strong>
           </div>
         </section>
@@ -243,61 +245,106 @@ export default function MonthlyReport() {
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>01</span>
-            <h2>Arbeitszeit</h2>
+            <h2>
+              {
+                monthlyReportLabels.sections
+                  .workingTime
+              }
+            </h2>
           </div>
 
           <div className="print-report-grid">
             <div>
-              <span>Sollstunden</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .targetHours
+                }
+              </span>
               <strong>
                 {formatHours(monthlyHours.targetHours)}
               </strong>
             </div>
 
             <div>
-              <span>Iststunden</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .actualHours
+                }
+              </span>
               <strong>
                 {formatHours(monthlyHours.actualHours)}
               </strong>
             </div>
 
             <div>
-              <span>Saldo</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .balance
+                }
+              </span>
               <strong>
                 {formatHours(monthlyHours.balanceHours)}
               </strong>
             </div>
 
             <div>
-              <span>Überstunden</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .overtime
+                }
+              </span>
               <strong>
                 {formatHours(monthlyHours.overtimeHours)}
               </strong>
             </div>
 
             <div>
-              <span>Unterstunden</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .undertime
+                }
+              </span>
               <strong>
                 {formatHours(monthlyHours.undertimeHours)}
               </strong>
             </div>
 
             <div>
-              <span>Soll-Arbeitstage</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .workingDays
+                }
+              </span>
               <strong>
                 {monthlyHours.workingDayCount}
               </strong>
             </div>
 
             <div>
-              <span>Feiertage</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .holidays
+                }
+              </span>
               <strong>
                 {monthlyHours.publicHolidayCount}
               </strong>
             </div>
 
             <div>
-              <span>Feiertagsabzug</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .holidayReduction
+                }
+              </span>
               <strong>
                 {formatHours(
                   monthlyHours.holidayReductionHours,
@@ -306,7 +353,12 @@ export default function MonthlyReport() {
             </div>
 
             <div>
-              <span>Ø tägliche Sollzeit</span>
+              <span>
+                {
+                  monthlyReportLabels.workingTime
+                    .averageDailyHours
+                }
+              </span>
               <strong>
                 {formatHours(
                   monthlyHours.averageDailyHours,
@@ -319,54 +371,94 @@ export default function MonthlyReport() {
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>02</span>
-            <h2>Monatsplanung</h2>
+            <h2>
+              {
+                monthlyReportLabels.sections
+                  .planning
+              }
+            </h2>
           </div>
 
           <div className="print-report-grid">
             <div>
-              <span>Arbeitsdienste</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .workShifts
+                }
+              </span>
               <strong>
                 {monthlyHours.workShiftCount}
               </strong>
             </div>
 
             <div>
-              <span>Planungseinträge</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .planningEntries
+                }
+              </span>
               <strong>
                 {monthlyHours.planningEntryCount}
               </strong>
             </div>
 
             <div>
-              <span>Planungstage</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .plannedDays
+                }
+              </span>
               <strong>
                 {monthlyHours.plannedDayCount}
               </strong>
             </div>
 
             <div>
-              <span>Kalendereinträge</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .calendarEntries
+                }
+              </span>
               <strong>
                 {monthlyHours.calendarEntryCount}
               </strong>
             </div>
 
             <div>
-              <span>Urlaubstage</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .vacationDays
+                }
+              </span>
               <strong>
                 {monthlyHours.vacationDayCount}
               </strong>
             </div>
 
             <div>
-              <span>Krankheitstage</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .sickDays
+                }
+              </span>
               <strong>
                 {monthlyHours.sickDayCount}
               </strong>
             </div>
 
             <div>
-              <span>Urlaubsstunden</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .vacationHours
+                }
+              </span>
               <strong>
                 {formatHours(
                   monthlyHours.vacationHours,
@@ -375,7 +467,12 @@ export default function MonthlyReport() {
             </div>
 
             <div>
-              <span>Krankstunden</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .sickHours
+                }
+              </span>
               <strong>
                 {formatHours(
                   monthlyHours.sickHours,
@@ -384,7 +481,12 @@ export default function MonthlyReport() {
             </div>
 
             <div>
-              <span>Abwesenheitsstunden</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .absenceHours
+                }
+              </span>
               <strong>
                 {formatHours(
                   monthlyHours.absenceHours,
@@ -393,21 +495,36 @@ export default function MonthlyReport() {
             </div>
 
             <div>
-              <span>Fortbildungstage</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .trainingDays
+                }
+              </span>
               <strong>
                 {monthlyHours.trainingDayCount}
               </strong>
             </div>
 
             <div>
-              <span>Frei-Tage</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .freeDays
+                }
+              </span>
               <strong>
                 {monthlyHours.freeDayCount}
               </strong>
             </div>
 
             <div>
-              <span>Compliance-relevant</span>
+              <span>
+                {
+                  monthlyReportLabels.planning
+                    .complianceRelevantEntries
+                }
+              </span>
               <strong>
                 {
                   complianceRelevantShiftsInSelectedMonth
@@ -421,21 +538,30 @@ export default function MonthlyReport() {
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>03</span>
-            <h2>Zuschläge</h2>
+            <h2>
+              {
+                monthlyReportLabels.sections
+                  .premiums
+              }
+            </h2>
           </div>
 
           {monthlyPremiums.lines.length === 0 ? (
             <p className="print-report-empty">
-              Keine zuschlagspflichtigen Zeiten erkannt.
+              {
+                monthlyReportLabels.emptyStates
+                  .premiums
+              }
             </p>
           ) : (
             <table className="print-report-table">
               <thead>
                 <tr>
-                  <th>Art</th>
-                  <th>Stunden</th>
-                  <th>Prozent</th>
-                  <th>Betrag</th>
+                  {monthlyReportLabels.tables.premiums.map(
+                    (label) => (
+                      <th key={label}>{label}</th>
+                    ),
+                  )}
                 </tr>
               </thead>
 
@@ -453,7 +579,10 @@ export default function MonthlyReport() {
 
                 <tr className="print-report-total-row">
                   <td colSpan={3}>
-                    Summe Zuschläge
+                    {
+                      monthlyReportLabels.totals
+                        .premiums
+                    }
                   </td>
                   <td>
                     {formatEuro(
@@ -469,20 +598,30 @@ export default function MonthlyReport() {
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>04</span>
-            <h2>Prüfhinweise</h2>
+            <h2>
+              {
+                monthlyReportLabels.sections
+                  .compliance
+              }
+            </h2>
           </div>
 
           {complianceIssues.length === 0 ? (
             <p className="print-report-empty">
-              Keine Auffälligkeiten gefunden.
+              {
+                monthlyReportLabels.emptyStates
+                  .complianceReport
+              }
             </p>
           ) : (
             <table className="print-report-table">
               <thead>
                 <tr>
-                  <th>Schweregrad</th>
-                  <th>Titel</th>
-                  <th>Beschreibung</th>
+                  {monthlyReportLabels.tables.compliance.map(
+                    (label) => (
+                      <th key={label}>{label}</th>
+                    ),
+                  )}
                 </tr>
               </thead>
 
@@ -491,7 +630,7 @@ export default function MonthlyReport() {
                   <tr key={issue.id}>
                     <td>
                       {
-                        severityLabels[
+                        monthlyReportSeverityLabels[
                           issue.severity
                         ]
                       }
@@ -508,24 +647,30 @@ export default function MonthlyReport() {
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>05</span>
-            <h2>Kalendereinträge</h2>
+            <h2>
+              {
+                monthlyReportLabels.sections
+                  .calendarEntries
+              }
+            </h2>
           </div>
 
           {shiftsInSelectedMonth.length === 0 ? (
             <p className="print-report-empty">
-              Keine Kalendereinträge erfasst.
+              {
+                monthlyReportLabels.emptyStates
+                  .calendarEntriesReport
+              }
             </p>
           ) : (
             <table className="print-report-table print-report-shift-table">
               <thead>
                 <tr>
-                  <th>Datum</th>
-                  <th>Eintragsart</th>
-                  <th>Zeit</th>
-                  <th>Pause</th>
-                  <th>Stunden</th>
-                  <th>Stundenquelle</th>
-                  <th>Notiz</th>
+                  {monthlyReportLabels.tables.calendarEntries.map(
+                    (label) => (
+                      <th key={label}>{label}</th>
+                    ),
+                  )}
                 </tr>
               </thead>
 
@@ -536,7 +681,11 @@ export default function MonthlyReport() {
                       {formatDateGerman(shift.date)}
                     </td>
                     <td>
-                      {shiftLabels[shift.type]}
+                      {
+                        monthlyReportShiftLabels[
+                          shift.type
+                        ]
+                      }
                     </td>
                     <td>
                       {getReportTimeLabel(shift)}

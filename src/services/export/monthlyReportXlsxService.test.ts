@@ -122,7 +122,7 @@ describe(
       ).toEqual([
         "Übersicht",
         "Zuschläge",
-        "Prüfung",
+        "Prüfhinweise",
         "Kalendereinträge",
       ]);
     });

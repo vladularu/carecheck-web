@@ -14,6 +14,7 @@ import {
   createMonthlyReportCsvFileContent,
   createMonthlyReportCsvFileName,
 } from "./monthlyReportCsvService";
+import { monthlyReportLabels } from "./monthlyReportLabels";
 
 const profile: UserProfile = {
   federalState: "HE",
@@ -173,6 +174,35 @@ describe(
 
       expect(csv).toContain(
         '"Keine Kalendereinträge"',
+      );
+    });
+
+    it("exportiert die Berichtsabschnitte in gemeinsamer Reihenfolge", () => {
+      const csv =
+        createMonthlyReportCsv(
+          createInput(),
+        );
+
+      const rows = csv.split("\r\n");
+      const sectionRows = [
+        monthlyReportLabels.sections.workingTime,
+        monthlyReportLabels.sections.planning,
+        monthlyReportLabels.sections.premiums,
+        monthlyReportLabels.sections.compliance,
+        monthlyReportLabels.sections
+          .calendarEntries,
+      ].map((label) => `"${label}"`);
+
+      const positions = sectionRows.map((row) =>
+        rows.indexOf(row),
+      );
+
+      expect(positions.every((index) => index >= 0)).toBe(
+        true,
+      );
+
+      expect(positions).toEqual(
+        [...positions].sort((left, right) => left - right),
       );
     });
 

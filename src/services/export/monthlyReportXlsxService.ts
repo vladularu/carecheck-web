@@ -16,6 +16,11 @@ import {
   getReportTimeLabel,
 } from "./monthlyReportEntryFormatter";
 import { createMonthlyReportExportFileName } from "./monthlyReportExportMetadata";
+import {
+  monthlyReportLabels,
+  monthlyReportSeverityLabels,
+  monthlyReportShiftLabels,
+} from "./monthlyReportLabels";
 
 export interface MonthlyReportXlsxInput {
   monthLabel: string;
@@ -25,27 +30,6 @@ export interface MonthlyReportXlsxInput {
   monthlyPremiums: MonthlyPremiumResult;
   complianceIssues: ComplianceIssue[];
 }
-
-const shiftLabels: Record<Shift["type"], string> = {
-  EARLY: "Frühdienst",
-  LATE: "Spätdienst",
-  NIGHT: "Nachtdienst",
-  DAY: "Tagdienst",
-  TRAINING: "Fortbildung",
-  VACATION: "Urlaub",
-  SICK: "Krank",
-  FREE: "Frei",
-  CUSTOM: "Individuell",
-};
-
-const severityLabels: Record<
-  ComplianceIssue["severity"],
-  string
-> = {
-  info: "Info",
-  warning: "Warnung",
-  critical: "Kritisch",
-};
 
 export function createMonthlyReportXlsxFileName(
   monthLabel: string,
@@ -87,99 +71,121 @@ export function createMonthlyReportWorkbook({
   const workbook = XLSX.utils.book_new();
 
   const overviewRows = [
-    ["CareCheck TVöD Monatsbericht"],
+    [monthlyReportLabels.title],
     [],
-    ["Monat", monthLabel],
-    ["Bundesland", profile.federalState],
     [
-      "Wochenarbeitszeit",
+      monthlyReportLabels.fields.month,
+      monthLabel,
+    ],
+    [
+      monthlyReportLabels.fields.federalState,
+      profile.federalState,
+    ],
+    [
+      monthlyReportLabels.fields.weeklyHours,
       `${profile.weeklyHours} h`,
     ],
-    ["TVöD-P Gruppe", profile.payGroup],
-    ["Stufe", profile.payLevel],
-    [],
-    ["Arbeitszeit"],
     [
-      "Sollstunden",
+      monthlyReportLabels.fields.payGroup,
+      profile.payGroup,
+    ],
+    [
+      monthlyReportLabels.fields.payLevel,
+      profile.payLevel,
+    ],
+    [],
+    [monthlyReportLabels.sections.workingTime],
+    [
+      monthlyReportLabels.workingTime.targetHours,
       monthlyHours.targetHours,
     ],
     [
-      "Iststunden",
+      monthlyReportLabels.workingTime.actualHours,
       monthlyHours.actualHours,
     ],
-    ["Saldo", monthlyHours.balanceHours],
     [
-      "Überstunden",
+      monthlyReportLabels.workingTime.balance,
+      monthlyHours.balanceHours,
+    ],
+    [
+      monthlyReportLabels.workingTime.overtime,
       monthlyHours.overtimeHours,
     ],
     [
-      "Unterstunden",
+      monthlyReportLabels.workingTime.undertime,
       monthlyHours.undertimeHours,
     ],
     [
-      "Soll-Arbeitstage",
+      monthlyReportLabels.workingTime.workingDays,
       monthlyHours.workingDayCount,
     ],
     [
-      "Feiertage",
+      monthlyReportLabels.workingTime.holidays,
       monthlyHours.publicHolidayCount,
     ],
     [
-      "Feiertagsabzug",
+      monthlyReportLabels.workingTime
+        .holidayReduction,
       monthlyHours.holidayReductionHours,
     ],
     [
-      "Durchschnittliche tägliche Sollzeit",
+      monthlyReportLabels.workingTime
+        .averageDailyHours,
       monthlyHours.averageDailyHours,
     ],
     [],
-    ["Monatsplanung"],
+    [monthlyReportLabels.sections.planning],
     [
-      "Arbeitsdienste",
+      monthlyReportLabels.planning.workShifts,
       monthlyHours.workShiftCount,
     ],
     [
-      "Planungseinträge",
+      monthlyReportLabels.planning
+        .planningEntries,
       monthlyHours.planningEntryCount,
     ],
     [
-      "Planungstage",
+      monthlyReportLabels.planning.plannedDays,
       monthlyHours.plannedDayCount,
     ],
     [
-      "Kalendereinträge",
+      monthlyReportLabels.planning
+        .calendarEntries,
       monthlyHours.calendarEntryCount,
     ],
     [
-      "Urlaubstage",
+      monthlyReportLabels.planning.vacationDays,
       monthlyHours.vacationDayCount,
     ],
     [
-      "Krankheitstage",
+      monthlyReportLabels.planning.sickDays,
       monthlyHours.sickDayCount,
     ],
     [
-      "Urlaubsstunden",
+      monthlyReportLabels.planning
+        .vacationHours,
       monthlyHours.vacationHours,
     ],
     [
-      "Krankstunden",
+      monthlyReportLabels.planning.sickHours,
       monthlyHours.sickHours,
     ],
     [
-      "Abwesenheitsstunden",
+      monthlyReportLabels.planning.absenceHours,
       monthlyHours.absenceHours,
     ],
     [
-      "Fortbildungstage",
+      monthlyReportLabels.planning
+        .trainingDays,
       monthlyHours.trainingDayCount,
     ],
     [
-      "Frei-Tage",
+      monthlyReportLabels.planning.freeDays,
       monthlyHours.freeDayCount,
     ],
     [
-      "Compliance-relevante Einträge",
+      monthlyReportLabels.planning
+        .complianceRelevantEntries,
       monthlyHours.complianceRelevantShiftCount,
     ],
   ];
@@ -195,11 +201,11 @@ export function createMonthlyReportWorkbook({
   XLSX.utils.book_append_sheet(
     workbook,
     overviewSheet,
-    "Übersicht",
+    monthlyReportLabels.sections.overview,
   );
 
   const premiumRows = [
-    ["Art", "Stunden", "Prozent", "Betrag"],
+    [...monthlyReportLabels.tables.premiums],
     ...monthlyPremiums.lines.map((line) => [
       line.label,
       line.hours,
@@ -208,7 +214,7 @@ export function createMonthlyReportWorkbook({
     ]),
     [],
     [
-      "Summe Zuschläge",
+      monthlyReportLabels.totals.premiums,
       "",
       "",
       formatEuro(
@@ -228,20 +234,26 @@ export function createMonthlyReportWorkbook({
   XLSX.utils.book_append_sheet(
     workbook,
     premiumSheet,
-    "Zuschläge",
+    monthlyReportLabels.sections.premiums,
   );
 
   const complianceRows =
     complianceIssues.length === 0
-      ? [["Keine Auffälligkeiten"]]
+      ? [
+          [
+            monthlyReportLabels.emptyStates
+              .compliance,
+          ],
+        ]
       : [
           [
-            "Schweregrad",
-            "Titel",
-            "Beschreibung",
+            ...monthlyReportLabels.tables
+              .compliance,
           ],
           ...complianceIssues.map((issue) => [
-            severityLabels[issue.severity],
+            monthlyReportSeverityLabels[
+              issue.severity
+            ],
             issue.title,
             issue.description,
           ]),
@@ -260,32 +272,28 @@ export function createMonthlyReportWorkbook({
   XLSX.utils.book_append_sheet(
     workbook,
     complianceSheet,
-    "Prüfung",
+    monthlyReportLabels.sections.compliance,
   );
 
   const shiftRows: Array<
     Array<string | number>
   > = [
     [
-      "Datum",
-      "Eintragsart",
-      "Zeit",
-      "Pause",
-      "Stunden",
-      "Stundenquelle",
-      "Notiz",
+      ...monthlyReportLabels.tables
+        .calendarEntries,
     ],
   ];
 
   if (shifts.length === 0) {
     shiftRows.push([
-      "Keine Kalendereinträge",
+      monthlyReportLabels.emptyStates
+        .calendarEntries,
     ]);
   } else {
     shiftRows.push(
       ...shifts.map((shift) => [
         formatDateGerman(shift.date),
-        shiftLabels[shift.type],
+        monthlyReportShiftLabels[shift.type],
         getReportTimeLabel(shift),
         getReportBreakLabel(shift),
         getReportNetHours(
@@ -309,7 +317,8 @@ export function createMonthlyReportWorkbook({
   XLSX.utils.book_append_sheet(
     workbook,
     shiftsSheet,
-    "Kalendereinträge",
+    monthlyReportLabels.sections
+      .calendarEntries,
   );
 
   return workbook;

@@ -15,6 +15,11 @@ import {
   getReportTimeLabel,
 } from "./monthlyReportEntryFormatter";
 import { createMonthlyReportExportFileName } from "./monthlyReportExportMetadata";
+import {
+  monthlyReportLabels,
+  monthlyReportSeverityLabels,
+  monthlyReportShiftLabels,
+} from "./monthlyReportLabels";
 
 export interface MonthlyReportCsvInput {
   monthLabel: string;
@@ -24,27 +29,6 @@ export interface MonthlyReportCsvInput {
   monthlyPremiums: MonthlyPremiumResult;
   complianceIssues: ComplianceIssue[];
 }
-
-const shiftLabels: Record<Shift["type"], string> = {
-  EARLY: "Frühdienst",
-  LATE: "Spätdienst",
-  NIGHT: "Nachtdienst",
-  DAY: "Tagdienst",
-  TRAINING: "Fortbildung",
-  VACATION: "Urlaub",
-  SICK: "Krank",
-  FREE: "Frei",
-  CUSTOM: "Individuell",
-};
-
-const severityLabels: Record<
-  ComplianceIssue["severity"],
-  string
-> = {
-  info: "Info",
-  warning: "Warnung",
-  critical: "Kritisch",
-};
 
 function protectSpreadsheetFormula(
   value: string,
@@ -116,36 +100,48 @@ export function createMonthlyReportCsv({
   const rows: string[] = [];
 
   rows.push(
-    createRow(["CareCheck TVöD Monatsbericht"]),
+    createRow([monthlyReportLabels.title]),
   );
-  rows.push(createRow(["Monat", monthLabel]));
   rows.push(
     createRow([
-      "Bundesland",
+      monthlyReportLabels.fields.month,
+      monthLabel,
+    ]),
+  );
+  rows.push(
+    createRow([
+      monthlyReportLabels.fields.federalState,
       profile.federalState,
     ]),
   );
   rows.push(
     createRow([
-      "Wochenarbeitszeit",
+      monthlyReportLabels.fields.weeklyHours,
       `${formatNumber(profile.weeklyHours)} h`,
     ]),
   );
   rows.push(
     createRow([
-      "TVöD-P Gruppe",
+      monthlyReportLabels.fields.payGroup,
       profile.payGroup,
     ]),
   );
   rows.push(
-    createRow(["Stufe", profile.payLevel]),
+    createRow([
+      monthlyReportLabels.fields.payLevel,
+      profile.payLevel,
+    ]),
   );
   rows.push("");
 
-  rows.push(createRow(["Arbeitszeit"]));
   rows.push(
     createRow([
-      "Sollstunden",
+      monthlyReportLabels.sections.workingTime,
+    ]),
+  );
+  rows.push(
+    createRow([
+      monthlyReportLabels.workingTime.targetHours,
       `${formatNumber(
         monthlyHours.targetHours,
       )} h`,
@@ -153,7 +149,7 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Iststunden",
+      monthlyReportLabels.workingTime.actualHours,
       `${formatNumber(
         monthlyHours.actualHours,
       )} h`,
@@ -161,7 +157,7 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Saldo",
+      monthlyReportLabels.workingTime.balance,
       `${formatNumber(
         monthlyHours.balanceHours,
       )} h`,
@@ -169,7 +165,7 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Überstunden",
+      monthlyReportLabels.workingTime.overtime,
       `${formatNumber(
         monthlyHours.overtimeHours,
       )} h`,
@@ -177,7 +173,7 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Unterstunden",
+      monthlyReportLabels.workingTime.undertime,
       `${formatNumber(
         monthlyHours.undertimeHours,
       )} h`,
@@ -185,19 +181,20 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Soll-Arbeitstage",
+      monthlyReportLabels.workingTime.workingDays,
       monthlyHours.workingDayCount,
     ]),
   );
   rows.push(
     createRow([
-      "Feiertage",
+      monthlyReportLabels.workingTime.holidays,
       monthlyHours.publicHolidayCount,
     ]),
   );
   rows.push(
     createRow([
-      "Feiertagsabzug",
+      monthlyReportLabels.workingTime
+        .holidayReduction,
       `${formatNumber(
         monthlyHours.holidayReductionHours,
       )} h`,
@@ -205,7 +202,8 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Durchschnittliche tägliche Sollzeit",
+      monthlyReportLabels.workingTime
+        .averageDailyHours,
       `${formatNumber(
         monthlyHours.averageDailyHours,
       )} h`,
@@ -213,46 +211,53 @@ export function createMonthlyReportCsv({
   );
   rows.push("");
 
-  rows.push(createRow(["Monatsplanung"]));
   rows.push(
     createRow([
-      "Arbeitsdienste",
+      monthlyReportLabels.sections.planning,
+    ]),
+  );
+  rows.push(
+    createRow([
+      monthlyReportLabels.planning.workShifts,
       monthlyHours.workShiftCount,
     ]),
   );
   rows.push(
     createRow([
-      "Planungseinträge",
+      monthlyReportLabels.planning
+        .planningEntries,
       monthlyHours.planningEntryCount,
     ]),
   );
   rows.push(
     createRow([
-      "Planungstage",
+      monthlyReportLabels.planning.plannedDays,
       monthlyHours.plannedDayCount,
     ]),
   );
   rows.push(
     createRow([
-      "Kalendereinträge",
+      monthlyReportLabels.planning
+        .calendarEntries,
       monthlyHours.calendarEntryCount,
     ]),
   );
   rows.push(
     createRow([
-      "Urlaubstage",
+      monthlyReportLabels.planning.vacationDays,
       monthlyHours.vacationDayCount,
     ]),
   );
   rows.push(
     createRow([
-      "Krankheitstage",
+      monthlyReportLabels.planning.sickDays,
       monthlyHours.sickDayCount,
     ]),
   );
   rows.push(
     createRow([
-      "Urlaubsstunden",
+      monthlyReportLabels.planning
+        .vacationHours,
       `${formatNumber(
         monthlyHours.vacationHours,
       )} h`,
@@ -260,7 +265,7 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Krankstunden",
+      monthlyReportLabels.planning.sickHours,
       `${formatNumber(
         monthlyHours.sickHours,
       )} h`,
@@ -268,7 +273,7 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Abwesenheitsstunden",
+      monthlyReportLabels.planning.absenceHours,
       `${formatNumber(
         monthlyHours.absenceHours,
       )} h`,
@@ -276,39 +281,42 @@ export function createMonthlyReportCsv({
   );
   rows.push(
     createRow([
-      "Fortbildungstage",
+      monthlyReportLabels.planning
+        .trainingDays,
       monthlyHours.trainingDayCount,
     ]),
   );
   rows.push(
     createRow([
-      "Frei-Tage",
+      monthlyReportLabels.planning.freeDays,
       monthlyHours.freeDayCount,
     ]),
   );
   rows.push(
     createRow([
-      "Compliance-relevante Einträge",
+      monthlyReportLabels.planning
+        .complianceRelevantEntries,
       monthlyHours.complianceRelevantShiftCount,
     ]),
   );
   rows.push("");
 
-  rows.push(createRow(["Zuschläge"]));
+  rows.push(
+    createRow([
+      monthlyReportLabels.sections.premiums,
+    ]),
+  );
 
   if (monthlyPremiums.lines.length === 0) {
     rows.push(
       createRow([
-        "Keine zuschlagspflichtigen Zeiten erkannt",
+        monthlyReportLabels.emptyStates.premiums,
       ]),
     );
   } else {
     rows.push(
       createRow([
-        "Art",
-        "Stunden",
-        "Prozent",
-        "Betrag",
+        ...monthlyReportLabels.tables.premiums,
       ]),
     );
 
@@ -325,7 +333,7 @@ export function createMonthlyReportCsv({
 
     rows.push(
       createRow([
-        "Summe Zuschläge",
+        monthlyReportLabels.totals.premiums,
         "",
         "",
         formatEuro(
@@ -337,25 +345,31 @@ export function createMonthlyReportCsv({
 
   rows.push("");
 
-  rows.push(createRow(["Prüfhinweise"]));
+  rows.push(
+    createRow([
+      monthlyReportLabels.sections.compliance,
+    ]),
+  );
 
   if (complianceIssues.length === 0) {
     rows.push(
-      createRow(["Keine Auffälligkeiten"]),
+      createRow([
+        monthlyReportLabels.emptyStates.compliance,
+      ]),
     );
   } else {
     rows.push(
       createRow([
-        "Schweregrad",
-        "Titel",
-        "Beschreibung",
+        ...monthlyReportLabels.tables.compliance,
       ]),
     );
 
     for (const issue of complianceIssues) {
       rows.push(
         createRow([
-          severityLabels[issue.severity],
+          monthlyReportSeverityLabels[
+            issue.severity
+          ],
           issue.title,
           issue.description,
         ]),
@@ -365,23 +379,24 @@ export function createMonthlyReportCsv({
 
   rows.push("");
 
-  rows.push(createRow(["Kalendereinträge"]));
   rows.push(
     createRow([
-      "Datum",
-      "Eintragsart",
-      "Zeit",
-      "Pause",
-      "Stunden",
-      "Stundenquelle",
-      "Notiz",
+      monthlyReportLabels.sections
+        .calendarEntries,
+    ]),
+  );
+  rows.push(
+    createRow([
+      ...monthlyReportLabels.tables
+        .calendarEntries,
     ]),
   );
 
   if (shifts.length === 0) {
     rows.push(
       createRow([
-        "Keine Kalendereinträge",
+        monthlyReportLabels.emptyStates
+          .calendarEntries,
       ]),
     );
   } else {
@@ -389,7 +404,7 @@ export function createMonthlyReportCsv({
       rows.push(
         createRow([
           formatDateGerman(shift.date),
-          shiftLabels[shift.type],
+          monthlyReportShiftLabels[shift.type],
           getReportTimeLabel(shift),
           getReportBreakLabel(shift),
           `${formatNumber(
