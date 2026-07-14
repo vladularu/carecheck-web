@@ -1,87 +1,161 @@
-# CareCheck TVöD – Roadmap
+# CareCheck - Master-Roadmap
 
-## Aktueller stabiler Stand
+Stand: nach Release `v1.2.8`
 
-v1.1.0 PWA abgeschlossen.
+Aktuell stabil: `v1.2.8 - UI Consistency`
 
-Funktionen:
+Aktiver Hauptstand: `main`
 
-- Dienstplan erfassen
-- Kalender
-- Soll-/Iststunden
-- Feiertage
-- TVöD-P Werte
-- Zuschläge
-- Prüfstatus
-- Wochenendfolge
-- CSV/XLSX Export
-- PDF-/Druckansicht
+## Abgeschlossen
+
+### v1.0-v1.2.4: Produktgrundlage
+
+- Dienstplanerfassung und Kalender
+- Tagesdetails und Bearbeitung
+- Soll-, Ist- und Differenzstunden
+- Feiertage aller Bundeslaender
+- Wochenendfolge-Pruefung
+- TVoeD-P-Grundwerte und ArbZG-Basispruefung
+- CSV-, XLSX- und Druckexport
+- PWA-Installation
+- JSON-Backup und Wiederherstellung
 - Dienstvorlagen
-- PWA-Installierbarkeit
+- responsive Grundlage
+- Premium-Dashboard und ShiftForm
+- Kalender-Quick-Add
 
----
+### v1.2.5-v1.2.7: Statistik und Qualitaet
 
-## Nächste Priorität: Ästhetik und Struktur
+- zentrale Statistik- und Compliance-Logik
+- einheitliche Datenbasis fuer Dashboard und Kalender
+- Tagesgesamtarbeitszeit und Tagespausen
+- ununterbrochene Arbeitsphasen
+- Nachtdienste ueber Mitternacht
+- Urlaubs- und Krankstundenlogik
+- Backup-Version 2 mit v1-Kompatibilitaet
+- Storage-Validierung
+- CSV-/XLSX-Haertung und Exporttests
+- sichere Dateinamen
+- XLSX Lazy Loading und Code-Splitting
+- GitHub Actions
+- 14 Testdateien und 125 bestandene Tests
+- erfolgreicher ESLint- und Produktions-Build
 
-### v1.1.1 Design Foundation
+### v1.2.8: UI Consistency
 
-Ziel:
-Einheitliche visuelle Grundlage.
+Ziel: eine einheitliche, verstaendliche und vorfuehrbare Produktoberflaeche.
 
-Status:
-In Arbeit oder abgeschlossen, je nach Commitstand.
+- UI-Bestandsaufnahme
+- zentrale Farben, Abstaende, Typografie und Design-Tokens
+- Dashboard-Karten vereinheitlicht
+- Kalender und Tagesdetails angeglichen
+- Diensterfassung konsistenter gestaltet
+- Profil, Vorlagen, Backup und Export angeglichen
+- einheitliche Begriffe und Kennzahlen geschaerft
+- iPhone-Ansicht priorisiert
+- klassische Desktop-Uebersicht erhalten
+- vollstaendige Regression mit Lint, Tests und Build
+- GitHub Release `v1.2.8` erstellt
 
----
+## Naechste Meilensteine
 
-### v1.1.2 Dashboard Cockpit
+### v1.2.9: Reporting & Export
 
-Ziel:
-Dashboard wirkt wie ein professionelles Monats-Cockpit.
+- professioneller Monatsbericht
+- verstaendliche Pruefhinweise
+- einheitliche CSV-, XLSX- und Druckausgaben
+- nachvollziehbare Berechnungsgrundlagen
+- Exportvorschau
+- bessere Dateinamen und Monatszuordnung
+- PDF-Bericht pruefen beziehungsweise ergaenzen
 
----
+### v1.3.0: TVoeD-P Fachmodul
 
-### v1.1.3 Kalender Design
+- Schicht- und Wechselschichtlogik
+- Nacht-, Sonntags- und Feiertagszuschlaege
+- Samstagszuschlaege
+- Ueberschneidungen von Zuschlagszeitraeumen
+- Wochenendbewertung
+- Feiertage nach Bundesland
+- planmaessige und tatsaechliche Arbeitszeiten
+- transparente Trennung von ArbZG- und TVoeD-P-Pruefungen
+- tarifliche Werte versionierbar machen
 
-Ziel:
-Kalender ruhiger, professioneller und besser lesbar.
+Vor Umsetzung muessen die jeweils aktuellen TVoeD-P-Regeln fachlich und rechtlich geprueft werden.
 
----
+### v1.4.0: Jahresauswertung
 
-### v1.1.4 Profil und Formulare
+- Uebersicht ueber alle zwoelf Monate
+- Jahres-Soll- und Iststunden
+- kumulierter Stundensaldo
+- Urlaub, Krankheit und Fortbildung
+- Wochenend- und Nachtdienstverteilung
+- Feiertagsarbeit
+- Trends und Monatsvergleiche
+- Jahresbericht und Export
 
-Ziel:
-Profil in klare Einstellungsgruppen aufteilen.
+### v1.5.0: Regelwerk und Transparenz
 
----
+- Erklaerung fuer jede Warnung
+- Darstellung der verwendeten Eingangsdaten
+- verstaendliche Berechnungsschritte
+- Schweregrade fuer Hinweise und Verstoesse
+- Verlinkung auf relevante Regelgrundlagen
+- konfigurierbare Pruefregeln
+- dokumentierte Grenzen der Pruefung
 
-### v1.1.5 Bericht Design
+### v1.6.0: Dienstplanpruefung und Fairness
 
-Ziel:
-Monatsbericht wirkt wie ein professioneller Nachweis.
+- Dienstverteilung innerhalb eines Teams
+- Vergleich von Nacht-, Wochenend- und Feiertagsdiensten
+- Pruefung "grundsaetzlich jedes zweite Wochenende frei"
+- individuelle Beschaeftigungsumfaenge
+- faire Verteilung nach Teilzeitanteil
+- erkennbare Abweichungen
+- anonymisierbare Team-Auswertung
 
----
+### v1.7.0: Planung und Komfort
 
-## Danach
+- wiederkehrende Dienstfolgen
+- Monatsvorlagen
+- Mehrfacherfassung
+- Kopieren und Verschieben von Diensten
+- Konfliktwarnungen direkt bei der Eingabe
+- verbesserte Such- und Filterfunktionen
+- optionaler Import vorhandener Dienstplaene
 
-### v1.2.0 Datensicherung
+## Langfristige Produktreife
 
-- JSON-Backup exportieren
-- JSON-Backup importieren
-- Profil, Dienste und Vorlagen sichern
+### v2.0: Synchronisierung und Mehrgeraetebetrieb
 
-### v1.3.0 Einstellbare Prüfregeln
+- Benutzerkonten
+- sichere Datensynchronisierung
+- Nutzung auf mehreren Geraeten
+- Datenschutz- und Loeschkonzept
+- verschluesselte Datenuebertragung
+- Rollen- und Berechtigungskonzept
+- Offline-/Online-Konfliktbehandlung
+- moegliche native iOS-/Android-Strategie
 
-- Wochenendfolge an/aus
-- Ruhezeitmodell
-- maximale Dienste in Folge
-- maximale Nachtdienste in Folge
+## Spaetere Vision
 
-### v1.4.0 Dienstplanimport
+- Einrichtungen und Teams
+- gemeinschaftliche Dienstplanpruefung
+- Betriebsrats- oder Mitarbeitervertretungsansicht
+- konfigurierbare Tarif- und Betriebsregeln
+- Import aus verbreiteten Dienstplansystemen
+- nachvollziehbare Audit-Berichte
+- optionale Cloud- und lokale Betriebsmodelle
 
-- CSV importieren
-- später Excel importieren
+## Verbindliche fachliche Grundlage
 
-### v2.0 Sync / Cloud
-
-- optional
-- erst später
+- FREE zaehlt keine Stunden und keinen Planungstag und wird nicht auf Compliance geprueft.
+- VACATION, SICK und TRAINING bleiben planungs- und stundenrelevant.
+- Urlaub und Krankheit gelten nicht als tatsaechliche ArbZG-Arbeitsdienste.
+- EARLY, LATE, NIGHT, DAY und CUSTOM gelten als Arbeitsdienste.
+- Nachtdienste ueber Mitternacht muessen korrekt verarbeitet werden.
+- Compliance-Auswertungen beziehen sich auf den ausgewaehlten Monat.
+- Datum: `dd.mm.yyyy`
+- Uhrzeit: 24-Stunden-Format
+- Mobile iPhone-Ansicht hat Prioritaet.
+- Die klassische Desktop-Uebersicht bleibt erhalten.
