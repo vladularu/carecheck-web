@@ -13,14 +13,24 @@ export default function CalendarHeader({
 }: CalendarHeaderProps) {
   return (
     <div className="calendar-header">
-      <Button variant="secondary" onClick={onPrevious}>
-        ◀
+      <Button
+        aria-label="Vorheriger Monat"
+        className="calendar-nav-button"
+        variant="secondary"
+        onClick={onPrevious}
+      >
+        {"<"}
       </Button>
 
       <h2>{monthLabel}</h2>
 
-      <Button variant="secondary" onClick={onNext}>
-        ▶
+      <Button
+        aria-label="Nächster Monat"
+        className="calendar-nav-button"
+        variant="secondary"
+        onClick={onNext}
+      >
+        {">"}
       </Button>
     </div>
   );

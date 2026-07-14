@@ -125,7 +125,9 @@ export default function DayDetails({
       )}
 
       {shifts.length === 0 ? (
-        <p>Für diesen Tag ist noch kein Dienst erfasst.</p>
+        <p className="day-details-empty">
+          Für diesen Tag ist noch kein Dienst erfasst.
+        </p>
       ) : (
         <div className="day-details-list">
           {shifts.map((shift) => {

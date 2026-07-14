@@ -157,7 +157,7 @@ export default function MonthlyReport() {
           description="Druckansicht für PDF-Export über den Browser."
         />
 
-        <Card>
+        <Card className="report-action-card">
           <div className="report-actions">
             <Button
               type="button"
@@ -384,10 +384,13 @@ export default function MonthlyReport() {
             </div>
 
             <div>
-<span>Compliance-relevant</span>
-<strong>
-  {complianceRelevantShiftsInSelectedMonth.length}
-</strong>
+              <span>Compliance-relevant</span>
+              <strong>
+                {
+                  complianceRelevantShiftsInSelectedMonth
+                    .length
+                }
+              </strong>
             </div>
           </div>
         </section>

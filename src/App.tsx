@@ -8,7 +8,6 @@ import Compliance from "./pages/Compliance";
 import Profile from "./pages/Profile";
 import Calendar from "./pages/Calendar";
 import MonthlyReport from "./pages/MonthlyReport";
-import "./App.css";
 
 export default function App() {
   return (
