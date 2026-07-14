@@ -85,4 +85,4 @@
 - [x] Statistik-, Tarif- und Compliance-Logik unveraendert lassen.
 - [x] v1.7.0 nach `main` uebernehmen.
 - [x] Release-Tag fuer `v1.7.0` erstellen.
-- [ ] GitHub Release fuer `v1.7.0` erstellen.
+- [x] GitHub Release fuer `v1.7.0` erstellen.

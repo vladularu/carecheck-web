@@ -144,6 +144,7 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 - Regressionstests fuer Planungskomfort-Service und Vorlagen-Storage
 - Statistik-, Tarif- und Compliance-Logik unveraendert gelassen
 - Release-Tag `v1.7.0` erstellt
+- GitHub Release `v1.7.0` erstellt
 
 ## Langfristige Produktreife
 
