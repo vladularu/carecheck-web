@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.3.0 (unreleased)
+## v1.3.0
 
 - TVoeD-P Fachmodul auf der Gehaltsseite ergaenzt.
 - Tarifwerte versionierbar gemacht, ohne vorhandene Tabellenwerte zu veraendern.

@@ -24,7 +24,7 @@
 - [x] ArbZG-/Compliance-Pruefung und TVoeD-P-Auswertung sichtbar trennen.
 - [x] Regressionstests fuer Tarifmodul und Zuschlagslogik ergaenzen.
 - [x] v1.3.0 nach `main` uebernehmen.
-- [ ] Release-Tag und GitHub Release fuer `v1.3.0` erstellen.
+- [x] Release-Tag und GitHub Release fuer `v1.3.0` erstellen.
 
 ## Spaetere Versionen
 

@@ -1,8 +1,8 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release `v1.2.9`
+Stand: nach Release `v1.3.0`
 
-Aktuell stabil: `v1.2.9 - Reporting & Export`
+Aktuell stabil: `v1.3.0 - TVoeD-P Fachmodul`
 
 Aktiver Hauptstand: `main`
 
@@ -75,8 +75,6 @@ Bereits umgesetzt:
 
 ### v1.3.0: TVoeD-P Fachmodul
 
-Status: in `main` uebernommen, noch nicht released.
-
 - Schicht- und Wechselschichtindikatoren
 - Nacht-, Sonntags- und Feiertagszuschlaege
 - Samstagszuschlaege 13-21 Uhr
@@ -87,12 +85,9 @@ Status: in `main` uebernommen, noch nicht released.
 - transparente Trennung von ArbZG- und TVoeD-P-Auswertung
 - tarifliche Werte versionierbar gemacht
 - Regressionstests fuer Tarifversion, Zuschlagskollisionen und Fachmodul
+- GitHub Release `v1.3.0` erstellt
 
-Noch offen vor Release:
-
-- Tag und GitHub Release fuer `v1.3.0`
-
-Vor Release muessen die jeweils aktuellen TVoeD-P-Regeln fachlich und rechtlich geprueft werden.
+Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich und rechtlich geprueft werden.
 
 ## Naechste Meilensteine
 

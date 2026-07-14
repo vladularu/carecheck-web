@@ -14,21 +14,9 @@ The app focuses on practical month-by-month workflows:
 
 ## Current Release
 
-Latest tagged release: `v1.2.9`
-
-Active main status: `v1.3.0 - TVoeD-P Fachmodul` merged, unreleased
+Latest tagged release: `v1.3.0`
 
 Release focus:
-
-- consistent monthly report filenames for CSV, XLSX, and browser/PDF print flows
-- shared export preview on dashboard and monthly report pages
-- aligned report labels across CSV, XLSX, print view, and UI
-- transparent calculation basis and clearer compliance notes in the monthly report
-- hardened print pagination for professional PDF output
-- export regression coverage for filenames, labels, preview data, and print/report consistency
-- statistics, tariff, and compliance logic unchanged
-
-Unreleased v1.3.0 scope:
 
 - versioned TVoeD-P tariff values
 - separated TVoeD-P module for tariff-oriented monthly evaluation
@@ -37,6 +25,7 @@ Unreleased v1.3.0 scope:
 - shift-work and alternating-shift indicators
 - weekend assessment for the selected month
 - explicit separation between ArbZG compliance checks and TVoeD-P tariff views
+- statistics and compliance logic unchanged
 
 ## Tech Stack
 
@@ -164,8 +153,8 @@ git push origin v1.2.8
 For the current release, use:
 
 ```powershell
-git tag -a v1.2.9 -m "Release v1.2.9 Reporting & Export"
-git push origin v1.2.9
+git tag -a v1.3.0 -m "Release v1.3.0 TVoeD-P Fachmodul"
+git push origin v1.3.0
 ```
 
 ## Deployment
