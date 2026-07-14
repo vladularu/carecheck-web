@@ -16,7 +16,7 @@ The app focuses on practical month-by-month workflows:
 
 Latest tagged release: `v1.3.0`
 
-Active development: `v1.4.0 - Jahresauswertung` on `feature/v1.4.0-yearly-analysis`
+Active main status: `v1.4.0 - Jahresauswertung` merged, unreleased
 
 Release focus:
 
@@ -29,7 +29,7 @@ Release focus:
 - explicit separation between ArbZG compliance checks and TVoeD-P tariff views
 - statistics and compliance logic unchanged
 
-Current development focus:
+Unreleased v1.4.0 scope:
 
 - yearly overview across all twelve months
 - annual target, actual, balance, absence, premium, night, weekend, and holiday-work totals

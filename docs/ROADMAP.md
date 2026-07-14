@@ -5,7 +5,6 @@ Stand: nach Release `v1.3.0`
 Aktuell stabil: `v1.3.0 - TVoeD-P Fachmodul`
 
 Aktiver Hauptstand: `main`
-Aktiver Entwicklungsbranch: `feature/v1.4.0-yearly-analysis`
 
 ## Abgeschlossen
 
@@ -92,7 +91,7 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 
 ### v1.4.0: Jahresauswertung
 
-Status: umgesetzt auf `feature/v1.4.0-yearly-analysis`, noch nicht released.
+Status: in `main` uebernommen, noch nicht released.
 
 - Uebersicht ueber alle zwoelf Monate
 - Jahres-Soll- und Iststunden
@@ -106,7 +105,6 @@ Status: umgesetzt auf `feature/v1.4.0-yearly-analysis`, noch nicht released.
 
 Noch offen vor Release:
 
-- Branch nach `main` uebernehmen
 - Tag und GitHub Release fuer `v1.4.0`
 
 ## Naechste Meilensteine
