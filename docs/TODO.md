@@ -51,7 +51,8 @@
 - [x] Grenzen der Pruefung dokumentieren.
 - [x] Regressionstests fuer Regeltransparenz ergaenzen.
 - [x] v1.5.0 nach `main` uebernehmen.
-- [x] Release-Tag und GitHub Release fuer `v1.5.0` erstellen.
+- [x] Release-Tag fuer `v1.5.0` erstellen.
+- [ ] GitHub Release fuer `v1.5.0` erstellen.
 
 ## Spaetere Versionen
 

@@ -114,7 +114,7 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 - dokumentierte Grenzen der Pruefung
 - iPhone-taugliche Detailansicht mit aufklappbaren Regelinformationen
 - Regressionstests fuer Regelzuordnung, Quellen, Pruefprofil und Eingangsdaten
-- GitHub Release `v1.5.0` erstellt
+- Release-Tag `v1.5.0` erstellt
 
 ## Naechste Meilensteine
 
