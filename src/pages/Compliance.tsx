@@ -62,23 +62,37 @@ export default function Compliance() {
   ).length;
 
   return (
-    <section className="page">
+    <section className="page compliance-page">
       <PageHeader
         eyebrow="Prüfung"
         title={`Arbeitszeitgesetz · ${selectedMonthLabel}`}
         description="Prüfung für Ruhezeit, Pausen, tägliche Arbeitszeit, Überschneidungen und Wochenendfolge im ausgewählten Monat."
       />
 
-      <Card>
+      <Card className="compliance-overview-card">
+        <div className="compliance-section-header">
+          <span className="card-label">Audit-Überblick</span>
+          <strong>{selectedMonthLabel}</strong>
+          <p>
+            Zusammenfassung der erkannten Hinweise im
+            ausgewählten Monat.
+          </p>
+        </div>
+
         <div className="compliance-summary">
-          <div>
+          <div className="compliance-summary-critical">
             <span>Kritisch</span>
             <strong>{criticalCount}</strong>
           </div>
 
-          <div>
+          <div className="compliance-summary-warning">
             <span>Warnungen</span>
             <strong>{warningCount}</strong>
+          </div>
+
+          <div>
+            <span>Hinweise gesamt</span>
+            <strong>{issues.length}</strong>
           </div>
 
           <div>
@@ -105,35 +119,54 @@ export default function Compliance() {
       </Card>
 
       {issues.length === 0 ? (
-        <Card>
-          <strong>
-            Keine Auffälligkeiten gefunden
-          </strong>
+        <Card className="compliance-empty-card">
+          <div className="compliance-section-header">
+            <span className="card-label">Ergebnis</span>
+            <strong>
+              Keine Auffälligkeiten gefunden
+            </strong>
 
-          <p>
-            Für {selectedMonthLabel} wurden keine
-            Verstöße gegen die hinterlegten
-            Prüfregeln erkannt.
-          </p>
+            <p>
+              Für {selectedMonthLabel} wurden keine
+              Verstöße gegen die hinterlegten
+              Prüfregeln erkannt.
+            </p>
+          </div>
         </Card>
       ) : (
-        <div className="compliance-list">
-          {issues.map((issue) => (
-            <article
-              className={getIssueClassName(
-                issue.severity,
-              )}
-              key={issue.id}
-            >
-              <span>
-                {severityLabels[issue.severity]}
-              </span>
+        <section
+          className="compliance-list-section"
+          aria-labelledby="compliance-issues-title"
+        >
+          <div className="compliance-section-header">
+            <span className="card-label">Hinweise</span>
+            <strong id="compliance-issues-title">
+              Prüfhinweise im Detail
+            </strong>
+            <p>
+              Jeder Hinweis beschreibt die Auffälligkeit
+              und ihre Relevanz für den Dienstplan.
+            </p>
+          </div>
 
-              <strong>{issue.title}</strong>
-              <p>{issue.description}</p>
-            </article>
-          ))}
-        </div>
+          <div className="compliance-list">
+            {issues.map((issue) => (
+              <article
+                className={getIssueClassName(
+                  issue.severity,
+                )}
+                key={issue.id}
+              >
+                <span>
+                  {severityLabels[issue.severity]}
+                </span>
+
+                <strong>{issue.title}</strong>
+                <p>{issue.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
       )}
     </section>
   );
