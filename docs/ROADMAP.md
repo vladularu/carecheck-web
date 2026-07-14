@@ -1,8 +1,8 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release `v1.5.0`
+Stand: nach Release-Tag `v1.6.0`
 
-Aktuell stabil: `v1.5.0 - Regelwerk und Transparenz`
+Aktuell stabil: `v1.6.0 - Dienstplanpruefung und Fairness`
 
 Aktiver Hauptstand: `main`
 
@@ -116,17 +116,21 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 - Regressionstests fuer Regelzuordnung, Quellen, Pruefprofil und Eingangsdaten
 - Release-Tag `v1.5.0` erstellt
 
-## Naechste Meilensteine
-
 ### v1.6.0: Dienstplanpruefung und Fairness
 
-- Dienstverteilung innerhalb eines Teams
+- eigene Fairness-Seite mit Monatsnavigation
+- aktuelle Person automatisch aus dem Dienstplan berechnet
+- manuelle Teamvergleichswerte lokal gespeichert
 - Vergleich von Nacht-, Wochenend- und Feiertagsdiensten
 - Pruefung "grundsaetzlich jedes zweite Wochenende frei"
-- individuelle Beschaeftigungsumfaenge
+- individuelle Beschaeftigungsumfaenge ueber Wochenstundenanteil
 - faire Verteilung nach Teilzeitanteil
-- erkennbare Abweichungen
+- erkennbare Abweichungen und Belastungshinweise
 - anonymisierbare Team-Auswertung
+- Regressionstests fuer Fairness-Service und Storage
+- Release-Tag `v1.6.0` erstellt
+
+## Naechste Meilensteine
 
 ### v1.7.0: Planung und Komfort
 

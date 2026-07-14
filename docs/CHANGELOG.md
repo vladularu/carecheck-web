@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.6.0
+
+- Fairness-Seite fuer Dienstverteilung im Team ergaenzt.
+- Aktuelle Person automatisch aus dem Monatsdienstplan berechnet.
+- Manuelle Teamvergleichswerte lokal speicherbar gemacht.
+- Nacht-, Wochenend- und Feiertagsdienste nach Wochenstundenanteil vergleichbar gemacht.
+- Pruefung "grundsaetzlich jedes zweite Wochenende frei" als Fairness-Hinweis ergaenzt.
+- Anonymisierbare Team-Auswertung ergaenzt.
+- Regressionstests fuer Fairness-Service und Teamdaten-Storage ergaenzt.
+- Statistik-, Tarif- und Compliance-Berechnungslogik unveraendert gelassen.
+
 ## v1.5.0
 
 - Zentralen Regelkatalog fuer bestehende Compliance-Hinweise ergaenzt.

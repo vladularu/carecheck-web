@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Calendar from "./pages/Calendar";
 import MonthlyReport from "./pages/MonthlyReport";
 import YearlyReport from "./pages/YearlyReport";
+import Fairness from "./pages/Fairness";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/kalender" element={<Calendar />} />
             <Route path="/bericht" element={<MonthlyReport />} />
             <Route path="/jahr" element={<YearlyReport />} />
+            <Route path="/fairness" element={<Fairness />} />
           </Routes>
         </main>
 

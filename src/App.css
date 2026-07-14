@@ -7598,19 +7598,292 @@ textarea {
 
 /* v1.4.0 yearly analysis navigation */
 .bottom-nav {
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  width: min(760px, calc(100% - 24px));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  width: min(820px, calc(100% - 24px));
 }
 
 .bottom-nav-link,
 .bottom-nav a {
   min-width: 0;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 @media (max-width: 430px) {
   .bottom-nav-link,
   .bottom-nav a {
-    font-size: 11px;
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   CareCheck TVoeD v1.6.0 - Dienstplanpruefung und Fairness
+   Eigene Fairness-Auswertung, keine Compliance-Logikaenderung
+   ========================================================= */
+
+.fairness-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.fairness-header-row,
+.fairness-team-header,
+.fairness-member-editor-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.fairness-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.15rem;
+}
+
+.fairness-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.fairness-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 0.85rem;
+}
+
+.fairness-card,
+.fairness-wide-card {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.fairness-wide-card {
+  min-width: 0;
+}
+
+.fairness-card-header {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.fairness-card-header strong {
+  color: var(--cc-text);
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 900;
+  line-height: 1.12;
+}
+
+.fairness-card-header p,
+.fairness-alert-list p,
+.fairness-empty-note,
+.fairness-note-list li {
+  margin: 0;
+  color: var(--cc-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.fairness-alert-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.fairness-alert-list p {
+  padding: 0.7rem;
+  border: 1px solid rgba(234, 88, 12, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 247, 237, 0.9);
+  color: #9a3412;
+}
+
+.fairness-weekend-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.fairness-weekend-list div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  border: 1px solid rgba(120, 132, 158, 0.14);
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.82);
+}
+
+.fairness-weekend-list span,
+.fairness-table th,
+.fairness-table td,
+.fairness-source-label {
+  min-width: 0;
+}
+
+.fairness-weekend-list span {
+  color: var(--cc-text-muted);
+  font-size: 0.85rem;
+  font-weight: 850;
+}
+
+.fairness-weekend-list strong {
+  color: var(--cc-text);
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.fairness-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.6rem;
+  width: fit-content;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid rgba(120, 132, 158, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--cc-text);
+  font-size: 0.72rem;
+  font-weight: 850;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.fairness-status-balanced,
+.fairness-weekend-ok {
+  border-color: rgba(22, 163, 74, 0.18);
+  background: rgba(240, 253, 244, 0.9);
+  color: #166534;
+}
+
+.fairness-status-above-share,
+.fairness-weekend-review {
+  border-color: rgba(234, 88, 12, 0.2);
+  background: rgba(255, 247, 237, 0.94);
+  color: #9a3412;
+}
+
+.fairness-status-below-share,
+.fairness-status-no-team-data {
+  border-color: rgba(37, 99, 235, 0.18);
+  background: rgba(239, 246, 255, 0.92);
+  color: #1d4ed8;
+}
+
+.fairness-weekend-critical {
+  border-color: rgba(220, 38, 38, 0.2);
+  background: rgba(254, 242, 242, 0.94);
+  color: #991b1b;
+}
+
+.fairness-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.fairness-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.fairness-table th,
+.fairness-table td {
+  padding: 0.7rem;
+  border-bottom: 1px solid rgba(120, 132, 158, 0.14);
+  color: var(--cc-text);
+  font-size: 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.fairness-table th {
+  color: var(--cc-text-muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fairness-table tbody th {
+  color: var(--cc-text);
+  font-size: 0.92rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.fairness-table small {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--cc-text-muted);
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.fairness-member-editor-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.fairness-member-editor {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(120, 132, 158, 0.14);
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.82);
+}
+
+.fairness-member-editor-header .field {
+  flex: 1;
+}
+
+.fairness-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.fairness-note-list {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+@media (max-width: 900px) {
+  .fairness-header-row,
+  .fairness-team-header,
+  .fairness-member-editor-header {
+    display: grid;
+  }
+
+  .fairness-actions {
+    justify-content: stretch;
+  }
+
+  .fairness-actions .ui-button,
+  .fairness-team-header .ui-button,
+  .fairness-member-editor-header .ui-button {
+    width: 100%;
+  }
+
+  .fairness-kpi-grid,
+  .fairness-content-grid,
+  .fairness-editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fairness-weekend-list div {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .fairness-status {
+    width: fit-content;
   }
 }

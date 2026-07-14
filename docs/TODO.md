@@ -54,7 +54,22 @@
 - [x] Release-Tag fuer `v1.5.0` erstellen.
 - [ ] GitHub Release fuer `v1.5.0` erstellen.
 
+## v1.6.0 - Dienstplanpruefung und Fairness
+
+- [x] Fairness-Service fuer Teamvergleich ergaenzen.
+- [x] Aktuelle Person automatisch aus Monatsdienstplan berechnen.
+- [x] Manuelle Teamvergleichswerte lokal speichern.
+- [x] Nacht-, Wochenend- und Feiertagsdienste vergleichen.
+- [x] Pruefung "grundsaetzlich jedes zweite Wochenende frei" ergaenzen.
+- [x] Individuelle Beschaeftigungsumfaenge ueber Wochenstundenanteil beruecksichtigen.
+- [x] Erkennbare Abweichungen und Belastungshinweise anzeigen.
+- [x] Anonymisierbare Team-Auswertung ergaenzen.
+- [x] Fairness-Seite in Routing und Navigation einbinden.
+- [x] Regressionstests fuer Fairness-Service und Storage ergaenzen.
+- [x] v1.6.0 nach `main` uebernehmen.
+- [x] Release-Tag fuer `v1.6.0` erstellen.
+- [ ] GitHub Release fuer `v1.6.0` erstellen.
+
 ## Spaetere Versionen
 
-- [ ] v1.6.0 Dienstplanpruefung und Fairness konzipieren.
 - [ ] v1.7.0 Planung und Komfort erweitern.

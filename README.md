@@ -8,15 +8,24 @@ The app focuses on practical month-by-month workflows:
 - compare target and actual hours
 - calculate shift premiums and salary-relevant totals
 - check working-time compliance
+- compare team fairness for night, weekend, and holiday duties
 - export monthly reports as CSV/XLSX
 - print or save a monthly report as PDF through the browser
 - back up and restore local profile, shifts, and templates
 
 ## Current Release
 
-Latest tagged release: `v1.5.0`
+Latest tagged release: `v1.6.0`
 
 Release focus:
+
+- fairness page for monthly team duty distribution
+- current user's fairness values calculated from the shift plan
+- manually maintained local team comparison values
+- night, weekend, and holiday-duty comparison by weekly-hour share
+- every-second-weekend review signal
+- anonymized team view for shareable review
+- statistics, tariff, and compliance calculation logic unchanged
 
 - central rule catalog for existing compliance hints
 - transparent issue details with source data, calculation steps, severity explanation, references, and documented limits
@@ -109,6 +118,7 @@ npm.cmd run build
 - `/kalender` - calendar and day details
 - `/bericht` - monthly report and print view
 - `/jahr` - yearly analysis and CSV export
+- `/fairness` - team fairness and duty distribution review
 - `/profil` - profile, templates, and backup
 
 ## Project Structure
@@ -127,6 +137,7 @@ docs/
   CARECHECK_DESIGN_GUIDE.md
   ROADMAP.md
   TODO.md
+  V1.6.0_FAIRNESS_AUDIT.md
   V1.5.0_RULE_TRANSPARENCY_AUDIT.md
   V1.4.0_YEARLY_ANALYSIS_AUDIT.md
   V1.3.0_TVOED_P_MODULE_AUDIT.md
@@ -169,8 +180,8 @@ git push origin v1.2.8
 For the current release, use:
 
 ```powershell
-git tag -a v1.5.0 -m "Release v1.5.0 Regelwerk und Transparenz"
-git push origin v1.5.0
+git tag -a v1.6.0 -m "Release v1.6.0 Dienstplanpruefung und Fairness"
+git push origin v1.6.0
 ```
 
 ## Deployment
