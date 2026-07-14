@@ -1,8 +1,8 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Merge von `v1.2.9` in `main`, vor Release-Tag
+Stand: nach Release `v1.2.9`
 
-Aktuell stabil: `v1.2.8 - UI Consistency`
+Aktuell stabil: `v1.2.9 - Reporting & Export`
 
 Aktiver Hauptstand: `main`
 
@@ -57,11 +57,7 @@ Ziel: eine einheitliche, verstaendliche und vorfuehrbare Produktoberflaeche.
 - vollstaendige Regression mit Lint, Tests und Build
 - GitHub Release `v1.2.8` erstellt
 
-## In Entwicklung
-
 ### v1.2.9: Reporting & Export
-
-Status: in `main` uebernommen, noch nicht released.
 
 Ziel: Monatsbericht, CSV, XLSX und Druck/PDF-Ausgabe verstaendlicher, konsistenter und besser pruefbar machen, ohne Statistik-, Tarif- oder Compliance-Logik zu veraendern.
 
@@ -75,10 +71,7 @@ Bereits umgesetzt:
 - gehaertete Druck-/PDF-Paginierung fuer Monatsbericht-Abschnitte
 - Regressionstests fuer Exportnamen, Labels, Vorschau und Berichtskonsistenz
 - erfolgreiche lokale Regression mit ESLint, Tests und Produktions-Build
-
-Noch offen vor Release:
-
-- Tag und GitHub Release fuer `v1.2.9`
+- GitHub Release `v1.2.9` erstellt
 
 ## Naechste Meilensteine
 

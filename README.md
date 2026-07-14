@@ -14,18 +14,9 @@ The app focuses on practical month-by-month workflows:
 
 ## Current Release
 
-Latest tagged release: `v1.2.8`
+Latest tagged release: `v1.2.9`
 
-Active main status: `v1.2.9 - Reporting & Export` merged, unreleased
-
-Latest release focus:
-
-- UI consistency across profile, planner, salary, compliance, calendar, and monthly report views
-- iPhone-first mobile refinements
-- classic desktop layout preserved
-- statistics, tariff, export, and compliance logic unchanged
-
-Unreleased v1.2.9 scope:
+Release focus:
 
 - consistent monthly report filenames for CSV, XLSX, and browser/PDF print flows
 - shared export preview on dashboard and monthly report pages
@@ -33,6 +24,7 @@ Unreleased v1.2.9 scope:
 - transparent calculation basis and clearer compliance notes in the monthly report
 - hardened print pagination for professional PDF output
 - export regression coverage for filenames, labels, preview data, and print/report consistency
+- statistics, tariff, and compliance logic unchanged
 
 ## Tech Stack
 
@@ -156,7 +148,7 @@ git push origin v1.2.8
 
 7. Create a GitHub Release from the tag.
 
-For the unreleased v1.2.9 state, use after the final release decision:
+For the current release, use:
 
 ```powershell
 git tag -a v1.2.9 -m "Release v1.2.9 Reporting & Export"

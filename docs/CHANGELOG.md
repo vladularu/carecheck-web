@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.2.9 (unreleased)
+## v1.2.9
 
 - Monatsbericht, CSV, XLSX und Druck/PDF-Ausgabe mit gemeinsamen Report-Labels vereinheitlicht.
 - Sortierbare Monatsbericht-Dateinamen mit klarer Monatskennung fuer CSV, XLSX und Drucktitel ergaenzt.

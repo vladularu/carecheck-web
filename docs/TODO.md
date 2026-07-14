@@ -11,7 +11,7 @@
 - [x] Export- und Berichtskonsistenz mit Regressionstests absichern.
 - [x] Finale Doku pruefen.
 - [x] v1.2.9-Branch nach `main` uebernehmen.
-- [ ] Release-Tag und GitHub Release fuer `v1.2.9` erstellen.
+- [x] Release-Tag und GitHub Release fuer `v1.2.9` erstellen.
 
 ## Spaetere Versionen
 
