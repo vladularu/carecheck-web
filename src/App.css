@@ -8530,3 +8530,608 @@ textarea {
     padding: 0 0.65rem !important;
   }
 }
+
+/* =========================================================
+   CareCheck v1.8.0 - Vision Design Alignment
+   Quelle: CareCheck Vision Referenz, nur Praesentationsschicht
+   ========================================================= */
+
+:root {
+  --cc-bg: #f5f8f4;
+  --cc-paper: #f5f8f4;
+  --cc-paper-soft: #f7faf6;
+  --cc-surface: #ffffff;
+  --cc-surface-soft: #f7f9f7;
+  --cc-card: rgba(255, 255, 255, 0.94);
+  --cc-card-solid: #ffffff;
+
+  --cc-text: #102c2a;
+  --cc-text-soft: #49605e;
+  --cc-text-muted: #71817e;
+
+  --cc-border: rgba(16, 44, 42, 0.12);
+  --cc-border-strong: rgba(24, 122, 99, 0.32);
+
+  --cc-primary: #102c2a;
+  --cc-primary-dark: #102c2a;
+  --cc-primary-soft: rgba(98, 214, 180, 0.16);
+  --cc-mint: #62d6b4;
+  --cc-mint-dark: #187a63;
+  --cc-lime: #dff476;
+  --cc-blue: #769cff;
+  --cc-amber: #f6c967;
+  --cc-blue-soft: rgba(118, 156, 255, 0.14);
+
+  --cc-success: #187a63;
+  --cc-success-soft: #e2f5ed;
+  --cc-warning: #8b6410;
+  --cc-warning-soft: #fff0c6;
+  --cc-danger: #9f2d2d;
+  --cc-danger-soft: #fdeaea;
+
+  --cc-radius-sm: 8px;
+  --cc-radius-md: 8px;
+  --cc-radius-lg: 8px;
+  --cc-radius-xl: 8px;
+
+  --cc-shadow-soft: 0 10px 26px rgba(32, 76, 68, 0.08);
+  --cc-shadow-card: 0 18px 46px rgba(32, 76, 68, 0.12);
+  --cc-shadow-nav: 0 18px 44px rgba(32, 76, 68, 0.18);
+}
+
+html,
+body,
+#root {
+  background: var(--cc-paper) !important;
+  color: var(--cc-text) !important;
+}
+
+body {
+  background:
+    linear-gradient(180deg, #f9fbf7 0%, var(--cc-paper) 46%, #eff6f1 100%) !important;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-shell {
+  width: min(1180px, calc(100% - 48px)) !important;
+  max-width: 1180px !important;
+  padding: 1.15rem 0 calc(114px + env(safe-area-inset-bottom)) !important;
+}
+
+.page,
+.dashboard-page,
+.calendar-page,
+.profile-page,
+.monthly-report-page,
+.yearly-page,
+.fairness-page,
+.planner-page {
+  gap: 0.95rem !important;
+}
+
+.ui-page-header,
+.dashboard-hero,
+.cockpit-overview-card,
+.work-card-header,
+.monthly-premium-header,
+.profile-section-header,
+.planner-section-header,
+.fairness-card-header,
+.yearly-card-header {
+  letter-spacing: 0 !important;
+}
+
+.ui-page-header span,
+.eyebrow,
+.card-label,
+.cockpit-eyebrow {
+  color: var(--cc-mint-dark) !important;
+  font-size: 0.73rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+  text-transform: uppercase;
+}
+
+.ui-page-header h1,
+.page h1,
+.dashboard-hero h1,
+.cockpit-overview-header h2 {
+  color: var(--cc-text) !important;
+  font-size: 2.35rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.02 !important;
+}
+
+.ui-page-header p,
+.dashboard-hero p,
+.planner-section-header p,
+.profile-section-header p,
+.fairness-card-header p,
+.yearly-card-header p,
+.report-action-header p {
+  max-width: 44rem;
+  color: var(--cc-text-soft) !important;
+  font-size: 0.98rem !important;
+  line-height: 1.6 !important;
+}
+
+.ui-card,
+.summary-card,
+.dashboard-card,
+.work-card,
+.status-card,
+.planner-entry-card,
+.planner-summary-card,
+.planning-comfort-card,
+.planner-filter-card,
+.profile-section-card,
+.yearly-card,
+.fairness-card,
+.fairness-wide-card,
+.report-action-card,
+.cockpit-wide-card {
+  border: 1px solid var(--cc-border) !important;
+  border-radius: 8px !important;
+  background: var(--cc-card) !important;
+  box-shadow: var(--cc-shadow-soft) !important;
+  backdrop-filter: blur(12px);
+}
+
+.ui-card,
+.planner-entry-card,
+.planner-summary-card,
+.planning-comfort-card,
+.profile-section-card,
+.yearly-card,
+.fairness-card,
+.fairness-wide-card {
+  padding: 1.05rem !important;
+}
+
+.dashboard-hero {
+  display: grid !important;
+  align-items: start !important;
+  gap: 0.85rem !important;
+  min-height: auto !important;
+  padding: 1.15rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.92) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 246, 0.88)),
+    linear-gradient(90deg, rgba(98, 214, 180, 0.12), rgba(118, 156, 255, 0.1)) !important;
+  color: var(--cc-text) !important;
+  box-shadow: var(--cc-shadow-card) !important;
+}
+
+.dashboard-hero::before,
+.dashboard-hero::after {
+  content: none !important;
+  display: none !important;
+}
+
+.dashboard-hero-brand-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.dashboard-brand-mark {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1.95rem;
+  height: 1.95rem;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: var(--cc-text);
+  box-shadow: 0 8px 22px rgba(16, 44, 42, 0.18);
+}
+
+.dashboard-brand-mark span {
+  position: absolute;
+  border-radius: 4px;
+  background: var(--cc-mint);
+}
+
+.dashboard-brand-mark span:first-child {
+  width: 0.92rem;
+  height: 0.28rem;
+}
+
+.dashboard-brand-mark span:last-child {
+  width: 0.28rem;
+  height: 0.92rem;
+}
+
+.dashboard-hero h1 {
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.dashboard-hero p {
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.dashboard-hero > div:not(.dashboard-hero-brand-row) {
+  display: grid;
+  gap: 0.32rem;
+  max-width: 44rem;
+  text-align: left !important;
+}
+
+.cockpit-overview-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(24, 122, 99, 0.12) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(135deg, rgba(98, 214, 180, 0.1), rgba(223, 244, 118, 0.08)),
+    #ffffff !important;
+  box-shadow: var(--cc-shadow-card) !important;
+}
+
+.cockpit-overview-card::before {
+  content: none !important;
+}
+
+.cockpit-overview-header {
+  align-items: start !important;
+  gap: 0.8rem !important;
+}
+
+.cockpit-status,
+.release-pill,
+.monthly-premium-count,
+.progress-number {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  width: fit-content;
+  border: 1px solid rgba(24, 122, 99, 0.15) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: var(--cc-text) !important;
+  font-size: 0.78rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap;
+}
+
+.cockpit-status-ok,
+.dashboard-status-card.dashboard-status-ok {
+  border-color: rgba(24, 122, 99, 0.18) !important;
+  background: rgba(226, 245, 237, 0.82) !important;
+  color: var(--cc-mint-dark) !important;
+}
+
+.cockpit-status-warning,
+.dashboard-status-card.dashboard-status-warning {
+  border-color: rgba(246, 201, 103, 0.35) !important;
+  background: rgba(255, 240, 198, 0.75) !important;
+  color: var(--cc-warning) !important;
+}
+
+.cockpit-status-critical,
+.dashboard-status-card.dashboard-status-critical {
+  border-color: rgba(159, 45, 45, 0.22) !important;
+  background: rgba(253, 234, 234, 0.85) !important;
+  color: var(--cc-danger) !important;
+}
+
+.cockpit-main-values,
+.cockpit-mini-grid,
+.work-grid,
+.dashboard-status-grid,
+.planner-summary-grid,
+.yearly-metric-grid,
+.fairness-kpi-grid {
+  gap: 0.55rem !important;
+}
+
+.ui-stat-card,
+.planner-summary-grid div,
+.planning-tool-panel,
+.cockpit-main-values div,
+.cockpit-mini-grid article,
+.dashboard-status-grid div,
+.fairness-member-editor,
+.yearly-metric-grid div,
+.yearly-trend-list div,
+.tariff-box,
+.shift-card,
+.day-details-shift {
+  border: 1px solid rgba(16, 44, 42, 0.1) !important;
+  border-radius: 8px !important;
+  background: var(--cc-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+.cockpit-main-values strong,
+.work-card-header strong,
+.monthly-premium-header strong,
+.planner-section-header strong,
+.profile-section-header strong,
+.fairness-card-header strong,
+.yearly-card-header strong,
+.dashboard-status-grid strong {
+  color: var(--cc-text) !important;
+  font-size: 1.45rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.12 !important;
+}
+
+.progress-track,
+.cockpit-progress-track {
+  height: 0.42rem !important;
+  border-radius: 999px !important;
+  background: rgba(24, 122, 99, 0.1) !important;
+}
+
+.progress-fill,
+.cockpit-progress-track span {
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, var(--cc-mint-dark), var(--cc-mint)) !important;
+}
+
+.ui-button,
+.primary-button,
+.danger-button {
+  min-height: 3rem !important;
+  padding-inline: 1rem !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  font-size: 0.9rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+}
+
+.ui-button-primary,
+.primary-button,
+button[type="submit"] {
+  border: 1px solid transparent !important;
+  background: var(--cc-primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 15px 30px rgba(16, 44, 42, 0.16) !important;
+}
+
+.ui-button-secondary {
+  border: 1px solid var(--cc-border) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: var(--cc-text) !important;
+}
+
+.ui-button-danger,
+.danger-button {
+  background: var(--cc-danger) !important;
+  color: #ffffff !important;
+}
+
+.field input,
+.field select,
+.field textarea,
+input,
+select,
+textarea {
+  min-height: 2.95rem !important;
+  border: 1px solid var(--cc-border) !important;
+  border-radius: 13px !important;
+  background: #ffffff !important;
+  color: var(--cc-text) !important;
+  box-shadow: none !important;
+  letter-spacing: 0 !important;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--cc-border-strong) !important;
+  box-shadow: 0 0 0 4px rgba(98, 214, 180, 0.16) !important;
+  outline: none !important;
+}
+
+.calendar-day {
+  border-color: rgba(16, 44, 42, 0.1) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+}
+
+.calendar-day.has-shift {
+  border-color: rgba(24, 122, 99, 0.28) !important;
+  background: #f3fbf7 !important;
+}
+
+.calendar-day.weekend {
+  border-color: rgba(246, 201, 103, 0.45) !important;
+  background: #fff9e7 !important;
+}
+
+.calendar-day.selected {
+  outline: 3px solid rgba(98, 214, 180, 0.45) !important;
+}
+
+.calendar-shift {
+  border-color: rgba(24, 122, 99, 0.12) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+}
+
+.shift-type-row,
+.monthly-premium-row,
+.tariff-row,
+.compliance-issue,
+.day-details-compliance,
+.day-details-compliance-item,
+.fairness-weekend-list div {
+  border-radius: 8px !important;
+}
+
+.status-title {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--cc-success);
+  box-shadow: 0 0 0 4px rgba(98, 214, 180, 0.12);
+}
+
+.status-dot.dashboard-status-warning {
+  background: var(--cc-warning);
+  box-shadow: 0 0 0 4px rgba(246, 201, 103, 0.16);
+}
+
+.status-dot.dashboard-status-critical {
+  background: var(--cc-danger);
+  box-shadow: 0 0 0 4px rgba(159, 45, 45, 0.12);
+}
+
+.bottom-nav {
+  border: 1px solid rgba(16, 44, 42, 0.12) !important;
+  border-radius: 13px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: var(--cc-shadow-nav) !important;
+}
+
+.bottom-nav-link {
+  min-width: 0;
+  min-height: 2.75rem !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: var(--cc-text-muted) !important;
+  font-size: 0.75rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+}
+
+.bottom-nav-link.active,
+.bottom-nav-link[aria-current="page"] {
+  background: var(--cc-text) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(16, 44, 42, 0.16) !important;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    width: 100% !important;
+    padding: 0.75rem 0.7rem calc(104px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .ui-page-header h1,
+  .page h1,
+  .dashboard-hero h1,
+  .cockpit-overview-header h2 {
+    font-size: 1.95rem !important;
+    line-height: 1.04 !important;
+  }
+
+  .ui-page-header p,
+  .dashboard-hero p {
+    font-size: 0.92rem !important;
+  }
+
+  .dashboard-hero,
+  .cockpit-overview-card,
+  .ui-card,
+  .planner-entry-card,
+  .planner-summary-card,
+  .planning-comfort-card,
+  .profile-section-card,
+  .yearly-card,
+  .fairness-card,
+  .fairness-wide-card {
+    padding: 0.9rem !important;
+  }
+
+  .cockpit-overview-header {
+    grid-template-columns: 1fr !important;
+  }
+
+  .cockpit-main-values,
+  .cockpit-mini-grid,
+  .planning-comfort-grid,
+  .planning-tool-fields,
+  .planner-filter-card,
+  .fairness-content-grid,
+  .yearly-content-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .bottom-nav {
+    left: 0.7rem !important;
+    right: 0.7rem !important;
+    bottom: calc(0.65rem + env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    padding: 0.32rem !important;
+  }
+
+  .bottom-nav-primary {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .bottom-nav-more-panel {
+    right: 0 !important;
+    bottom: calc(100% + 0.5rem) !important;
+    width: min(22rem, 100%) !important;
+    border-color: rgba(16, 44, 42, 0.12) !important;
+    border-radius: 13px !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+  }
+
+  .bottom-nav-link {
+    min-height: 2.8rem !important;
+    padding: 0 0.28rem !important;
+    font-size: 0.72rem !important;
+    line-height: 1.08 !important;
+  }
+}
+
+@media (min-width: 761px) {
+  .dashboard-page {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-hero,
+  .cockpit-overview-card,
+  .cockpit-wide-card,
+  .export-card {
+    grid-column: 1 / -1;
+  }
+
+  .bottom-nav {
+    width: min(820px, calc(100% - 2rem)) !important;
+  }
+}
+
+body .bottom-nav {
+  border-radius: 13px !important;
+}
+
+body .bottom-nav-link {
+  border-radius: 10px !important;
+}
+
+body nav.bottom-nav[aria-label="Hauptnavigation"] {
+  width: min(820px, calc(100% - 2rem)) !important;
+}
+
+body .bottom-nav-link.active,
+body .bottom-nav-link[aria-current="page"] {
+  border-radius: 10px !important;
+}

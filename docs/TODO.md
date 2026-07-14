@@ -95,7 +95,7 @@
 - [x] Dashboard-Status ohne Emoji und mit sachlichem Statuspunkt darstellen.
 - [x] Planer, Komfortplanung und gemeinsame Seitenkoepfe visuell verdichten.
 - [x] Klassische Desktop-Uebersicht erhalten.
-- [ ] Demo-Referenzen oder Screenshots abgleichen, falls vorhanden.
+- [x] Demo-Referenz `carecheck-vision` abgleichen und Look-and-feel uebernehmen.
 - [ ] Mobile Sichtpruefung auf echtem iPhone oder verlaesslichem iPhone-Viewport nachziehen.
 - [x] Lint, Tests und Build final ausfuehren.
 - [ ] v1.8.0 nach `main` uebernehmen.

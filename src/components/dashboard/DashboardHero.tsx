@@ -11,10 +11,21 @@ export default function DashboardHero({
 }: DashboardHeroProps) {
   return (
     <div className="dashboard-hero">
-      <div>
-        <span className="eyebrow">
-          CareCheck TVöD
+      <div className="dashboard-hero-brand-row">
+        <span
+          className="dashboard-brand-mark"
+          aria-hidden="true"
+        >
+          <span />
+          <span />
         </span>
+
+        <span className="eyebrow">
+          Monatscockpit
+        </span>
+      </div>
+
+      <div>
 
         <h1>{monthLabel}</h1>
 
