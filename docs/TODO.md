@@ -39,8 +39,21 @@
 - [x] v1.4.0 nach `main` uebernehmen.
 - [x] Release-Tag und GitHub Release fuer `v1.4.0` erstellen.
 
+## v1.5.0 - Regelwerk und Transparenz
+
+- [x] Zentralen Regelkatalog fuer bestehende Compliance-Hinweise ergaenzen.
+- [x] Erklaerung fuer jede Warnung und jeden kritischen Hinweis anzeigen.
+- [x] Verwendete Eingangsdaten je Hinweis darstellen.
+- [x] Berechnungsschritte je Regeltyp dokumentieren.
+- [x] Schweregrade fuer Hinweise und Verstoesse erklaeren.
+- [x] Relevante ArbZG-Quellen und interne CareCheck-Regeln verlinken.
+- [x] Aktives Pruefprofil mit Schwellenwerten sichtbar machen.
+- [x] Grenzen der Pruefung dokumentieren.
+- [x] Regressionstests fuer Regeltransparenz ergaenzen.
+- [x] v1.5.0 nach `main` uebernehmen.
+- [x] Release-Tag und GitHub Release fuer `v1.5.0` erstellen.
+
 ## Spaetere Versionen
 
-- [ ] v1.5.0 Regelwerk und Transparenz ausarbeiten.
 - [ ] v1.6.0 Dienstplanpruefung und Fairness konzipieren.
 - [ ] v1.7.0 Planung und Komfort erweitern.

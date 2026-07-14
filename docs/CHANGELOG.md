@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.5.0
+
+- Zentralen Regelkatalog fuer bestehende Compliance-Hinweise ergaenzt.
+- Compliance-Seite um aufklappbare Details fuer Regel, Eingangsdaten, Berechnungsschritte und Grenzen erweitert.
+- Relevante ArbZG-Regelgrundlagen und interne CareCheck-Planungsregeln getrennt verlinkt.
+- Aktives Pruefprofil mit dokumentierten Schwellenwerten sichtbar gemacht.
+- Schweregrad-Erklaerungen fuer Info, Warnung und kritisch ergaenzt.
+- Regressionstests fuer Regelzuordnung, Quellen, Pruefprofil und Eingangsdaten ergaenzt.
+- Statistik- und Compliance-Berechnungslogik unveraendert gelassen.
+
 ## v1.4.0
 
 - Jahresauswertung fuer alle zwoelf Monate ergaenzt.

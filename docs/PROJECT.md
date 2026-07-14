@@ -13,7 +13,7 @@ CareCheck TVoeD ist eine lokale React-App fuer Dienstplanung, Arbeitszeitpruefun
 
 ## Aktueller Stand
 
-- Stabiler Release-Stand: `v1.4.0 - Jahresauswertung`
+- Stabiler Release-Stand: `v1.5.0 - Regelwerk und Transparenz`
 - Aktiver Hauptstand: `main`
 
 ## Fachliche Leitplanken
@@ -21,6 +21,7 @@ CareCheck TVoeD ist eine lokale React-App fuer Dienstplanung, Arbeitszeitpruefun
 - Statistik- und Compliance-Logik bleiben fuer v1.3.0 unveraendert.
 - TVoeD-P-Auswertung ist ab v1.3.0 fachlich von ArbZG-/Compliance-Pruefungen getrennt.
 - Jahresauswertungen ab v1.4.0 verwenden bestehende Monatslogik und aendern keine Compliance-Regeln.
+- Regeltransparenz ab v1.5.0 erklaert bestehende Compliance-Hinweise, ohne die Prueflogik zu veraendern.
 - FREE zaehlt keine Stunden und keinen Planungstag und wird nicht auf Compliance geprueft.
 - VACATION, SICK und TRAINING bleiben planungs- und stundenrelevant.
 - Urlaub und Krankheit gelten nicht als tatsaechliche ArbZG-Arbeitsdienste.

@@ -14,9 +14,15 @@ The app focuses on practical month-by-month workflows:
 
 ## Current Release
 
-Latest tagged release: `v1.4.0`
+Latest tagged release: `v1.5.0`
 
 Release focus:
+
+- central rule catalog for existing compliance hints
+- transparent issue details with source data, calculation steps, severity explanation, references, and documented limits
+- active rule profile with visible thresholds for working time, breaks, rest time, weekend sequence, and night sequences
+- official ArbZG links kept separate from internal CareCheck planning rules
+- statistics and compliance calculation logic unchanged
 
 - versioned TVoeD-P tariff values
 - separated TVoeD-P module for tariff-oriented monthly evaluation
@@ -121,6 +127,7 @@ docs/
   CARECHECK_DESIGN_GUIDE.md
   ROADMAP.md
   TODO.md
+  V1.5.0_RULE_TRANSPARENCY_AUDIT.md
   V1.4.0_YEARLY_ANALYSIS_AUDIT.md
   V1.3.0_TVOED_P_MODULE_AUDIT.md
   V1.2.9_REPORTING_EXPORT_AUDIT.md
@@ -162,8 +169,8 @@ git push origin v1.2.8
 For the current release, use:
 
 ```powershell
-git tag -a v1.4.0 -m "Release v1.4.0 Jahresauswertung"
-git push origin v1.4.0
+git tag -a v1.5.0 -m "Release v1.5.0 Regelwerk und Transparenz"
+git push origin v1.5.0
 ```
 
 ## Deployment

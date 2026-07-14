@@ -1,8 +1,8 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release `v1.4.0`
+Stand: nach Release `v1.5.0`
 
-Aktuell stabil: `v1.4.0 - Jahresauswertung`
+Aktuell stabil: `v1.5.0 - Regelwerk und Transparenz`
 
 Aktiver Hauptstand: `main`
 
@@ -102,17 +102,21 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 - Regressionstests fuer Jahresauswertung und Export
 - GitHub Release `v1.4.0` erstellt
 
-## Naechste Meilensteine
-
 ### v1.5.0: Regelwerk und Transparenz
 
-- Erklaerung fuer jede Warnung
-- Darstellung der verwendeten Eingangsdaten
-- verstaendliche Berechnungsschritte
-- Schweregrade fuer Hinweise und Verstoesse
-- Verlinkung auf relevante Regelgrundlagen
-- konfigurierbare Pruefregeln
+- zentraler Regelkatalog fuer alle bestehenden Compliance-Hinweise
+- Erklaerung fuer jede Warnung und jeden kritischen Hinweis
+- Darstellung der verwendeten Eingangsdaten je Hinweis
+- verstaendliche Berechnungsschritte je Regeltyp
+- Schweregrad-Erklaerungen fuer Info, Warnung und kritisch
+- Verlinkung auf relevante ArbZG-Regelgrundlagen und interne CareCheck-Regeln
+- aktives Pruefprofil mit dokumentierten Schwellenwerten
 - dokumentierte Grenzen der Pruefung
+- iPhone-taugliche Detailansicht mit aufklappbaren Regelinformationen
+- Regressionstests fuer Regelzuordnung, Quellen, Pruefprofil und Eingangsdaten
+- GitHub Release `v1.5.0` erstellt
+
+## Naechste Meilensteine
 
 ### v1.6.0: Dienstplanpruefung und Fairness
 
