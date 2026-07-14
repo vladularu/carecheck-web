@@ -101,3 +101,16 @@
 - [x] Lint, Tests und Build final ausfuehren.
 - [x] v1.8.0 nach `main` uebernehmen.
 - [x] Release-Tag und GitHub Release fuer `v1.8.0` erstellen.
+
+## v1.9.0 - Sync-Vorbereitung und Datenmodell
+
+- [x] v1.9.0-Branch fuer Sync-Vorbereitung anlegen.
+- [x] Bestehende Storage-, Backup- und ID-Struktur pruefen.
+- [x] Lokale Sync-Metadatenstruktur mit Schema-Version und Device-ID einfuehren.
+- [x] Lokale Revisionen, Soft-Delete- und Konfliktfelder vorbereiten.
+- [x] Profil-, Dienst- und Dienstvorlagen-Aenderungen lokal markieren.
+- [x] Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert lassen.
+- [x] Regressionstests fuer Sync-Metadaten ergaenzen.
+- [ ] Datenschutz- und Loeschkonzept fachlich ausarbeiten.
+- [ ] v1.9.0 nach `main` uebernehmen.
+- [ ] Release-Tag und GitHub Release fuer `v1.9.0` erstellen.

@@ -1,10 +1,10 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release-Tag `v1.7.0`
+Stand: nach Release-Tag `v1.8.0`
 
-Aktuell stabil: `v1.7.0 - Planung und Komfort`
+Aktuell stabil: `v1.8.0 - Product UI Refresh`
 
-Aktiver Hauptstand: `main`
+Aktiver Entwicklungszweig: `feature/v1.9.0-sync-prep-data-model`
 
 ## Abgeschlossen
 
@@ -146,14 +146,12 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 - Release-Tag `v1.7.0` erstellt
 - GitHub Release `v1.7.0` erstellt
 
-## In Entwicklung
-
 ### v1.8.0: Product UI Refresh
 
 Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberflaeche, ohne Statistik-, Tarif- oder Compliance-Logik zu veraendern.
 
 - iPhone-first App-Navigation mit klaren Hauptbereichen
-- sekundäre Bereiche ueber ein kompaktes Mehr-Menue
+- sekundaere Bereiche ueber ein kompaktes Mehr-Menue
 - ruhigere App-Shell mit klinisch sauberer Farb- und Flaechenwirkung
 - kompaktere Karten, Buttons, Formulare und Seitenkoepfe
 - Dashboard optisch sachlicher und vorfuehrbarer machen
@@ -161,15 +159,23 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - klassische Desktop-Uebersicht erhalten
 - Barrierefreiheit und Tastaturbedienung pruefen
 - vollstaendige Regression mit Lint, Tests und Build
+- mobile Sichtpruefung im iPhone-Viewport `390x844`
+- Release-Tag `v1.8.0` erstellt
+- GitHub Release `v1.8.0` erstellt
 
-## Langfristige Produktreife
+## In Entwicklung
 
 ### v1.9.0: Sync-Vorbereitung und Datenmodell
 
+- Branch `feature/v1.9.0-sync-prep-data-model` angelegt
 - persistente Datenstruktur fuer spaetere Synchronisierung pruefen
 - lokale IDs, Versionierung und Konfliktfelder vorbereiten
+- lokale Sync-Metadaten separat von Fachobjekten speichern
+- Profil-, Dienst- und Dienstvorlagen-Aenderungen lokal revisionieren
 - Backup-/Restore-Kompatibilitaet bewahren
 - Datenschutz- und Loeschkonzept fachlich vorbereiten
+
+## Langfristige Produktreife
 
 ### v2.0: Synchronisierung und Mehrgeraetebetrieb
 

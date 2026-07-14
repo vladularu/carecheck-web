@@ -1,6 +1,14 @@
 # Changelog
 
-## v1.8.0 - in Entwicklung
+## v1.9.0 - in Entwicklung
+
+- Sync-Vorbereitung als lokales Datenmodell ohne Cloud-Anbindung gestartet.
+- Separate Sync-Metadaten mit Schema-Version, Device-ID, lokalen Revisionen, Soft-Delete- und Konfliktfeldern ergaenzt.
+- Profil-, Dienst- und Dienstvorlagen-Aenderungen markieren kuenftig lokale Revisionen.
+- Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert gelassen.
+- Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
+
+## v1.8.0
 
 - Product UI Refresh als eigener Zwischenschritt vor Sync/Auth eingeordnet.
 - iPhone-first Navigation mit Haupttabs und Mehr-Menue vorbereitet.

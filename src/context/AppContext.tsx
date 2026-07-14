@@ -18,6 +18,10 @@ import {
   loadShiftTemplates,
   saveShiftTemplates,
 } from "../services/storage/shiftTemplateStorage";
+import {
+  markSyncEntityChanged,
+  markSyncEntityDeleted,
+} from "../services/storage/syncMetadataStorage";
 import { AppContext, type AppContextValue } from "./appContextValue";
 
 interface SelectedMonth {
@@ -235,6 +239,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function setProfile(nextProfile: UserProfile) {
+    markSyncEntityChanged(
+      "profile",
+      "current",
+    );
+
     setProfileState(nextProfile);
 
     setShifts((current) =>
@@ -245,6 +254,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function addShift(shift: Shift) {
+    markSyncEntityChanged(
+      "shifts",
+      shift.id,
+    );
+
     setShifts((current) => {
       const plannedSourceShifts =
         shift.type === "SICK"
@@ -271,6 +285,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function updateShift(updatedShift: Shift) {
+    markSyncEntityChanged(
+      "shifts",
+      updatedShift.id,
+    );
+
     setShifts((current) => {
       const previousShift = current.find(
         (shift) => shift.id === updatedShift.id,
@@ -312,10 +331,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function deleteShift(id: string) {
+    markSyncEntityDeleted(
+      "shifts",
+      id,
+    );
+
     setShifts((current) => current.filter((shift) => shift.id !== id));
   }
 
   function updateShiftTemplate(type: ShiftType, template: ShiftTemplate) {
+    markSyncEntityChanged(
+      "shiftTemplates",
+      type,
+    );
+
     setShiftTemplates((current) => ({
       ...current,
       [type]: template,
@@ -323,6 +352,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function resetShiftTemplates() {
+    markSyncEntityChanged(
+      "shiftTemplates",
+      "all",
+    );
+
     setShiftTemplates(defaultShiftTemplates);
   }
 
