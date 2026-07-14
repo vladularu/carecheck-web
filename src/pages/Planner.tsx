@@ -1,3 +1,5 @@
+import { useMemo, useState } from "react";
+import PlanningComfortPanel from "../components/planner/PlanningComfortPanel";
 import ShiftForm from "../components/ShiftForm";
 import ShiftList from "../components/ShiftList";
 import Card from "../components/ui/Card";
@@ -7,6 +9,7 @@ import {
   calculateMonthlyHours,
   filterShiftsByMonth,
 } from "../services/calculation/monthlyHoursCalculator";
+import type { ShiftType } from "../types/index";
 
 const monthNames = [
   "Januar",
@@ -23,6 +26,30 @@ const monthNames = [
   "Dezember",
 ];
 
+const shiftFilterLabels: Record<ShiftType, string> = {
+  EARLY: "Frühdienst",
+  LATE: "Spätdienst",
+  NIGHT: "Nachtdienst",
+  DAY: "Tagdienst",
+  TRAINING: "Fortbildung",
+  VACATION: "Urlaub",
+  SICK: "Krank",
+  FREE: "Frei",
+  CUSTOM: "Individuell",
+};
+
+const shiftFilterOptions: ShiftType[] = [
+  "EARLY",
+  "LATE",
+  "NIGHT",
+  "DAY",
+  "TRAINING",
+  "VACATION",
+  "SICK",
+  "FREE",
+  "CUSTOM",
+];
+
 function formatHours(value: number): string {
   return `${value.toLocaleString("de-DE", {
     minimumFractionDigits: value % 1 === 0 ? 0 : 1,
@@ -31,9 +58,14 @@ function formatHours(value: number): string {
 }
 
 export default function Planner() {
+  const [searchText, setSearchText] = useState("");
+  const [typeFilter, setTypeFilter] =
+    useState<ShiftType | "ALL">("ALL");
+
   const {
     profile,
     shifts,
+    shiftTemplates,
     addShift,
     deleteShift,
     selectedYear,
@@ -56,6 +88,38 @@ export default function Planner() {
     selectedMonth,
   );
 
+  const filteredShifts = useMemo(() => {
+    const normalizedSearch = searchText
+      .trim()
+      .toLowerCase();
+
+    return shiftsInSelectedMonth.filter((shift) => {
+      if (
+        typeFilter !== "ALL" &&
+        shift.type !== typeFilter
+      ) {
+        return false;
+      }
+
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      const searchTarget = [
+        shift.date,
+        shift.startTime,
+        shift.endTime,
+        shift.note ?? "",
+        shift.type,
+        shiftFilterLabels[shift.type],
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return searchTarget.includes(normalizedSearch);
+    });
+  }, [searchText, shiftsInSelectedMonth, typeFilter]);
+
   return (
     <section className="page planner-page">
       <PageHeader
@@ -76,6 +140,16 @@ export default function Planner() {
 
         <ShiftForm onAddShift={addShift} />
       </Card>
+
+      <PlanningComfortPanel
+        shifts={shifts}
+        shiftsInSelectedMonth={shiftsInSelectedMonth}
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        shiftTemplates={shiftTemplates}
+        onAddShift={addShift}
+        onDeleteShift={deleteShift}
+      />
 
       <Card className="planner-summary-card">
         <div className="planner-section-header">
@@ -146,12 +220,45 @@ export default function Planner() {
           </strong>
           <p>
             Die Liste zeigt nur Kalendereinträge aus{" "}
-            {monthLabel}.
+            {monthLabel}. Suche und Filter verändern nur die
+            Ansicht.
           </p>
         </div>
 
+        <Card className="planner-filter-card">
+          <label className="field">
+            <span>Suche</span>
+            <input
+              value={searchText}
+              onChange={(event) =>
+                setSearchText(event.target.value)
+              }
+              placeholder="Datum, Dienstart oder Notiz"
+            />
+          </label>
+
+          <label className="field">
+            <span>Dienstart</span>
+            <select
+              value={typeFilter}
+              onChange={(event) =>
+                setTypeFilter(
+                  event.target.value as ShiftType | "ALL",
+                )
+              }
+            >
+              <option value="ALL">Alle Einträge</option>
+              {shiftFilterOptions.map((type) => (
+                <option value={type} key={type}>
+                  {shiftFilterLabels[type]}
+                </option>
+              ))}
+            </select>
+          </label>
+        </Card>
+
         <ShiftList
-          shifts={shiftsInSelectedMonth}
+          shifts={filteredShifts}
           onDelete={deleteShift}
         />
       </section>

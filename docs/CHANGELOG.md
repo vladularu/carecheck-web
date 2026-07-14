@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.7.0
+
+- Komfortplanung im Dienstplan ergaenzt.
+- Wiederkehrende Dienstfolgen aus bestehenden Dienstvorlagen erzeugbar gemacht.
+- Monatsvorlagen lokal speicherbar und auf andere Monate anwendbar gemacht.
+- Kopieren und Verschieben kompletter Tagesplaene ergaenzt.
+- CSV-Import fuer vorhandene Dienstplaene mit Vorschau und Fehlerhinweisen ergaenzt.
+- Konfliktvorschau fuer belegte Tage, Dubletten und zeitliche Ueberschneidungen eingefuehrt.
+- Dienstliste um Suche und Dienstart-Filter erweitert.
+- Regressionstests fuer Planungskomfort-Service und Vorlagen-Storage ergaenzt.
+- Statistik-, Tarif- und Compliance-Berechnungslogik unveraendert gelassen.
+
 ## v1.6.0
 
 - Fairness-Seite fuer Dienstverteilung im Team ergaenzt.

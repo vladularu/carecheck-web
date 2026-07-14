@@ -70,6 +70,19 @@
 - [x] Release-Tag fuer `v1.6.0` erstellen.
 - [ ] GitHub Release fuer `v1.6.0` erstellen.
 
-## Spaetere Versionen
+## v1.7.0 - Planung und Komfort
 
-- [ ] v1.7.0 Planung und Komfort erweitern.
+- [x] Wiederkehrende Dienstfolgen aus bestehenden Dienstvorlagen erzeugen.
+- [x] Monatsvorlagen lokal speichern und auf andere Monate anwenden.
+- [x] Mehrfacherfassung ueber Folge, Vorlage und Import ergaenzen.
+- [x] Kopieren und Verschieben kompletter Tagesplaene ergaenzen.
+- [x] Konfliktvorschau fuer belegte Tage, Dubletten und Ueberschneidungen anzeigen.
+- [x] Dienstliste um Suche und Dienstart-Filter erweitern.
+- [x] Optionalen CSV-Import vorhandener Dienstplaene ergaenzen.
+- [x] iPhone-Ansicht fuer Komfortplanung priorisieren.
+- [x] Klassische Desktop-Uebersicht erhalten.
+- [x] Regressionstests fuer Planungskomfort-Service und Vorlagen-Storage ergaenzen.
+- [x] Statistik-, Tarif- und Compliance-Logik unveraendert lassen.
+- [x] v1.7.0 nach `main` uebernehmen.
+- [x] Release-Tag fuer `v1.7.0` erstellen.
+- [ ] GitHub Release fuer `v1.7.0` erstellen.

@@ -9,45 +9,26 @@ The app focuses on practical month-by-month workflows:
 - calculate shift premiums and salary-relevant totals
 - check working-time compliance
 - compare team fairness for night, weekend, and holiday duties
+- speed up planning with recurring sequences, monthly templates, day copy/move, and import
 - export monthly reports as CSV/XLSX
 - print or save a monthly report as PDF through the browser
 - back up and restore local profile, shifts, and templates
 
 ## Current Release
 
-Latest tagged release: `v1.6.0`
+Latest tagged release: `v1.7.0`
 
 Release focus:
 
-- fairness page for monthly team duty distribution
-- current user's fairness values calculated from the shift plan
-- manually maintained local team comparison values
-- night, weekend, and holiday-duty comparison by weekly-hour share
-- every-second-weekend review signal
-- anonymized team view for shareable review
+- comfort planning directly in the shift planner
+- recurring shift sequences based on existing shift templates
+- local monthly templates that can be applied to other months
+- day-level copy and move workflow
+- optional CSV import for existing schedules
+- conflict preview for occupied days, duplicates, and time overlaps
+- shift-list search and type filtering
+- iPhone-first planning tools while preserving the classic desktop overview
 - statistics, tariff, and compliance calculation logic unchanged
-
-- central rule catalog for existing compliance hints
-- transparent issue details with source data, calculation steps, severity explanation, references, and documented limits
-- active rule profile with visible thresholds for working time, breaks, rest time, weekend sequence, and night sequences
-- official ArbZG links kept separate from internal CareCheck planning rules
-- statistics and compliance calculation logic unchanged
-
-- versioned TVoeD-P tariff values
-- separated TVoeD-P module for tariff-oriented monthly evaluation
-- non-overlapping time premium calculation for day-based premiums
-- additive night premium handling
-- shift-work and alternating-shift indicators
-- weekend assessment for the selected month
-- explicit separation between ArbZG compliance checks and TVoeD-P tariff views
-- statistics and compliance logic unchanged
-
-- yearly overview across all twelve months
-- annual target, actual, balance, absence, premium, night, weekend, and holiday-work totals
-- monthly comparison table for trend review
-- yearly CSV export
-- annual compliance issue counts based on existing monthly checks
-- iPhone-first yearly dashboard while preserving desktop overview
 
 ## Tech Stack
 
@@ -137,6 +118,7 @@ docs/
   CARECHECK_DESIGN_GUIDE.md
   ROADMAP.md
   TODO.md
+  V1.7.0_PLANNING_COMFORT_AUDIT.md
   V1.6.0_FAIRNESS_AUDIT.md
   V1.5.0_RULE_TRANSPARENCY_AUDIT.md
   V1.4.0_YEARLY_ANALYSIS_AUDIT.md
@@ -171,8 +153,8 @@ npm.cmd run build
 6. Tag the release, for example:
 
 ```powershell
-git tag -a v1.2.8 -m "Release v1.2.8 UI Consistency"
-git push origin v1.2.8
+git tag -a v1.7.0 -m "Release v1.7.0 Planung und Komfort"
+git push origin v1.7.0
 ```
 
 7. Create a GitHub Release from the tag.
@@ -180,8 +162,8 @@ git push origin v1.2.8
 For the current release, use:
 
 ```powershell
-git tag -a v1.6.0 -m "Release v1.6.0 Dienstplanpruefung und Fairness"
-git push origin v1.6.0
+git tag -a v1.7.0 -m "Release v1.7.0 Planung und Komfort"
+git push origin v1.7.0
 ```
 
 ## Deployment

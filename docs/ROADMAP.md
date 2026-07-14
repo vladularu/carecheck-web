@@ -1,8 +1,8 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release-Tag `v1.6.0`
+Stand: nach Release-Tag `v1.7.0`
 
-Aktuell stabil: `v1.6.0 - Dienstplanpruefung und Fairness`
+Aktuell stabil: `v1.7.0 - Planung und Komfort`
 
 Aktiver Hauptstand: `main`
 
@@ -130,17 +130,20 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 - Regressionstests fuer Fairness-Service und Storage
 - Release-Tag `v1.6.0` erstellt
 
-## Naechste Meilensteine
-
 ### v1.7.0: Planung und Komfort
 
-- wiederkehrende Dienstfolgen
-- Monatsvorlagen
-- Mehrfacherfassung
-- Kopieren und Verschieben von Diensten
-- Konfliktwarnungen direkt bei der Eingabe
-- verbesserte Such- und Filterfunktionen
-- optionaler Import vorhandener Dienstplaene
+- Komfortplanung direkt im Dienstplan
+- wiederkehrende Dienstfolgen aus bestehenden Dienstvorlagen
+- Monatsvorlagen lokal speichern und auf andere Monate anwenden
+- Mehrfacherfassung ueber Dienstfolgen, Vorlagen und Import
+- Kopieren und Verschieben kompletter Tagesplaene
+- Konfliktvorschau fuer belegte Tage, Dubletten und zeitliche Ueberschneidungen
+- verbesserte Such- und Filterfunktionen in der Dienstliste
+- optionaler CSV-Import vorhandener Dienstplaene
+- iPhone-taugliche Planungswerkzeuge und klassische Desktop-Uebersicht
+- Regressionstests fuer Planungskomfort-Service und Vorlagen-Storage
+- Statistik-, Tarif- und Compliance-Logik unveraendert gelassen
+- Release-Tag `v1.7.0` erstellt
 
 ## Langfristige Produktreife
 
