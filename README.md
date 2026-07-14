@@ -16,7 +16,7 @@ The app focuses on practical month-by-month workflows:
 
 Latest tagged release: `v1.2.8`
 
-Active development: `v1.2.9 - Reporting & Export` on `feature/v1.2.9-reporting-export`
+Active main status: `v1.2.9 - Reporting & Export` merged, unreleased
 
 Latest release focus:
 
@@ -25,7 +25,7 @@ Latest release focus:
 - classic desktop layout preserved
 - statistics, tariff, export, and compliance logic unchanged
 
-Current development focus:
+Unreleased v1.2.9 scope:
 
 - consistent monthly report filenames for CSV, XLSX, and browser/PDF print flows
 - shared export preview on dashboard and monthly report pages
@@ -156,7 +156,7 @@ git push origin v1.2.8
 
 7. Create a GitHub Release from the tag.
 
-For the active v1.2.9 branch, use:
+For the unreleased v1.2.9 state, use after the final release decision:
 
 ```powershell
 git tag -a v1.2.9 -m "Release v1.2.9 Reporting & Export"

@@ -10,7 +10,7 @@
 - [x] Druck-/PDF-Paginierung fuer professionelle Monatsberichte haerten.
 - [x] Export- und Berichtskonsistenz mit Regressionstests absichern.
 - [x] Finale Doku pruefen.
-- [ ] Pull Request nach `main` vorbereiten.
+- [x] v1.2.9-Branch nach `main` uebernehmen.
 - [ ] Release-Tag und GitHub Release fuer `v1.2.9` erstellen.
 
 ## Spaetere Versionen

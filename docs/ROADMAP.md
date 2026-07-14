@@ -1,10 +1,10 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release `v1.2.8`, waehrend Entwicklung von `v1.2.9`
+Stand: nach Merge von `v1.2.9` in `main`, vor Release-Tag
 
 Aktuell stabil: `v1.2.8 - UI Consistency`
 
-Aktiver Entwicklungsbranch: `feature/v1.2.9-reporting-export`
+Aktiver Hauptstand: `main`
 
 ## Abgeschlossen
 
@@ -61,6 +61,8 @@ Ziel: eine einheitliche, verstaendliche und vorfuehrbare Produktoberflaeche.
 
 ### v1.2.9: Reporting & Export
 
+Status: in `main` uebernommen, noch nicht released.
+
 Ziel: Monatsbericht, CSV, XLSX und Druck/PDF-Ausgabe verstaendlicher, konsistenter und besser pruefbar machen, ohne Statistik-, Tarif- oder Compliance-Logik zu veraendern.
 
 Bereits umgesetzt:
@@ -76,7 +78,6 @@ Bereits umgesetzt:
 
 Noch offen vor Release:
 
-- Pull Request nach `main`
 - Tag und GitHub Release fuer `v1.2.9`
 
 ## Naechste Meilensteine
