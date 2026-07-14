@@ -1,75 +1,156 @@
-# React + TypeScript + Vite
+# CareCheck TVoeD
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CareCheck TVoeD is a local-first React app for planning shifts, checking working-time rules, and preparing monthly reports for TVoeD-P-oriented care work.
 
-Currently, two official plugins are available:
+The app focuses on practical month-by-month workflows:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- capture and review shifts
+- compare target and actual hours
+- calculate shift premiums and salary-relevant totals
+- check working-time compliance
+- export monthly reports as CSV/XLSX
+- print or save a monthly report as PDF through the browser
+- back up and restore local profile, shifts, and templates
 
-## React Compiler
+## Current Release
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Latest tagged release: `v1.2.8`
 
-## Expanding the ESLint configuration
+Release focus:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- UI consistency across profile, planner, salary, compliance, calendar, and monthly report views
+- iPhone-first mobile refinements
+- classic desktop layout preserved
+- statistics, tariff, export, and compliance logic unchanged
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React 19
+- TypeScript
+- Vite
+- React Router
+- Vitest
+- ESLint
+- XLSX export via `xlsx`
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
 
+Install dependencies:
+
+```powershell
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Start the development server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```powershell
+npm.cmd run dev
 ```
+
+Create a production build:
+
+```powershell
+npm.cmd run build
+```
+
+Preview the production build locally:
+
+```powershell
+npm.cmd run preview
+```
+
+On Windows/PowerShell, use `npm.cmd` if script execution policy blocks `npm.ps1`.
+
+## Quality Checks
+
+Run lint:
+
+```powershell
+npm.cmd run lint
+```
+
+Run tests once:
+
+```powershell
+npm.cmd run test:run
+```
+
+Run the full local release check:
+
+```powershell
+npm.cmd run lint
+npm.cmd run test:run
+npm.cmd run build
+```
+
+## App Routes
+
+- `/` - Dashboard
+- `/plan` - shift planner
+- `/gehalt` - salary and tariff overview
+- `/pruefung` - compliance checks
+- `/kalender` - calendar and day details
+- `/bericht` - monthly report and print view
+- `/profil` - profile, templates, and backup
+
+## Project Structure
+
+```text
+src/
+  components/     Shared UI, navigation, dashboard, calendar, profile parts
+  context/        App-wide state and persistence wiring
+  data/           Demo data and default shift templates
+  pages/          Route-level views
+  services/       Calculation, compliance, export, storage, tariff, holiday logic
+  styles/         Responsive foundation
+  types/          Shared domain types
+docs/
+  CHANGELOG.md
+  CARECHECK_DESIGN_GUIDE.md
+  ROADMAP.md
+  TODO.md
+```
+
+## Development Rules
+
+- Keep statistics, tariff, export, and compliance logic covered by tests.
+- Preserve the classic desktop layout while improving mobile behavior.
+- Prioritize iPhone-sized viewports for responsive QA.
+- Do not overwrite unrelated local changes.
+- After implementation changes, run lint, tests, and build before committing.
+
+## Release Workflow
+
+Typical flow:
+
+1. Create or update a feature branch.
+2. Run:
+
+```powershell
+npm.cmd run lint
+npm.cmd run test:run
+npm.cmd run build
+```
+
+3. Push the branch.
+4. Open a pull request into `main`.
+5. Merge after checks pass.
+6. Tag the release, for example:
+
+```powershell
+git tag -a v1.2.8 -m "Release v1.2.8 UI Consistency"
+git push origin v1.2.8
+```
+
+7. Create a GitHub Release from the tag.
+
+## Deployment
+
+No deployment target is currently configured in the repository.
+
+Checked after `v1.2.8`:
+
+- GitHub Pages: not configured
+- GitHub Deployments: none found
+
+Possible next targets are GitHub Pages, Vercel, Netlify, or a custom static host.
