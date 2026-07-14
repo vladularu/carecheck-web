@@ -9697,3 +9697,151 @@ button[type="submit"] {
 .shift-type-picker legend {
   text-align: left !important;
 }
+
+/* =========================================================
+   CareCheck v1.8.0 - iPhone QA Fixes
+   ========================================================= */
+
+@media (max-width: 760px) {
+  body .app-shell {
+    padding: 0.75rem 0.7rem calc(110px + env(safe-area-inset-bottom)) !important;
+  }
+
+  body .ui-page-header {
+    gap: 0.25rem !important;
+    padding-block: 0.15rem 0.25rem !important;
+  }
+
+  body .dashboard-hero h1,
+  body .ui-page-header h1,
+  body .page h1,
+  body .cockpit-overview-header h2 {
+    font-size: 1.55rem !important;
+    line-height: 1.08 !important;
+  }
+
+  body .dashboard-hero p,
+  body .ui-page-header p,
+  body .page p,
+  body .planner-section-header p,
+  body .shift-form-header p {
+    font-size: 0.9rem !important;
+    line-height: 1.45 !important;
+  }
+
+  body .dashboard-hero,
+  body .cockpit-overview-card,
+  body .ui-card,
+  body .planner-entry-card,
+  body .planning-comfort-card,
+  body .planner-summary-card,
+  body .planner-filter-card,
+  body .day-details {
+    padding: 0.85rem !important;
+  }
+
+  body .cockpit-main-values {
+    grid-template-columns: 1fr !important;
+  }
+
+  body .cockpit-main-values strong {
+    font-size: 1.25rem !important;
+  }
+
+  body .shift-type-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.4rem !important;
+  }
+
+  body .shift-type-tile {
+    min-height: 3.85rem !important;
+    overflow: hidden !important;
+    padding: 0.48rem !important;
+  }
+
+  body .shift-type-tile strong {
+    color: var(--cc-ink) !important;
+    font-size: 0.82rem !important;
+    line-height: 1.12 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+  }
+
+  body .shift-type-tile small {
+    display: none !important;
+  }
+
+  body .shift-type-tile span {
+    min-height: 1.25rem !important;
+    padding: 0 0.38rem !important;
+    font-size: 0.66rem !important;
+    white-space: nowrap !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] {
+    left: 0.7rem !important;
+    right: 0.7rem !important;
+    bottom: calc(0.65rem + env(safe-area-inset-bottom)) !important;
+    display: block !important;
+    width: auto !important;
+    min-height: auto !important;
+    max-width: none !important;
+    padding: 0.35rem !important;
+    border-radius: 18px !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-primary {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 0.25rem !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link,
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link.active,
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link[aria-current="page"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    min-height: 2.8rem !important;
+    padding: 0 0.2rem !important;
+    border-radius: 14px !important;
+    font-size: 0.68rem !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: keep-all !important;
+    hyphens: none !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link span {
+    display: block !important;
+    max-width: 100% !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: keep-all !important;
+    hyphens: none !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-more-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link {
+    font-size: 0.64rem !important;
+  }
+
+  body .shift-type-tile strong {
+    font-size: 0.78rem !important;
+  }
+}
