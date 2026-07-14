@@ -37,7 +37,7 @@
 - [x] Jahresansicht in Routing und Navigation einbinden.
 - [x] Regressionstests fuer Jahresauswertung und Export ergaenzen.
 - [x] v1.4.0 nach `main` uebernehmen.
-- [ ] Release-Tag und GitHub Release fuer `v1.4.0` erstellen.
+- [x] Release-Tag und GitHub Release fuer `v1.4.0` erstellen.
 
 ## Spaetere Versionen
 

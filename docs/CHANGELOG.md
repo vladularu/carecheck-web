@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.4.0 (unreleased)
+## v1.4.0
 
 - Jahresauswertung fuer alle zwoelf Monate ergaenzt.
 - Jahressummen fuer Soll, Ist, Saldo, Abwesenheiten, Zuschlaege, Nacht-, Wochenend- und Feiertagsarbeit eingefuehrt.

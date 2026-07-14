@@ -14,9 +14,7 @@ The app focuses on practical month-by-month workflows:
 
 ## Current Release
 
-Latest tagged release: `v1.3.0`
-
-Active main status: `v1.4.0 - Jahresauswertung` merged, unreleased
+Latest tagged release: `v1.4.0`
 
 Release focus:
 
@@ -28,8 +26,6 @@ Release focus:
 - weekend assessment for the selected month
 - explicit separation between ArbZG compliance checks and TVoeD-P tariff views
 - statistics and compliance logic unchanged
-
-Unreleased v1.4.0 scope:
 
 - yearly overview across all twelve months
 - annual target, actual, balance, absence, premium, night, weekend, and holiday-work totals
@@ -166,8 +162,8 @@ git push origin v1.2.8
 For the current release, use:
 
 ```powershell
-git tag -a v1.3.0 -m "Release v1.3.0 TVoeD-P Fachmodul"
-git push origin v1.3.0
+git tag -a v1.4.0 -m "Release v1.4.0 Jahresauswertung"
+git push origin v1.4.0
 ```
 
 ## Deployment

@@ -1,8 +1,8 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release `v1.3.0`
+Stand: nach Release `v1.4.0`
 
-Aktuell stabil: `v1.3.0 - TVoeD-P Fachmodul`
+Aktuell stabil: `v1.4.0 - Jahresauswertung`
 
 Aktiver Hauptstand: `main`
 
@@ -91,8 +91,6 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 
 ### v1.4.0: Jahresauswertung
 
-Status: in `main` uebernommen, noch nicht released.
-
 - Uebersicht ueber alle zwoelf Monate
 - Jahres-Soll- und Iststunden
 - kumulierter Stundensaldo
@@ -102,10 +100,7 @@ Status: in `main` uebernommen, noch nicht released.
 - Trends und Monatsvergleiche
 - Jahresbericht als CSV-Export
 - Regressionstests fuer Jahresauswertung und Export
-
-Noch offen vor Release:
-
-- Tag und GitHub Release fuer `v1.4.0`
+- GitHub Release `v1.4.0` erstellt
 
 ## Naechste Meilensteine
 
