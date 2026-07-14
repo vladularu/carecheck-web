@@ -99,5 +99,5 @@
 - [x] Weitere Bildreferenzen fuer iPhone-App-UI und CareCheck-TVoeD-Branding zusammenfuehren.
 - [x] Mobile Sichtpruefung in verlaesslichem iPhone-Viewport nachziehen.
 - [x] Lint, Tests und Build final ausfuehren.
-- [ ] v1.8.0 nach `main` uebernehmen.
-- [ ] Release-Tag und GitHub Release fuer `v1.8.0` erstellen.
+- [x] v1.8.0 nach `main` uebernehmen.
+- [x] Release-Tag und GitHub Release fuer `v1.8.0` erstellen.
