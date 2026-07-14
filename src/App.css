@@ -6750,11 +6750,37 @@ textarea {
     overflow: visible !important;
   }
 
+  .monthly-report-page .print-report-section {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .monthly-report-page .print-report-section-title,
+  .monthly-report-page .print-report-status div,
+  .monthly-report-page .print-report-grid div,
+  .monthly-report-page .print-report-empty,
+  .monthly-report-page .print-report-total-row,
+  .monthly-report-page .print-report-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
   .monthly-report-page .print-report-table {
+    break-inside: auto;
+    page-break-inside: auto;
     display: table !important;
     min-width: 0 !important;
     width: 100% !important;
     table-layout: fixed;
+  }
+
+  .monthly-report-page .print-report-table thead {
+    display: table-header-group;
+  }
+
+  .monthly-report-page .print-report-table tbody tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   .monthly-report-page .print-report-shift-table {
