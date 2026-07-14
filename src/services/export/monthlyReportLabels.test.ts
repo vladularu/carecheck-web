@@ -12,12 +12,14 @@ describe("monthlyReportLabels", () => {
       monthlyReportLabels.sections.planning,
       monthlyReportLabels.sections.premiums,
       monthlyReportLabels.sections.compliance,
+      monthlyReportLabels.sections.calculationBasis,
       monthlyReportLabels.sections.calendarEntries,
     ]).toEqual([
       "Arbeitszeit",
       "Monatsplanung",
       "Zuschläge",
       "Prüfhinweise",
+      "Berechnungsgrundlagen",
       "Kalendereinträge",
     ]);
   });

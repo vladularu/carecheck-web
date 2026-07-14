@@ -18,6 +18,7 @@ export const monthlyReportLabels = {
     planning: "Monatsplanung",
     premiums: "Zuschläge",
     compliance: "Prüfhinweise",
+    calculationBasis: "Berechnungsgrundlagen",
     calendarEntries: "Kalendereinträge",
   },
   workingTime: {

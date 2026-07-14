@@ -141,6 +141,53 @@ export default function MonthlyReport() {
       complianceIssues,
     });
 
+  const calculationBasisRows = [
+    {
+      label: "Ausgewerteter Zeitraum",
+      value: monthLabel,
+      detail:
+        "Alle Monatswerte beziehen sich auf die Kalendereinträge im ausgewählten Monat.",
+    },
+    {
+      label: "Profilgrundlage",
+      value:
+        `${profile.federalState} · ${profile.weeklyHours} h/Woche · ` +
+        `${profile.payGroup} Stufe ${profile.payLevel}`,
+      detail:
+        "Bundesland, Wochenarbeitszeit und Entgeltgruppe stammen aus dem Profil.",
+    },
+    {
+      label: "Sollzeit",
+      value:
+        `${monthlyHours.workingDayCount} Soll-Arbeitstage · ` +
+        `${monthlyHours.publicHolidayCount} Feiertage · ` +
+        `${formatHours(monthlyHours.averageDailyHours)} täglich`,
+      detail:
+        "Sollstunden werden aus Arbeitstagen, Feiertagen und der Wochenarbeitszeit abgeleitet.",
+    },
+    {
+      label: "Abwesenheiten",
+      value:
+        `${formatHours(monthlyHours.vacationHours)} Urlaub · ` +
+        `${formatHours(monthlyHours.sickHours)} Krank`,
+      detail:
+        "Urlaub nutzt die tägliche Sollzeit; Krankheit nutzt gespeicherte Gutschriften oder die tägliche Sollzeit.",
+    },
+    {
+      label: "Compliance-Prüfung",
+      value: `${complianceRelevantShiftsInSelectedMonth.length} relevante Einträge`,
+      detail:
+        "FREE, Urlaub und Krankheit werden nicht als tatsächliche ArbZG-Arbeitsdienste geprüft.",
+    },
+    {
+      label: "Zuschlagsbasis",
+      value:
+        `${formatEuro(premiumHourlyRate)} · Feiertage mit Freizeitausgleich`,
+      detail:
+        "Zuschläge werden aus den erfassten Dienstzeiten, dem Bundesland und der TVöD-P-Zuschlagsbasis berechnet.",
+    },
+  ];
+
   function handlePrint() {
     window.print();
   }
@@ -647,6 +694,27 @@ export default function MonthlyReport() {
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>05</span>
+            <h2>
+              {monthlyReportLabels.sections.calculationBasis}
+            </h2>
+          </div>
+
+          <dl className="print-report-basis-list">
+            {calculationBasisRows.map((row) => (
+              <div key={row.label}>
+                <dt>{row.label}</dt>
+                <dd>
+                  <strong>{row.value}</strong>
+                  <span>{row.detail}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section className="print-report-section">
+          <div className="print-report-section-title">
+            <span>06</span>
             <h2>
               {
                 monthlyReportLabels.sections
