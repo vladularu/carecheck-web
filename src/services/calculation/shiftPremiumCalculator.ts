@@ -12,6 +12,18 @@ export interface ShiftPremiumHours {
   saturdayHours: number;
   saturdayAfternoonHours: number;
 
+  /**
+   * Nicht ueberlappende TVoeD-P-Zuschlagsstunden:
+   * Nacht wird additiv gezaehlt; bei tagesbezogenen
+   * Zuschlaegen gewinnt je Minute der hoechste Satz.
+   */
+  tvoedPremiumHours: {
+    nightHours: number;
+    sundayHours: number;
+    holidayHours: number;
+    saturdayAfternoonHours: number;
+  };
+
   holidayNames: string[];
 }
 
@@ -29,6 +41,12 @@ function emptyPremium(shiftId: string): ShiftPremiumHours {
     holidayHours: 0,
     saturdayHours: 0,
     saturdayAfternoonHours: 0,
+    tvoedPremiumHours: {
+      nightHours: 0,
+      sundayHours: 0,
+      holidayHours: 0,
+      saturdayAfternoonHours: 0,
+    },
     holidayNames: [],
   };
 }
@@ -132,6 +150,10 @@ export function calculateShiftPremiumHours(
   let holidayMinutes = 0;
   let saturdayMinutes = 0;
   let saturdayAfternoonMinutes = 0;
+  let tvoedNightMinutes = 0;
+  let tvoedSundayMinutes = 0;
+  let tvoedHolidayMinutes = 0;
+  let tvoedSaturdayAfternoonMinutes = 0;
 
   const holidayNames = new Set<string>();
   const holidayCache = new Map<string, string | null>();
@@ -155,11 +177,18 @@ export function calculateShiftPremiumHours(
 
     workedMinutes++;
 
-    if (isNightMinute(cursor)) {
+    const nightMinute = isNightMinute(cursor);
+    const sundayMinute = isSundayMinute(cursor);
+    const saturdayMinute = isSaturdayMinute(cursor);
+    const saturdayAfternoonMinute =
+      isSaturdayAfternoonMinute(cursor);
+
+    if (nightMinute) {
       nightMinutes++;
+      tvoedNightMinutes++;
     }
 
-    if (isSundayMinute(cursor)) {
+    if (sundayMinute) {
       sundayMinutes++;
     }
 
@@ -168,12 +197,20 @@ export function calculateShiftPremiumHours(
       holidayNames.add(holidayName);
     }
 
-    if (isSaturdayMinute(cursor)) {
+    if (saturdayMinute) {
       saturdayMinutes++;
     }
 
-    if (isSaturdayAfternoonMinute(cursor)) {
+    if (saturdayAfternoonMinute) {
       saturdayAfternoonMinutes++;
+    }
+
+    if (holidayName) {
+      tvoedHolidayMinutes++;
+    } else if (sundayMinute) {
+      tvoedSundayMinutes++;
+    } else if (saturdayAfternoonMinute) {
+      tvoedSaturdayAfternoonMinutes++;
     }
   }
 
@@ -187,6 +224,14 @@ export function calculateShiftPremiumHours(
     holidayHours: minutesToHours(holidayMinutes),
     saturdayHours: minutesToHours(saturdayMinutes),
     saturdayAfternoonHours: minutesToHours(saturdayAfternoonMinutes),
+    tvoedPremiumHours: {
+      nightHours: minutesToHours(tvoedNightMinutes),
+      sundayHours: minutesToHours(tvoedSundayMinutes),
+      holidayHours: minutesToHours(tvoedHolidayMinutes),
+      saturdayAfternoonHours: minutesToHours(
+        tvoedSaturdayAfternoonMinutes,
+      ),
+    },
 
     holidayNames: Array.from(holidayNames),
   };

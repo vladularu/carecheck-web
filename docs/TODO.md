@@ -13,9 +13,21 @@
 - [x] v1.2.9-Branch nach `main` uebernehmen.
 - [x] Release-Tag und GitHub Release fuer `v1.2.9` erstellen.
 
+## v1.3.0 - TVoeD-P Fachmodul
+
+- [x] TVoeD-P Tarifwerte versionierbar machen.
+- [x] Nacht-, Sonntags-, Feiertags- und Samstagszuschlaege zentral ausweisen.
+- [x] Ueberschneidungen von Zuschlagszeitraeumen minutenbasiert behandeln.
+- [x] Schicht- und Wechselschichtindikatoren ergaenzen.
+- [x] Wochenendbewertung fuer den ausgewaehlten Monat ergaenzen.
+- [x] planmaessige und tatsaechliche Arbeitszeiten getrennt darstellen.
+- [x] ArbZG-/Compliance-Pruefung und TVoeD-P-Auswertung sichtbar trennen.
+- [x] Regressionstests fuer Tarifmodul und Zuschlagslogik ergaenzen.
+- [ ] v1.3.0 nach `main` uebernehmen.
+- [ ] Release-Tag und GitHub Release fuer `v1.3.0` erstellen.
+
 ## Spaetere Versionen
 
-- [ ] v1.3.0 TVoeD-P Fachmodul fachlich und rechtlich pruefen.
 - [ ] v1.4.0 Jahresauswertung planen.
 - [ ] v1.5.0 Regelwerk und Transparenz ausarbeiten.
 - [ ] v1.6.0 Dienstplanpruefung und Fairness konzipieren.

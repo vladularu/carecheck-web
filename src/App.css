@@ -6333,6 +6333,118 @@ textarea {
   max-width: 42rem;
 }
 
+.tvoed-module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.tvoed-module-card,
+.tvoed-transparency-card {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.tvoed-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.tvoed-metric-grid div,
+.tvoed-assessment,
+.tvoed-premium-row {
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid rgba(120, 132, 158, 0.16);
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.86);
+}
+
+.tvoed-metric-grid span,
+.tvoed-assessment > span,
+.tvoed-premium-row span {
+  display: block;
+  color: var(--cc-text-muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.tvoed-metric-grid strong,
+.tvoed-premium-row > strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--cc-text);
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.tvoed-assessment-list,
+.tvoed-premium-list,
+.tvoed-note-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.tvoed-assessment {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.tvoed-assessment strong {
+  color: var(--cc-text);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.tvoed-assessment ul,
+.tvoed-note-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--cc-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.tvoed-assessment-detected {
+  border-color: rgba(22, 163, 74, 0.22);
+  background: rgba(240, 253, 244, 0.9);
+}
+
+.tvoed-assessment-review_required {
+  border-color: rgba(217, 119, 6, 0.24);
+  background: rgba(255, 251, 235, 0.92);
+}
+
+.tvoed-assessment-not_detected {
+  border-color: rgba(100, 116, 139, 0.18);
+}
+
+.tvoed-premium-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tvoed-premium-row div {
+  min-width: 0;
+}
+
+.tvoed-premium-row div strong {
+  color: var(--cc-text);
+  font-size: 1rem;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
 @media (max-width: 760px) {
   .salary-value-grid {
     grid-template-columns: 1fr;
@@ -6342,6 +6454,20 @@ textarea {
   .salary-value-grid div {
     padding: 0.8rem;
     border-radius: 16px;
+  }
+
+  .tvoed-module-grid,
+  .tvoed-metric-grid,
+  .tvoed-premium-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tvoed-module-grid {
+    gap: 0.75rem;
+  }
+
+  .tvoed-premium-row {
+    align-items: start;
   }
 }
 

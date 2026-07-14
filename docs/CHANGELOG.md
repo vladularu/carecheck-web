@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.0 (unreleased)
+
+- TVoeD-P Fachmodul auf der Gehaltsseite ergaenzt.
+- Tarifwerte versionierbar gemacht, ohne vorhandene Tabellenwerte zu veraendern.
+- Zeitzuschlaege fuer Nacht, Sonntag, Feiertag und Samstag 13-21 Uhr fachlich getrennt ausgewiesen.
+- Ueberschneidungen tagesbezogener Zuschlaege minutenbasiert bereinigt; Nachtzuschlag bleibt additiv.
+- Schicht- und Wechselschichtindikatoren sowie Wochenendbewertung fuer den ausgewaehlten Monat ergaenzt.
+- TVoeD-P-Auswertung klar von ArbZG-/Compliance-Pruefungen getrennt.
+- Regressionstests fuer Tarifversion, Zuschlagskollisionen und Fachmodul ergaenzt.
+
 ## v1.2.9
 
 - Monatsbericht, CSV, XLSX und Druck/PDF-Ausgabe mit gemeinsamen Report-Labels vereinheitlicht.

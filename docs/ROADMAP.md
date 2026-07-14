@@ -5,6 +5,7 @@ Stand: nach Release `v1.2.9`
 Aktuell stabil: `v1.2.9 - Reporting & Export`
 
 Aktiver Hauptstand: `main`
+Aktiver Entwicklungsbranch: `feature/v1.3.0-tvoed-p-module`
 
 ## Abgeschlossen
 
@@ -73,21 +74,29 @@ Bereits umgesetzt:
 - erfolgreiche lokale Regression mit ESLint, Tests und Produktions-Build
 - GitHub Release `v1.2.9` erstellt
 
-## Naechste Meilensteine
-
 ### v1.3.0: TVoeD-P Fachmodul
 
-- Schicht- und Wechselschichtlogik
-- Nacht-, Sonntags- und Feiertagszuschlaege
-- Samstagszuschlaege
-- Ueberschneidungen von Zuschlagszeitraeumen
-- Wochenendbewertung
-- Feiertage nach Bundesland
-- planmaessige und tatsaechliche Arbeitszeiten
-- transparente Trennung von ArbZG- und TVoeD-P-Pruefungen
-- tarifliche Werte versionierbar machen
+Status: umgesetzt auf `feature/v1.3.0-tvoed-p-module`, noch nicht released.
 
-Vor Umsetzung muessen die jeweils aktuellen TVoeD-P-Regeln fachlich und rechtlich geprueft werden.
+- Schicht- und Wechselschichtindikatoren
+- Nacht-, Sonntags- und Feiertagszuschlaege
+- Samstagszuschlaege 13-21 Uhr
+- Ueberschneidungen von Zuschlagszeitraeumen minutenbasiert behandelt
+- Wochenendbewertung fuer den ausgewaehlten Monat
+- Feiertage nach Bundesland ueber bestehendes Feiertagsmodul
+- planmaessige und tatsaechliche Arbeitszeiten getrennt dargestellt
+- transparente Trennung von ArbZG- und TVoeD-P-Auswertung
+- tarifliche Werte versionierbar gemacht
+- Regressionstests fuer Tarifversion, Zuschlagskollisionen und Fachmodul
+
+Noch offen vor Release:
+
+- Branch nach `main` uebernehmen
+- Tag und GitHub Release fuer `v1.3.0`
+
+Vor Release muessen die jeweils aktuellen TVoeD-P-Regeln fachlich und rechtlich geprueft werden.
+
+## Naechste Meilensteine
 
 ### v1.4.0: Jahresauswertung
 

@@ -1,8 +1,19 @@
 import type { PayGroup, PayLevel } from "../../types/index";
 
 type TvoedPValues = Record<PayLevel, number | null>;
+type TvoedPTariffTable = Record<PayGroup, TvoedPValues>;
 
-const TVOED_P_MONTHLY_2026: Record<PayGroup, TvoedPValues> = {
+export interface TvoedPTariffVersion {
+  id: string;
+  label: string;
+  validFrom: string;
+  validTo: string;
+  sourceNote: string;
+  monthly: TvoedPTariffTable;
+  hourly: TvoedPTariffTable;
+}
+
+const TVOED_P_MONTHLY_2026: TvoedPTariffTable = {
   P7: {
     1: null,
     2: 3510.3,
@@ -85,7 +96,7 @@ const TVOED_P_MONTHLY_2026: Record<PayGroup, TvoedPValues> = {
   },
 };
 
-const TVOED_P_HOURLY_2026: Record<PayGroup, TvoedPValues> = {
+const TVOED_P_HOURLY_2026: TvoedPTariffTable = {
   P7: {
     1: null,
     2: 20.7,
@@ -168,24 +179,59 @@ const TVOED_P_HOURLY_2026: Record<PayGroup, TvoedPValues> = {
   },
 };
 
-export function getTvoedPTariffLabel(): string {
-  return "TVöD-P 2026 · gültig 01.05.2026–31.03.2027";
+export const TVOED_P_TARIFF_VERSIONS: TvoedPTariffVersion[] = [
+  {
+    id: "tvoed-p-vka-2026-05",
+    label: "TVoeD-P 2026 - gueltig 01.05.2026-31.03.2027",
+    validFrom: "2026-05-01",
+    validTo: "2027-03-31",
+    sourceNote:
+      "Tabellenwerte aus dem bestehenden CareCheck-Datenstand; vor produktiver Abrechnung fachlich pruefen.",
+    monthly: TVOED_P_MONTHLY_2026,
+    hourly: TVOED_P_HOURLY_2026,
+  },
+];
+
+const CURRENT_TVOED_P_TARIFF_VERSION = TVOED_P_TARIFF_VERSIONS[0];
+
+export function getTvoedPTariffVersion(
+  dateKey?: string,
+): TvoedPTariffVersion {
+  if (!dateKey) {
+    return CURRENT_TVOED_P_TARIFF_VERSION;
+  }
+
+  return (
+    TVOED_P_TARIFF_VERSIONS.find(
+      (version) =>
+        version.validFrom <= dateKey && dateKey <= version.validTo,
+    ) ?? CURRENT_TVOED_P_TARIFF_VERSION
+  );
+}
+
+export function getTvoedPTariffLabel(dateKey?: string): string {
+  return getTvoedPTariffVersion(dateKey).label;
 }
 
 export function getTvoedPMonthlySalary(
   payGroup: PayGroup,
   payLevel: PayLevel,
+  dateKey?: string,
 ): number | null {
-  return TVOED_P_MONTHLY_2026[payGroup][payLevel];
+  return getTvoedPTariffVersion(dateKey).monthly[payGroup][payLevel];
 }
 
 export function getTvoedPHourlyRate(
   payGroup: PayGroup,
   payLevel: PayLevel,
+  dateKey?: string,
 ): number | null {
-  return TVOED_P_HOURLY_2026[payGroup][payLevel];
+  return getTvoedPTariffVersion(dateKey).hourly[payGroup][payLevel];
 }
 
-export function getTvoedPPremiumHourlyRate(payGroup: PayGroup): number {
-  return TVOED_P_HOURLY_2026[payGroup][3] ?? 0;
+export function getTvoedPPremiumHourlyRate(
+  payGroup: PayGroup,
+  dateKey?: string,
+): number {
+  return getTvoedPTariffVersion(dateKey).hourly[payGroup][3] ?? 0;
 }

@@ -16,6 +16,8 @@ The app focuses on practical month-by-month workflows:
 
 Latest tagged release: `v1.2.9`
 
+Active development: `v1.3.0 - TVoeD-P Fachmodul` on `feature/v1.3.0-tvoed-p-module`
+
 Release focus:
 
 - consistent monthly report filenames for CSV, XLSX, and browser/PDF print flows
@@ -25,6 +27,16 @@ Release focus:
 - hardened print pagination for professional PDF output
 - export regression coverage for filenames, labels, preview data, and print/report consistency
 - statistics, tariff, and compliance logic unchanged
+
+Current development focus:
+
+- versioned TVoeD-P tariff values
+- separated TVoeD-P module for tariff-oriented monthly evaluation
+- non-overlapping time premium calculation for day-based premiums
+- additive night premium handling
+- shift-work and alternating-shift indicators
+- weekend assessment for the selected month
+- explicit separation between ArbZG compliance checks and TVoeD-P tariff views
 
 ## Tech Stack
 
@@ -112,6 +124,7 @@ docs/
   CARECHECK_DESIGN_GUIDE.md
   ROADMAP.md
   TODO.md
+  V1.3.0_TVOED_P_MODULE_AUDIT.md
   V1.2.9_REPORTING_EXPORT_AUDIT.md
 ```
 

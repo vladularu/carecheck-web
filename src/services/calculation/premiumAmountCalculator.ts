@@ -20,7 +20,7 @@ export interface PremiumCalculationResult {
   totalAmount: number | null;
 }
 
-const PREMIUM_PERCENTAGES = {
+export const TVOED_P_PREMIUM_PERCENTAGES = {
   night: 20,
   sunday: 25,
   holidayWithTimeOff: 35,
@@ -70,22 +70,29 @@ export function calculatePremiumLines(
 ): PremiumCalculationResult {
   const holidayPercentage =
     options.holidayMode === "WITHOUT_TIME_OFF"
-      ? PREMIUM_PERCENTAGES.holidayWithoutTimeOff
-      : PREMIUM_PERCENTAGES.holidayWithTimeOff;
+      ? TVOED_P_PREMIUM_PERCENTAGES.holidayWithoutTimeOff
+      : TVOED_P_PREMIUM_PERCENTAGES.holidayWithTimeOff;
+
+  const tvoedPremiumHours = premium.tvoedPremiumHours ?? {
+    nightHours: premium.nightHours,
+    sundayHours: premium.sundayHours,
+    holidayHours: premium.holidayHours,
+    saturdayAfternoonHours: premium.saturdayAfternoonHours,
+  };
 
   const lines = [
     createLine(
       "night",
       "Nacht",
-      premium.nightHours,
-      PREMIUM_PERCENTAGES.night,
+      tvoedPremiumHours.nightHours,
+      TVOED_P_PREMIUM_PERCENTAGES.night,
       options.baseHourlyRate,
     ),
     createLine(
       "sunday",
       "Sonntag",
-      premium.sundayHours,
-      PREMIUM_PERCENTAGES.sunday,
+      tvoedPremiumHours.sundayHours,
+      TVOED_P_PREMIUM_PERCENTAGES.sunday,
       options.baseHourlyRate,
     ),
     createLine(
@@ -93,15 +100,15 @@ export function calculatePremiumLines(
       options.holidayMode === "WITHOUT_TIME_OFF"
         ? "Feiertag ohne Freizeitausgleich"
         : "Feiertag mit Freizeitausgleich",
-      premium.holidayHours,
+      tvoedPremiumHours.holidayHours,
       holidayPercentage,
       options.baseHourlyRate,
     ),
     createLine(
       "saturdayAfternoon",
-      "Samstag 13–21",
-      premium.saturdayAfternoonHours,
-      PREMIUM_PERCENTAGES.saturdayAfternoon,
+      "Samstag 13-21",
+      tvoedPremiumHours.saturdayAfternoonHours,
+      TVOED_P_PREMIUM_PERCENTAGES.saturdayAfternoon,
       options.baseHourlyRate,
     ),
   ].filter((line): line is PremiumLine => line !== null);
