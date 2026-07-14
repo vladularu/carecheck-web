@@ -18,6 +18,7 @@ import {
 import { createMonthlyReportExportPreview } from "../services/export/monthlyReportExportPreview";
 import {
   monthlyReportLabels,
+  monthlyReportSeverityHelpLabels,
   monthlyReportSeverityLabels,
   monthlyReportShiftLabels,
 } from "../services/export/monthlyReportLabels";
@@ -125,6 +126,10 @@ export default function MonthlyReport() {
     (issue) => issue.severity === "warning",
   ).length;
 
+  const infoCount = complianceIssues.filter(
+    (issue) => issue.severity === "info",
+  ).length;
+
   const reportStatus =
     criticalCount > 0
       ? "Kritische Hinweise vorhanden"
@@ -187,6 +192,24 @@ export default function MonthlyReport() {
         "Zuschläge werden aus den erfassten Dienstzeiten, dem Bundesland und der TVöD-P-Zuschlagsbasis berechnet.",
     },
   ];
+
+  const complianceSummaryRows = [
+    {
+      label: monthlyReportSeverityLabels.critical,
+      count: criticalCount,
+      severity: "critical",
+    },
+    {
+      label: monthlyReportSeverityLabels.warning,
+      count: warningCount,
+      severity: "warning",
+    },
+    {
+      label: monthlyReportSeverityLabels.info,
+      count: infoCount,
+      severity: "info",
+    },
+  ] as const;
 
   function handlePrint() {
     const previousTitle = document.title;
@@ -689,33 +712,52 @@ export default function MonthlyReport() {
               }
             </p>
           ) : (
-            <table className="print-report-table">
-              <thead>
-                <tr>
-                  {monthlyReportLabels.tables.compliance.map(
-                    (label) => (
-                      <th key={label}>{label}</th>
-                    ),
-                  )}
-                </tr>
-              </thead>
+            <>
+              <div
+                className="print-report-compliance-summary"
+                aria-label="Prüfhinweise nach Schweregrad"
+              >
+                {complianceSummaryRows.map((row) => (
+                  <div
+                    key={row.severity}
+                    className={`print-report-compliance-summary-item print-report-compliance-${row.severity}`}
+                  >
+                    <span>{row.label}</span>
+                    <strong>{row.count}</strong>
+                  </div>
+                ))}
+              </div>
 
-              <tbody>
+              <div className="print-report-compliance-list">
                 {complianceIssues.map((issue) => (
-                  <tr key={issue.id}>
-                    <td>
+                  <article
+                    key={issue.id}
+                    className={`print-report-compliance-card print-report-compliance-${issue.severity}`}
+                  >
+                    <div className="print-report-compliance-card-header">
+                      <span className="print-report-compliance-badge">
+                        {
+                          monthlyReportSeverityLabels[
+                            issue.severity
+                          ]
+                        }
+                      </span>
+                      <strong>{issue.title}</strong>
+                    </div>
+
+                    <p>{issue.description}</p>
+
+                    <small>
                       {
-                        monthlyReportSeverityLabels[
+                        monthlyReportSeverityHelpLabels[
                           issue.severity
                         ]
                       }
-                    </td>
-                    <td>{issue.title}</td>
-                    <td>{issue.description}</td>
-                  </tr>
+                    </small>
+                  </article>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </section>
 

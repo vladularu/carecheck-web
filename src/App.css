@@ -6856,6 +6856,122 @@ textarea {
   font-weight: 850;
 }
 
+.print-report-compliance-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.print-report-compliance-summary-item {
+  min-width: 0;
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(120, 132, 158, 0.18);
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.78);
+}
+
+.print-report-compliance-summary-item span {
+  color: var(--cc-text-muted);
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.print-report-compliance-summary-item strong {
+  color: var(--cc-text);
+  font-size: 1.15rem;
+  line-height: 1.1;
+}
+
+.print-report-compliance-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.print-report-compliance-card {
+  min-width: 0;
+  display: grid;
+  gap: 0.48rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(120, 132, 158, 0.2);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.print-report-compliance-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.6rem;
+}
+
+.print-report-compliance-card-header strong {
+  min-width: 0;
+  color: var(--cc-text);
+  font-size: 1rem;
+  line-height: 1.28;
+  overflow-wrap: anywhere;
+}
+
+.print-report-compliance-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.55rem;
+  padding: 0.22rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.print-report-compliance-card p {
+  margin: 0;
+  color: var(--cc-text);
+  font-size: 0.9rem;
+  line-height: 1.48;
+  overflow-wrap: anywhere;
+}
+
+.print-report-compliance-card small {
+  color: var(--cc-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.print-report-compliance-info {
+  border-left-color: #2563eb;
+}
+
+.print-report-compliance-info .print-report-compliance-badge {
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.print-report-compliance-warning {
+  border-left-color: #d97706;
+}
+
+.print-report-compliance-warning .print-report-compliance-badge {
+  color: #b45309;
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.print-report-compliance-critical {
+  border-left-color: #dc2626;
+}
+
+.print-report-compliance-critical .print-report-compliance-badge {
+  color: #b91c1c;
+  background: rgba(220, 38, 38, 0.1);
+}
+
 .print-report-basis-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -6908,9 +7024,44 @@ textarea {
   .print-report-basis-list {
     grid-template-columns: 1fr;
   }
+
+  .print-report-compliance-summary {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media print {
+  .print-report-compliance-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .print-report-compliance-summary-item {
+    padding: 0.45rem;
+    background: #ffffff;
+  }
+
+  .print-report-compliance-list {
+    gap: 0.45rem;
+  }
+
+  .print-report-compliance-card {
+    break-inside: avoid;
+    padding: 0.5rem;
+    background: #ffffff;
+  }
+
+  .print-report-compliance-summary-item span,
+  .print-report-compliance-badge,
+  .print-report-compliance-card small {
+    font-size: 8px;
+  }
+
+  .print-report-compliance-card-header strong,
+  .print-report-compliance-card p {
+    font-size: 9px;
+  }
+
   .print-report-basis-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.45rem;

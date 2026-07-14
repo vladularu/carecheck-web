@@ -108,3 +108,14 @@ export const monthlyReportSeverityLabels: Record<
   warning: "Warnung",
   critical: "Kritisch",
 };
+
+export const monthlyReportSeverityHelpLabels: Record<
+  ComplianceIssue["severity"],
+  string
+> = {
+  info: "Information zur Monatsprüfung.",
+  warning:
+    "Bitte Planung prüfen und bei Bedarf korrigieren.",
+  critical:
+    "Vor Nutzung oder Weitergabe des Plans vorrangig prüfen.",
+};

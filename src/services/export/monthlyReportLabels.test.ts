@@ -3,7 +3,10 @@ import {
   expect,
   it,
 } from "vitest";
-import { monthlyReportLabels } from "./monthlyReportLabels";
+import {
+  monthlyReportLabels,
+  monthlyReportSeverityHelpLabels,
+} from "./monthlyReportLabels";
 
 describe("monthlyReportLabels", () => {
   it("definiert die gemeinsame Berichtsreihenfolge", () => {
@@ -53,5 +56,17 @@ describe("monthlyReportLabels", () => {
       "Stundenquelle",
       "Notiz",
     ]);
+  });
+
+  it("erklaert Schweregrade fuer den druckbaren Monatsbericht", () => {
+    expect(
+      monthlyReportSeverityHelpLabels,
+    ).toEqual({
+      info: "Information zur Monatsprüfung.",
+      warning:
+        "Bitte Planung prüfen und bei Bedarf korrigieren.",
+      critical:
+        "Vor Nutzung oder Weitergabe des Plans vorrangig prüfen.",
+    });
   });
 });
