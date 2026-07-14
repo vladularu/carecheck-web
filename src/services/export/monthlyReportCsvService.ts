@@ -14,6 +14,7 @@ import {
   getReportNetHours,
   getReportTimeLabel,
 } from "./monthlyReportEntryFormatter";
+import { createMonthlyReportExportFileName } from "./monthlyReportExportMetadata";
 
 export interface MonthlyReportCsvInput {
   monthLabel: string;
@@ -95,42 +96,13 @@ function formatEuro(value: number | null): string {
   }).format(value);
 }
 
-function removeControlCharacters(
-  value: string,
-): string {
-  return Array.from(value)
-    .filter((character) => {
-      const codePoint =
-        character.codePointAt(0) ?? 0;
-
-      return (
-        codePoint >= 32 &&
-        codePoint !== 127
-      );
-    })
-    .join("");
-}
-
-function sanitizeFileNamePart(
-  value: string,
-): string {
-  const sanitized =
-    removeControlCharacters(value)
-      .trim()
-      .replace(/[<>:"/\\|?*]/g, "")
-      .replace(/\s+/g, "_")
-      .replace(/_+/g, "_")
-      .replace(/^\.+|\.+$/g, "");
-
-  return sanitized || "Monatsbericht";
-}
-
 export function createMonthlyReportCsvFileName(
   monthLabel: string,
 ): string {
-  return `CareCheck_Monatsbericht_${sanitizeFileNamePart(
+  return createMonthlyReportExportFileName(
     monthLabel,
-  )}.csv`;
+    "csv",
+  );
 }
 
 export function createMonthlyReportCsv({

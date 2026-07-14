@@ -176,13 +176,13 @@ describe(
       );
     });
 
-    it("erzeugt einen sicheren Dateinamen", () => {
+    it("erzeugt einen sortierbaren Dateinamen mit Monatskennung", () => {
       expect(
         createMonthlyReportCsvFileName(
-          'Juli/2026: "Test"',
+          "Juli 2026",
         ),
       ).toBe(
-        "CareCheck_Monatsbericht_Juli2026_Test.csv",
+        "CareCheck_Monatsbericht_2026-07_Juli.csv",
       );
     });
 

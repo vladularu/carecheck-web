@@ -212,13 +212,13 @@ describe(
       ]);
     });
 
-    it("erzeugt einen sicheren XLSX-Dateinamen", () => {
+    it("erzeugt einen sortierbaren XLSX-Dateinamen mit Monatskennung", () => {
       expect(
         createMonthlyReportXlsxFileName(
-          'Juli/2026: "Test"',
+          "Juli 2026",
         ),
       ).toBe(
-        "CareCheck_Monatsbericht_Juli2026_Test.xlsx",
+        "CareCheck_Monatsbericht_2026-07_Juli.xlsx",
       );
     });
   },
