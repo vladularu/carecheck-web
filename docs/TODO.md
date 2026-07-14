@@ -96,6 +96,7 @@
 - [x] Planer, Komfortplanung und gemeinsame Seitenkoepfe visuell verdichten.
 - [x] Klassische Desktop-Uebersicht erhalten.
 - [x] Demo-Referenz `carecheck-vision` abgleichen und Look-and-feel uebernehmen.
+- [x] Weitere Bildreferenzen fuer iPhone-App-UI und CareCheck-TVoeD-Branding zusammenfuehren.
 - [ ] Mobile Sichtpruefung auf echtem iPhone oder verlaesslichem iPhone-Viewport nachziehen.
 - [x] Lint, Tests und Build final ausfuehren.
 - [ ] v1.8.0 nach `main` uebernehmen.
