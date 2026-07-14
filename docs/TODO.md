@@ -86,3 +86,17 @@
 - [x] v1.7.0 nach `main` uebernehmen.
 - [x] Release-Tag fuer `v1.7.0` erstellen.
 - [x] GitHub Release fuer `v1.7.0` erstellen.
+
+## v1.8.0 - Product UI Refresh
+
+- [x] v1.8.0-Branch fuer Product UI Refresh anlegen.
+- [x] iPhone-first Navigation mit Haupttabs und Mehr-Menue ergaenzen.
+- [x] App-Shell, Karten, Buttons und Formulare ruhiger gestalten.
+- [x] Dashboard-Status ohne Emoji und mit sachlichem Statuspunkt darstellen.
+- [x] Planer, Komfortplanung und gemeinsame Seitenkoepfe visuell verdichten.
+- [x] Klassische Desktop-Uebersicht erhalten.
+- [ ] Demo-Referenzen oder Screenshots abgleichen, falls vorhanden.
+- [ ] Mobile Sichtpruefung auf echtem iPhone oder verlaesslichem iPhone-Viewport nachziehen.
+- [x] Lint, Tests und Build final ausfuehren.
+- [ ] v1.8.0 nach `main` uebernehmen.
+- [ ] Release-Tag und GitHub Release fuer `v1.8.0` erstellen.

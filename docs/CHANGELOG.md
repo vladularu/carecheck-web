@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.8.0 - in Entwicklung
+
+- Product UI Refresh als eigener Zwischenschritt vor Sync/Auth eingeordnet.
+- iPhone-first Navigation mit Haupttabs und Mehr-Menue vorbereitet.
+- App-Shell, Karten, Buttons und Formulare optisch ruhiger ausgerichtet.
+- Dashboard-Pruefstatus sachlicher ohne Emoji dargestellt.
+- Statistik-, Tarif- und Compliance-Berechnungslogik unveraendert gelassen.
+
 ## v1.7.0
 
 - Komfortplanung im Dienstplan ergaenzt.

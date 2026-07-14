@@ -146,7 +146,30 @@ Die jeweils aktuellen TVoeD-P-Regeln muessen vor produktiver Abrechnung fachlich
 - Release-Tag `v1.7.0` erstellt
 - GitHub Release `v1.7.0` erstellt
 
+## In Entwicklung
+
+### v1.8.0: Product UI Refresh
+
+Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberflaeche, ohne Statistik-, Tarif- oder Compliance-Logik zu veraendern.
+
+- iPhone-first App-Navigation mit klaren Hauptbereichen
+- sekundäre Bereiche ueber ein kompaktes Mehr-Menue
+- ruhigere App-Shell mit klinisch sauberer Farb- und Flaechenwirkung
+- kompaktere Karten, Buttons, Formulare und Seitenkoepfe
+- Dashboard optisch sachlicher und vorfuehrbarer machen
+- Planer und Komfortplanung visuell ordnen
+- klassische Desktop-Uebersicht erhalten
+- Barrierefreiheit und Tastaturbedienung pruefen
+- vollstaendige Regression mit Lint, Tests und Build
+
 ## Langfristige Produktreife
+
+### v1.9.0: Sync-Vorbereitung und Datenmodell
+
+- persistente Datenstruktur fuer spaetere Synchronisierung pruefen
+- lokale IDs, Versionierung und Konfliktfelder vorbereiten
+- Backup-/Restore-Kompatibilitaet bewahren
+- Datenschutz- und Loeschkonzept fachlich vorbereiten
 
 ### v2.0: Synchronisierung und Mehrgeraetebetrieb
 

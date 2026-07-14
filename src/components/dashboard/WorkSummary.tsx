@@ -40,7 +40,10 @@ export default function WorkSummary({
       </div>
 
       <div className="progress-track">
-        <div className="progress-fill" style={{ width: `${progress}%` }} />
+        <div
+          className="progress-fill"
+          style={{ width: `${progress}%` }}
+        />
       </div>
 
       <div className="work-grid">

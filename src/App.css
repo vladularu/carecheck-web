@@ -8075,3 +8075,458 @@ textarea {
     width: fit-content;
   }
 }
+
+/* =========================================================
+   CareCheck TVoeD v1.8.0 - Product UI Refresh
+   Fokus: iPhone-first, ruhiger Produktlook, keine Fachlogik
+   ========================================================= */
+
+:root {
+  --cc-bg: #f3f6fa;
+  --cc-surface: #ffffff;
+  --cc-surface-soft: #f8fafc;
+  --cc-card: #ffffff;
+  --cc-card-solid: #ffffff;
+
+  --cc-text: #111827;
+  --cc-text-soft: #4b5563;
+  --cc-text-muted: #6b7280;
+
+  --cc-border: rgba(99, 116, 139, 0.18);
+  --cc-border-strong: rgba(37, 99, 235, 0.28);
+
+  --cc-primary: #2563eb;
+  --cc-primary-dark: #1d4ed8;
+  --cc-primary-soft: rgba(37, 99, 235, 0.09);
+  --cc-blue: #0f766e;
+  --cc-blue-soft: rgba(15, 118, 110, 0.09);
+
+  --cc-success: #15803d;
+  --cc-success-soft: rgba(22, 163, 74, 0.1);
+  --cc-warning: #d97706;
+  --cc-warning-soft: rgba(217, 119, 6, 0.12);
+  --cc-danger: #b91c1c;
+  --cc-danger-soft: rgba(220, 38, 38, 0.1);
+
+  --cc-radius-sm: 6px;
+  --cc-radius-md: 8px;
+  --cc-radius-lg: 8px;
+  --cc-radius-xl: 8px;
+
+  --cc-shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.06);
+  --cc-shadow-card: 0 14px 30px rgba(15, 23, 42, 0.07);
+  --cc-shadow-nav: 0 16px 36px rgba(15, 23, 42, 0.16);
+}
+
+html,
+body,
+#root {
+  background: var(--cc-bg) !important;
+}
+
+body {
+  background:
+    linear-gradient(180deg, #f9fbfd 0%, #f3f6fa 46%, #edf2f7 100%) !important;
+  color: var(--cc-text);
+}
+
+.app-shell {
+  width: min(1060px, calc(100% - 32px)) !important;
+  max-width: 1060px !important;
+  padding: 1rem 0 calc(112px + env(safe-area-inset-bottom)) !important;
+}
+
+.page,
+.dashboard-page,
+.calendar-page,
+.profile-page,
+.monthly-report-page,
+.yearly-page,
+.fairness-page,
+.planner-page {
+  gap: 0.9rem !important;
+}
+
+.ui-page-header {
+  gap: 0.32rem !important;
+  padding: 0.15rem 0.1rem 0.25rem;
+}
+
+.ui-page-header span,
+.eyebrow,
+.card-label,
+.cockpit-eyebrow {
+  color: var(--cc-primary-dark) !important;
+  font-size: 0.72rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.06em !important;
+}
+
+.ui-page-header h1,
+.page h1,
+.dashboard-hero h1,
+.cockpit-overview-header h2 {
+  color: var(--cc-text) !important;
+  font-size: clamp(1.85rem, 7vw, 2.55rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.05 !important;
+}
+
+.ui-page-header p,
+.planner-section-header p,
+.profile-section-header p,
+.fairness-card-header p,
+.yearly-card-header p,
+.report-action-header p {
+  max-width: 42rem;
+  color: var(--cc-text-soft) !important;
+  font-size: 0.94rem !important;
+  line-height: 1.48 !important;
+}
+
+.ui-card,
+.summary-card,
+.dashboard-card,
+.work-card,
+.status-card,
+.planner-entry-card,
+.planner-summary-card,
+.planning-comfort-card,
+.planner-filter-card,
+.profile-section-card,
+.yearly-card,
+.fairness-card,
+.fairness-wide-card,
+.report-action-card {
+  border: 1px solid var(--cc-border) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: var(--cc-shadow-card) !important;
+  backdrop-filter: none !important;
+}
+
+.ui-card,
+.planner-entry-card,
+.planner-summary-card,
+.planning-comfort-card,
+.profile-section-card,
+.yearly-card,
+.fairness-card,
+.fairness-wide-card {
+  padding: 1rem !important;
+}
+
+.dashboard-hero,
+.cockpit-overview-card {
+  min-height: auto !important;
+  padding: 1rem !important;
+  border: 1px solid rgba(37, 99, 235, 0.18) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f7fbff 100%) !important;
+  color: var(--cc-text) !important;
+  box-shadow: var(--cc-shadow-card) !important;
+}
+
+.dashboard-hero p,
+.dashboard-hero .eyebrow {
+  color: var(--cc-text-soft) !important;
+}
+
+.work-card-header,
+.monthly-premium-header,
+.fairness-header-row,
+.yearly-header-row,
+.profile-section-header,
+.planner-section-header {
+  gap: 0.65rem !important;
+}
+
+.work-card-header strong,
+.monthly-premium-header strong,
+.planner-section-header strong,
+.profile-section-header strong,
+.fairness-card-header strong,
+.yearly-card-header strong {
+  color: var(--cc-text) !important;
+  font-size: clamp(1.15rem, 4vw, 1.55rem) !important;
+  letter-spacing: 0 !important;
+  line-height: 1.15 !important;
+}
+
+.ui-stat-card,
+.planner-summary-grid div,
+.planning-tool-panel,
+.cockpit-main-values div,
+.cockpit-mini-grid article,
+.dashboard-status-grid div,
+.fairness-member-editor,
+.yearly-metric-grid div,
+.yearly-trend-list div,
+.tariff-box,
+.shift-card,
+.day-details-shift {
+  border: 1px solid rgba(99, 116, 139, 0.14) !important;
+  border-radius: 8px !important;
+  background: var(--cc-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+.ui-button,
+.primary-button,
+.danger-button,
+button,
+input,
+select,
+textarea {
+  border-radius: 8px !important;
+}
+
+.ui-button,
+.primary-button,
+.danger-button {
+  min-height: 44px !important;
+  box-shadow: none !important;
+  letter-spacing: 0 !important;
+}
+
+.ui-button-primary,
+.primary-button,
+button[type="submit"] {
+  background: var(--cc-primary) !important;
+  color: #ffffff !important;
+}
+
+.ui-button-secondary {
+  background: #e5e7eb !important;
+  color: var(--cc-text) !important;
+}
+
+.ui-button-danger,
+.danger-button {
+  background: var(--cc-danger) !important;
+  color: #ffffff !important;
+}
+
+.field input,
+.field select,
+.field textarea,
+input,
+select,
+textarea {
+  min-height: 46px !important;
+  border-color: var(--cc-border) !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.progress-number,
+.monthly-premium-count {
+  border-radius: 8px !important;
+  background: var(--cc-primary-soft) !important;
+  color: var(--cc-primary-dark) !important;
+}
+
+.progress-track,
+.cockpit-progress-track {
+  height: 8px !important;
+  background: rgba(37, 99, 235, 0.1) !important;
+}
+
+.progress-fill,
+.cockpit-progress-track span {
+  background: linear-gradient(90deg, var(--cc-primary), #0f766e) !important;
+}
+
+.status-title {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 0.68rem;
+  height: 0.68rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--cc-success);
+}
+
+.status-dot.dashboard-status-warning {
+  background: var(--cc-warning);
+}
+
+.status-dot.dashboard-status-critical {
+  background: var(--cc-danger);
+}
+
+.bottom-nav {
+  border: 1px solid rgba(99, 116, 139, 0.2) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: var(--cc-shadow-nav) !important;
+}
+
+.bottom-nav-primary,
+.bottom-nav-more-panel {
+  display: contents;
+}
+
+.bottom-nav-link {
+  min-width: 0;
+  min-height: 44px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: var(--cc-text-muted) !important;
+  box-shadow: none !important;
+  font-size: 0.76rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+}
+
+.bottom-nav-link.active,
+.bottom-nav-link[aria-current="page"] {
+  background: var(--cc-primary-soft) !important;
+  color: var(--cc-primary-dark) !important;
+}
+
+.bottom-nav-more-button {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    width: 100% !important;
+    padding: 0.85rem 0.75rem calc(104px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .page,
+  .dashboard-page,
+  .calendar-page,
+  .profile-page,
+  .monthly-report-page,
+  .yearly-page,
+  .fairness-page,
+  .planner-page,
+  .premium-month-cockpit {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .ui-page-header {
+    padding-top: 0.15rem;
+  }
+
+  .ui-page-header h1,
+  .page h1,
+  .dashboard-hero h1,
+  .cockpit-overview-header h2 {
+    font-size: clamp(1.62rem, 8vw, 2.05rem) !important;
+  }
+
+  .dashboard-hero,
+  .cockpit-overview-card,
+  .ui-card,
+  .planner-entry-card,
+  .planner-summary-card,
+  .planning-comfort-card,
+  .profile-section-card,
+  .yearly-card,
+  .fairness-card,
+  .fairness-wide-card {
+    padding: 0.9rem !important;
+  }
+
+  .work-grid,
+  .planner-summary-grid,
+  .dashboard-status-grid,
+  .fairness-kpi-grid,
+  .yearly-kpi-grid {
+    gap: 0.5rem !important;
+  }
+
+  .cockpit-main-values,
+  .planning-comfort-grid,
+  .planning-tool-fields,
+  .planner-filter-card,
+  .fairness-content-grid,
+  .yearly-content-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .bottom-nav {
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    bottom: calc(0.65rem + env(safe-area-inset-bottom)) !important;
+    display: block !important;
+    width: auto !important;
+    min-height: auto !important;
+    max-width: none !important;
+    padding: 0.35rem !important;
+    transform: none !important;
+  }
+
+  .bottom-nav-primary {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+
+  .bottom-nav-more-button {
+    display: inline-flex !important;
+  }
+
+  .bottom-nav-more-panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.5rem);
+    display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem;
+    width: min(22rem, 100%);
+    padding: 0.45rem;
+    border: 1px solid rgba(99, 116, 139, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: var(--cc-shadow-nav);
+  }
+
+  .bottom-nav-more-panel.open {
+    display: grid;
+  }
+
+  .bottom-nav-more-panel .bottom-nav-link {
+    justify-content: flex-start !important;
+    padding: 0 0.75rem !important;
+  }
+
+  .bottom-nav-link {
+    justify-content: center !important;
+    min-height: 46px !important;
+    padding: 0 0.35rem !important;
+    font-size: 0.72rem !important;
+    line-height: 1.1 !important;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 761px) {
+  .bottom-nav {
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(0.85rem + env(safe-area-inset-bottom)) !important;
+    display: flex !important;
+    width: min(760px, calc(100% - 2rem)) !important;
+    min-height: 56px !important;
+    padding: 0.35rem !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .bottom-nav-link {
+    flex: 1 1 auto;
+    padding: 0 0.65rem !important;
+  }
+}

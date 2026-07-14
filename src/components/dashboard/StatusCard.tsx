@@ -27,13 +27,6 @@ export default function StatusCard({
         ? "Warnungen vorhanden"
         : "Keine Auffälligkeiten";
 
-  const statusIcon =
-    criticalCount > 0
-      ? "\u{1F534}"
-      : warningCount > 0
-        ? "\u{1F7E0}"
-        : "\u{1F7E2}";
-
   return (
     <Card
       className={`dashboard-status-card ${statusClass}`}
@@ -43,7 +36,11 @@ export default function StatusCard({
       </span>
 
       <strong className="status-title">
-        {statusIcon} {statusText}
+        <span
+          className={`status-dot ${statusClass}`}
+          aria-hidden="true"
+        />
+        {statusText}
       </strong>
 
       <div className="dashboard-status-grid">
