@@ -1,10 +1,10 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release `v1.2.8`
+Stand: nach Release `v1.2.8`, waehrend Entwicklung von `v1.2.9`
 
 Aktuell stabil: `v1.2.8 - UI Consistency`
 
-Aktiver Hauptstand: `main`
+Aktiver Entwicklungsbranch: `feature/v1.2.9-reporting-export`
 
 ## Abgeschlossen
 
@@ -57,17 +57,29 @@ Ziel: eine einheitliche, verstaendliche und vorfuehrbare Produktoberflaeche.
 - vollstaendige Regression mit Lint, Tests und Build
 - GitHub Release `v1.2.8` erstellt
 
-## Naechste Meilensteine
+## In Entwicklung
 
 ### v1.2.9: Reporting & Export
 
-- professioneller Monatsbericht
-- verstaendliche Pruefhinweise
-- einheitliche CSV-, XLSX- und Druckausgaben
-- nachvollziehbare Berechnungsgrundlagen
-- Exportvorschau
-- bessere Dateinamen und Monatszuordnung
-- PDF-Bericht pruefen beziehungsweise ergaenzen
+Ziel: Monatsbericht, CSV, XLSX und Druck/PDF-Ausgabe verstaendlicher, konsistenter und besser pruefbar machen, ohne Statistik-, Tarif- oder Compliance-Logik zu veraendern.
+
+Bereits umgesetzt:
+
+- einheitliche CSV-, XLSX- und Druckbegriffe ueber zentrale Report-Labels
+- sortierbare Monatsbericht-Dateinamen fuer CSV, XLSX und Druck/PDF-Hinweis
+- Exportvorschau in Dashboard und Monatsbericht
+- nachvollziehbare Berechnungsgrundlagen im Monatsbericht
+- verstaendlichere Pruefhinweise mit stabiler Compliance-Datenbasis
+- gehaertete Druck-/PDF-Paginierung fuer Monatsbericht-Abschnitte
+- Regressionstests fuer Exportnamen, Labels, Vorschau und Berichtskonsistenz
+- erfolgreiche lokale Regression mit ESLint, Tests und Produktions-Build
+
+Noch offen vor Release:
+
+- Pull Request nach `main`
+- Tag und GitHub Release fuer `v1.2.9`
+
+## Naechste Meilensteine
 
 ### v1.3.0: TVoeD-P Fachmodul
 

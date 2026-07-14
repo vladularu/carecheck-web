@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.2.9 (unreleased)
+
+- Monatsbericht, CSV, XLSX und Druck/PDF-Ausgabe mit gemeinsamen Report-Labels vereinheitlicht.
+- Sortierbare Monatsbericht-Dateinamen mit klarer Monatskennung fuer CSV, XLSX und Drucktitel ergaenzt.
+- Exportvorschau in Dashboard und Monatsbericht eingefuehrt.
+- Berechnungsgrundlagen, Compliance-Hinweise und Druck-/PDF-Paginierung im Monatsbericht verbessert.
+- Regressionstests fuer Exportnamen, Labels, Vorschau und Berichtskonsistenz ergaenzt.
+- Statistik-, Tarif- und Compliance-Logik unveraendert gelassen.
+
 ## v1.2.8
 
 - UI-Konsistenz für Profil, Plan, Gehalt, Prüfung, Kalender und Monatsbericht verbessert.

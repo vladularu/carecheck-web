@@ -1,11 +1,35 @@
-# CareCheck TVöD
+# CareCheck TVoeD
 
-Professionelle Web-App zur Prüfung von Dienstplänen nach Arbeitszeitgesetz und TVöD.
+CareCheck TVoeD ist eine lokale React-App fuer Dienstplanung, Arbeitszeitpruefung und Monatsberichte im Kontext TVoeD-P-orientierter Pflegearbeit.
 
-Ziel:
-- Dienstplanung
-- Stundenkonto
-- Gehaltsrechner
-- Zuschlagsberechnung
-- Feiertage
-- Arbeitszeitprüfung
+## Produktziel
+
+- Dienstplan monatlich erfassen und pruefen
+- Soll-, Ist- und Differenzstunden nachvollziehbar darstellen
+- Feiertage, Wochenendfolgen und ArbZG-Basispruefungen sichtbar machen
+- TVoeD-P-nahe Grundwerte und Zuschlaege transparent ausweisen
+- Monatsberichte als CSV, XLSX und Druck/PDF vorbereiten
+- Daten lokal sichern, wiederherstellen und als PWA nutzen
+
+## Aktueller Stand
+
+- Stabiler Release-Stand: `v1.2.8 - UI Consistency`
+- Aktiver Entwicklungsstand: `v1.2.9 - Reporting & Export`
+- Branch: `feature/v1.2.9-reporting-export`
+
+## Fachliche Leitplanken
+
+- Statistik-, Tarif- und Compliance-Logik bleiben fuer v1.2.9 unveraendert.
+- FREE zaehlt keine Stunden und keinen Planungstag und wird nicht auf Compliance geprueft.
+- VACATION, SICK und TRAINING bleiben planungs- und stundenrelevant.
+- Urlaub und Krankheit gelten nicht als tatsaechliche ArbZG-Arbeitsdienste.
+- EARLY, LATE, NIGHT, DAY und CUSTOM gelten als Arbeitsdienste.
+- Nachtdienste ueber Mitternacht muessen korrekt verarbeitet werden.
+- Compliance-Auswertungen beziehen sich auf den ausgewaehlten Monat.
+
+## UI-Leitplanken
+
+- Mobile iPhone-Ansicht hat Prioritaet.
+- Die klassische Desktop-Uebersicht bleibt erhalten.
+- Datum wird als `dd.mm.yyyy` dargestellt.
+- Uhrzeiten verwenden das 24-Stunden-Format.
