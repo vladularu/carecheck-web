@@ -17,6 +17,10 @@ import {
   saveFairnessTeamMembers,
   type FairnessTeamMemberDraft,
 } from "../services/storage/fairnessTeamStorage";
+import {
+  markSyncEntityChanged,
+  markSyncEntityDeleted,
+} from "../services/storage/syncMetadataStorage";
 
 const monthNames = [
   "Januar",
@@ -202,13 +206,25 @@ export default function Fairness() {
   const selectedMonthLabel = `${monthNames[selectedMonth]} ${selectedYear}`;
 
   function addTeamMember() {
+    const member = createEmptyMember();
+
+    markSyncEntityChanged(
+      "fairnessTeam",
+      member.id,
+    );
+
     setTeamMembers((current) => [
       ...current,
-      createEmptyMember(),
+      member,
     ]);
   }
 
   function removeTeamMember(id: string) {
+    markSyncEntityDeleted(
+      "fairnessTeam",
+      id,
+    );
+
     setTeamMembers((current) =>
       current.filter((member) => member.id !== id),
     );
@@ -219,6 +235,11 @@ export default function Fairness() {
     field: keyof FairnessTeamMemberDraft,
     value: string,
   ) {
+    markSyncEntityChanged(
+      "fairnessTeam",
+      id,
+    );
+
     setTeamMembers((current) =>
       current.map((member) => {
         if (member.id !== id) {

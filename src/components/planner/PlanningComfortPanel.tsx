@@ -15,6 +15,10 @@ import {
   loadPlanningTemplates,
   savePlanningTemplates,
 } from "../../services/storage/planningTemplateStorage";
+import {
+  markSyncEntityChanged,
+  markSyncEntityDeleted,
+} from "../../services/storage/syncMetadataStorage";
 import type {
   Shift,
   ShiftTemplates,
@@ -401,6 +405,10 @@ export default function PlanningComfortPanel({
       template,
       ...current,
     ]);
+    markSyncEntityChanged(
+      "planningTemplates",
+      template.id,
+    );
     setSelectedTemplateId(template.id);
     setTemplateName("");
   }
@@ -422,6 +430,11 @@ export default function PlanningComfortPanel({
     if (!selectedTemplateId) {
       return;
     }
+
+    markSyncEntityDeleted(
+      "planningTemplates",
+      selectedTemplateId,
+    );
 
     setTemplates((current) =>
       current.filter(

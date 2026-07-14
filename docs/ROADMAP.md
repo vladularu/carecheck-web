@@ -172,8 +172,10 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - lokale IDs, Versionierung und Konfliktfelder vorbereiten
 - lokale Sync-Metadaten separat von Fachobjekten speichern
 - Profil-, Dienst- und Dienstvorlagen-Aenderungen lokal revisionieren
+- Planungsvorlagen und Fairness-Teamdaten lokal revisionieren
 - Backup-/Restore-Kompatibilitaet bewahren
 - Datenschutz- und Loeschkonzept fachlich vorbereiten
+- Sync-Metadaten bleiben in v1.9.0 geraete-lokal und ausserhalb von Backup-Version 2
 
 ## Langfristige Produktreife
 

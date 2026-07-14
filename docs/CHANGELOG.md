@@ -5,6 +5,8 @@
 - Sync-Vorbereitung als lokales Datenmodell ohne Cloud-Anbindung gestartet.
 - Separate Sync-Metadaten mit Schema-Version, Device-ID, lokalen Revisionen, Soft-Delete- und Konfliktfeldern ergaenzt.
 - Profil-, Dienst- und Dienstvorlagen-Aenderungen markieren kuenftig lokale Revisionen.
+- Planungsvorlagen und Fairness-Teamdaten in die lokale Revisionierung aufgenommen.
+- Datenschutz- und Loeschkonzept inklusive Backup-Entscheidung dokumentiert.
 - Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert gelassen.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 

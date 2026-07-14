@@ -280,4 +280,42 @@ describe("syncMetadataStorage", () => {
       ),
     ).toBeNull();
   });
+
+  it("revisioniert Planungsvorlagen und Fairness-Teamdaten als eigene Domaenen", () => {
+    let state =
+      createEmptySyncMetadataState({
+        idFactory: () => "device-1",
+        nowFactory: () => firstTimestamp,
+      });
+
+    state = applySyncEntityChange(
+      state,
+      "planningTemplates",
+      "template-1",
+      {
+        nowFactory: () => firstTimestamp,
+      },
+    );
+
+    state = applySyncEntityDeletion(
+      state,
+      "fairnessTeam",
+      "member-1",
+      {
+        nowFactory: () => secondTimestamp,
+      },
+    );
+
+    expect(
+      state.entities[
+        "planningTemplates:template-1"
+      ].localRevision,
+    ).toBe(1);
+
+    expect(
+      state.entities[
+        "fairnessTeam:member-1"
+      ].deletedAt,
+    ).toBe(secondTimestamp);
+  });
 });

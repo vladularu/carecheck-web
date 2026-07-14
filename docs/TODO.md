@@ -109,8 +109,12 @@
 - [x] Lokale Sync-Metadatenstruktur mit Schema-Version und Device-ID einfuehren.
 - [x] Lokale Revisionen, Soft-Delete- und Konfliktfelder vorbereiten.
 - [x] Profil-, Dienst- und Dienstvorlagen-Aenderungen lokal markieren.
+- [x] Planungsvorlagen und Fairness-Teamdaten lokal markieren.
 - [x] Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert lassen.
+- [x] Sync-Metadaten bewusst aus Backup-Version 2 heraushalten.
 - [x] Regressionstests fuer Sync-Metadaten ergaenzen.
-- [ ] Datenschutz- und Loeschkonzept fachlich ausarbeiten.
+- [x] Datenschutz- und Loeschkonzept fachlich ausarbeiten.
+- [ ] UI fuer vollstaendiges lokales Loeschen entwerfen und umsetzen.
+- [ ] Vollstaendigen Portabilitaets-Export fuer alle lokalen Daten entwerfen.
 - [ ] v1.9.0 nach `main` uebernehmen.
 - [ ] Release-Tag und GitHub Release fuer `v1.9.0` erstellen.
