@@ -112,10 +112,16 @@ export default function DataBackupCard() {
     try {
       const backup =
         await readBackupFile(file);
+      const importIssueCount =
+        backup.importIssues?.length ?? 0;
+      const importIssueNotice =
+        importIssueCount > 0
+          ? `\n\nHinweis: ${importIssueCount} beschaedigte Datensaetze werden uebersprungen.`
+          : "";
 
       const shouldRestore =
         window.confirm(
-          "Dieses Backup ersetzt dein aktuelles Profil, deine Dienste und deine Dienstvorlagen. Backup v3 ersetzt zusaetzlich Planungsvorlagen und Fairness-Teamdaten. Fortfahren?",
+          `Dieses Backup ersetzt dein aktuelles Profil, deine Dienste und deine Dienstvorlagen. Backup v3 ersetzt zusaetzlich Planungsvorlagen und Fairness-Teamdaten. Fortfahren?${importIssueNotice}`,
         );
 
       if (!shouldRestore) {
@@ -129,7 +135,9 @@ export default function DataBackupCard() {
       restoreCareCheckBackup(backup);
 
       setMessage(
-        "Backup wurde wiederhergestellt. Die App wird neu geladen.",
+        importIssueCount > 0
+          ? `Backup wurde wiederhergestellt. ${importIssueCount} beschaedigte Datensaetze wurden uebersprungen. Die App wird neu geladen.`
+          : "Backup wurde wiederhergestellt. Die App wird neu geladen.",
       );
 
       window.setTimeout(() => {

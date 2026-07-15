@@ -11,6 +11,7 @@ import type {
   ShiftTemplates,
   UserProfile,
 } from "../../types/index";
+import { defaultShiftTemplates } from "../../data/defaultShiftTemplates";
 import type { PlanningTemplate } from "../planning/planningComfortService";
 import {
   loadFairnessTeamMembers,
@@ -64,8 +65,8 @@ const profile: UserProfile = {
   payLevel: 4,
 };
 
-const shiftTemplates =
-  {} as ShiftTemplates;
+const shiftTemplates: ShiftTemplates =
+  defaultShiftTemplates;
 
 const sickShift: Shift = {
   id: "sick-1",
@@ -300,28 +301,39 @@ describe("backupService", () => {
     );
   });
 
-  it("weist Backups mit beschaedigten Diensten zurueck", () => {
-    expect(() =>
+  it("isoliert beschaedigte Dienste beim Import", () => {
+    const parsed =
       parseCareCheckBackup(
         createValidLegacyBackup(2, {
           shifts: [
+            sickShift,
             {
               ...sickShift,
               date: "2026-99-99",
             },
           ],
         }),
-      ),
-    ).toThrow(
-      "Die Datei ist kein gültiges CareCheck-Backup.",
+      );
+
+    expect(parsed.shifts).toEqual([
+      sickShift,
+    ]);
+    expect(parsed.importIssues).toEqual(
+      [
+        expect.objectContaining({
+          scope: "shifts",
+          index: 1,
+        }),
+      ],
     );
   });
 
-  it("weist Backups der Version 3 mit ungueltigen Planungsvorlagen zurueck", () => {
-    expect(() =>
+  it("isoliert ungueltige Planungsvorlagen in Backup v3", () => {
+    const parsed =
       parseCareCheckBackup(
         createValidV3Backup({
           planningTemplates: [
+            planningTemplate,
             {
               ...planningTemplate,
               entries: [
@@ -333,9 +345,81 @@ describe("backupService", () => {
             },
           ],
         }),
-      ),
-    ).toThrow(
-      "Die Datei ist kein gültiges CareCheck-Backup.",
+      );
+
+    expect(
+      parsed.planningTemplates,
+    ).toEqual([planningTemplate]);
+    expect(parsed.importIssues).toEqual(
+      [
+        expect.objectContaining({
+          scope: "planningTemplates",
+          index: 1,
+        }),
+      ],
+    );
+  });
+
+  it("isoliert ungueltige Fairness-Teamdaten in Backup v3", () => {
+    const parsed =
+      parseCareCheckBackup(
+        createValidV3Backup({
+          fairnessTeamMembers: [
+            fairnessMember,
+            {
+              ...fairnessMember,
+              id: "",
+            },
+          ],
+        }),
+      );
+
+    expect(
+      parsed.fairnessTeamMembers,
+    ).toEqual([fairnessMember]);
+    expect(parsed.importIssues).toEqual(
+      [
+        expect.objectContaining({
+          scope: "fairnessTeamMembers",
+          index: 1,
+        }),
+      ],
+    );
+  });
+
+  it("ersetzt beschaedigte Dienstvorlagen durch Defaults", () => {
+    const parsed =
+      parseCareCheckBackup(
+        createValidLegacyBackup(2, {
+          shiftTemplates: {
+            EARLY:
+              defaultShiftTemplates.EARLY,
+            NIGHT: {
+              ...defaultShiftTemplates.NIGHT,
+              breakMinutes: -1,
+            },
+            UNKNOWN:
+              defaultShiftTemplates.DAY,
+          },
+        }),
+      );
+
+    expect(
+      parsed.shiftTemplates.NIGHT,
+    ).toEqual(
+      defaultShiftTemplates.NIGHT,
+    );
+    expect(parsed.importIssues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          scope: "shiftTemplates",
+          key: "NIGHT",
+        }),
+        expect.objectContaining({
+          scope: "shiftTemplates",
+          key: "UNKNOWN",
+        }),
+      ]),
     );
   });
 

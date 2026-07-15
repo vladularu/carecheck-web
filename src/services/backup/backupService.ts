@@ -1,8 +1,11 @@
 import type {
   Shift,
+  ShiftTemplate,
   ShiftTemplates,
+  ShiftType,
   UserProfile,
 } from "../../types/index";
+import { defaultShiftTemplates } from "../../data/defaultShiftTemplates";
 import {
   migrateLegacyCareCheckData,
   type DomainMigrationResult,
@@ -34,13 +37,30 @@ type SupportedBackupVersion =
   | 2
   | typeof CURRENT_BACKUP_VERSION;
 
-interface LegacyCareCheckBackup {
+export type BackupImportIssueScope =
+  | "shifts"
+  | "shiftTemplates"
+  | "planningTemplates"
+  | "fairnessTeamMembers";
+
+export interface BackupImportIssue {
+  scope: BackupImportIssueScope;
+  severity: "warning";
+  index?: number;
+  key?: string;
+  message: string;
+}
+
+interface RawCareCheckBackup {
   app: "CareCheck TVöD";
-  backupVersion: 1 | 2;
+  backupVersion: SupportedBackupVersion;
   exportedAt: string;
   profile: UserProfile;
-  shifts: Shift[];
-  shiftTemplates: ShiftTemplates;
+  shifts: unknown[];
+  shiftTemplates: Record<string, unknown>;
+  planningTemplates?: unknown;
+  fairnessTeamMembers?: unknown;
+  domainSnapshot?: unknown;
 }
 
 interface CareCheckBackupV3 {
@@ -58,6 +78,7 @@ interface CareCheckBackupV3 {
 export interface CareCheckBackup
   extends CareCheckBackupV3 {
   sourceBackupVersion?: SupportedBackupVersion;
+  importIssues?: BackupImportIssue[];
 }
 
 interface CreateBackupInput {
@@ -98,14 +119,12 @@ function isSupportedBackupVersion(
 
 function isBackupStructure(
   value: unknown,
-): value is
-  | LegacyCareCheckBackup
-  | CareCheckBackupV3 {
+): value is RawCareCheckBackup {
   if (!isRecord(value)) {
     return false;
   }
 
-  const hasBaseStructure = (
+  return (
     value.app === "CareCheck TVöD" &&
     isSupportedBackupVersion(
       value.backupVersion,
@@ -113,36 +132,201 @@ function isBackupStructure(
     typeof value.exportedAt === "string" &&
     isUserProfile(value.profile) &&
     Array.isArray(value.shifts) &&
-    value.shifts.every(isShift) &&
     isRecord(value.shiftTemplates)
   );
+}
 
-  if (!hasBaseStructure) {
+const shiftTemplateTypes = Object.keys(
+  defaultShiftTemplates,
+) as ShiftType[];
+
+function isShiftTemplateType(
+  value: string,
+): value is ShiftType {
+  return shiftTemplateTypes.includes(
+    value as ShiftType,
+  );
+}
+
+function isTime(value: unknown): value is string {
+  if (
+    typeof value !== "string" ||
+    !/^\d{2}:\d{2}$/.test(value)
+  ) {
     return false;
   }
 
-  if (
-    value.backupVersion !==
-    CURRENT_BACKUP_VERSION
-  ) {
-    return true;
-  }
+  const [hour, minute] = value
+    .split(":")
+    .map(Number);
 
   return (
-    Array.isArray(
-      value.planningTemplates,
-    ) &&
-    value.planningTemplates.every(
-      isPlanningTemplate,
-    ) &&
-    Array.isArray(
-      value.fairnessTeamMembers,
-    ) &&
-    value.fairnessTeamMembers.every(
-      isFairnessTeamMemberDraft,
-    ) &&
-    isRecord(value.domainSnapshot)
+    hour >= 0 &&
+    hour <= 23 &&
+    minute >= 0 &&
+    minute <= 59
   );
+}
+
+function isShiftTemplate(
+  value: unknown,
+): value is ShiftTemplate {
+  return (
+    isRecord(value) &&
+    isTime(value.startTime) &&
+    isTime(value.endTime) &&
+    typeof value.breakMinutes ===
+      "number" &&
+    Number.isFinite(
+      value.breakMinutes,
+    ) &&
+    value.breakMinutes >= 0
+  );
+}
+
+function createImportIssue(
+  input: Omit<
+    BackupImportIssue,
+    "severity" | "message"
+  > & {
+    message?: string;
+  },
+): BackupImportIssue {
+  return {
+    ...input,
+    severity: "warning",
+    message:
+      input.message ??
+      "Beschaedigter Datensatz wurde uebersprungen.",
+  };
+}
+
+function collectValidBackupItems<T>(
+  values: unknown[],
+  validator: (value: unknown) => value is T,
+  scope: BackupImportIssueScope,
+): {
+  items: T[];
+  issues: BackupImportIssue[];
+} {
+  const items: T[] = [];
+  const issues: BackupImportIssue[] = [];
+
+  values.forEach((value, index) => {
+    if (validator(value)) {
+      items.push(value);
+      return;
+    }
+
+    issues.push(
+      createImportIssue({
+        scope,
+        index,
+      }),
+    );
+  });
+
+  return {
+    items,
+    issues,
+  };
+}
+
+function readOptionalBackupList(
+  value: unknown,
+  scope: BackupImportIssueScope,
+): {
+  values: unknown[];
+  issues: BackupImportIssue[];
+} {
+  if (Array.isArray(value)) {
+    return {
+      values: value,
+      issues: [],
+    };
+  }
+
+  return {
+    values: [],
+    issues: [
+      createImportIssue({
+        scope,
+        message:
+          "Backup-Bereich fehlt oder ist beschaedigt und wurde leer importiert.",
+      }),
+    ],
+  };
+}
+
+function collectOptionalBackupItems<T>(
+  value: unknown,
+  validator: (value: unknown) => value is T,
+  scope: BackupImportIssueScope,
+): {
+  items: T[];
+  issues: BackupImportIssue[];
+} {
+  const list = readOptionalBackupList(
+    value,
+    scope,
+  );
+  const collected =
+    collectValidBackupItems(
+      list.values,
+      validator,
+      scope,
+    );
+
+  return {
+    items: collected.items,
+    issues: [
+      ...list.issues,
+      ...collected.issues,
+    ],
+  };
+}
+
+function sanitizeShiftTemplates(
+  value: Record<string, unknown>,
+): {
+  shiftTemplates: ShiftTemplates;
+  issues: BackupImportIssue[];
+} {
+  const shiftTemplates: ShiftTemplates = {
+    ...defaultShiftTemplates,
+  };
+  const issues: BackupImportIssue[] = [];
+
+  Object.entries(value).forEach(
+    ([key, template]) => {
+      if (!isShiftTemplateType(key)) {
+        issues.push(
+          createImportIssue({
+            scope: "shiftTemplates",
+            key,
+          }),
+        );
+        return;
+      }
+
+      if (!isShiftTemplate(template)) {
+        issues.push(
+          createImportIssue({
+            scope: "shiftTemplates",
+            key,
+          }),
+        );
+        return;
+      }
+
+      shiftTemplates[key] = template;
+    },
+  );
+
+  return {
+    shiftTemplates,
+    issues,
+  };
 }
 
 function createDomainSnapshot({
@@ -191,24 +375,56 @@ export function parseCareCheckBackup(
 
   const sourceBackupVersion =
     value.backupVersion;
+  const shifts =
+    collectValidBackupItems(
+      value.shifts,
+      isShift,
+      "shifts",
+    );
+  const shiftTemplates =
+    sanitizeShiftTemplates(
+      value.shiftTemplates,
+    );
   const planningTemplates =
     sourceBackupVersion ===
     CURRENT_BACKUP_VERSION
-      ? value.planningTemplates
-      : [];
+      ? collectOptionalBackupItems(
+          value.planningTemplates,
+          isPlanningTemplate,
+          "planningTemplates",
+        )
+      : {
+          items: [],
+          issues: [],
+        };
   const fairnessTeamMembers =
     sourceBackupVersion ===
     CURRENT_BACKUP_VERSION
-      ? value.fairnessTeamMembers
-      : [];
+      ? collectOptionalBackupItems(
+          value.fairnessTeamMembers,
+          isFairnessTeamMemberDraft,
+          "fairnessTeamMembers",
+        )
+      : {
+          items: [],
+          issues: [],
+        };
+  const importIssues = [
+    ...shifts.issues,
+    ...shiftTemplates.issues,
+    ...planningTemplates.issues,
+    ...fairnessTeamMembers.issues,
+  ];
   const domainSnapshot =
     createDomainSnapshot({
       profile: value.profile,
-      shifts: value.shifts,
+      shifts: shifts.items,
       shiftTemplates:
-        value.shiftTemplates,
-      planningTemplates,
-      fairnessTeamMembers,
+        shiftTemplates.shiftTemplates,
+      planningTemplates:
+        planningTemplates.items,
+      fairnessTeamMembers:
+        fairnessTeamMembers.items,
       migratedAt: value.exportedAt,
     });
 
@@ -219,12 +435,15 @@ export function parseCareCheckBackup(
     sourceBackupVersion,
     exportedAt: value.exportedAt,
     profile: value.profile,
-    shifts: value.shifts,
+    shifts: shifts.items,
     shiftTemplates:
-      value.shiftTemplates,
-    planningTemplates,
-    fairnessTeamMembers,
+      shiftTemplates.shiftTemplates,
+    planningTemplates:
+      planningTemplates.items,
+    fairnessTeamMembers:
+      fairnessTeamMembers.items,
     domainSnapshot,
+    importIssues,
   };
 }
 

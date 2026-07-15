@@ -16,6 +16,7 @@
 - Deterministische Migration lokaler Legacy-Daten in Domain-Entitaeten vorbereitet.
 - Backup-Version 3 mit Planungsvorlagen, Fairness-Teamdaten und Domain-Snapshot vorbereitet.
 - Backup v1/v2 bleiben importierbar und ueberschreiben keine v3-Datenbereiche.
+- Beschaedigte Backup-Eintraege werden beim Import isoliert und als Warnungen ausgewiesen.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 
 ## v1.8.0

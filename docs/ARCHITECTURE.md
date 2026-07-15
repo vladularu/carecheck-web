@@ -84,6 +84,8 @@ Enthalten sind:
 
 Geraetespezifische Sync-Metadaten bleiben bewusst ausserhalb des Backups. Beim Restore alter v1/v2-Backups werden nur die alten Datenbereiche ersetzt; v3-Datenbereiche wie Planungsvorlagen und Fairness-Teamdaten werden dadurch nicht geloescht.
 
+Beim Import werden beschaedigte Eintraege in Diensten, Dienstvorlagen, Planungsvorlagen und Fairness-Teamdaten isoliert. Gueltige Eintraege bleiben importierbar; uebersprungene Eintraege werden als Import-Warnungen am Backup-Ergebnis ausgewiesen.
+
 ## Abgrenzung
 
 Noch nicht umgesetzt:
