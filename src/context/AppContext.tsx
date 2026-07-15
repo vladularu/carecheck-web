@@ -12,16 +12,11 @@ import {
   calculateDailyTargetHours,
   calculateNetHours,
 } from "../services/calculation/workingTimeCalculator";
-import { loadProfile, saveProfile } from "../services/storage/profileStorage";
-import { loadShifts, saveShifts } from "../services/storage/shiftStorage";
 import {
-  loadShiftTemplates,
-  saveShiftTemplates,
-} from "../services/storage/shiftTemplateStorage";
-import {
-  markSyncEntityChanged,
-  markSyncEntityDeleted,
-} from "../services/storage/syncMetadataStorage";
+  localProfileRepository,
+  localShiftRepository,
+  localShiftTemplateRepository,
+} from "../services/repositories/localCareCheckRepositories";
 import { AppContext, type AppContextValue } from "./appContextValue";
 
 interface SelectedMonth {
@@ -204,15 +199,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const today = new Date();
 
   const [profile, setProfileState] = useState<UserProfile>(
-    () => loadProfile() ?? demoProfile,
+    () => localProfileRepository.load() ?? demoProfile,
   );
 
   const [shifts, setShifts] = useState<Shift[]>(() =>
-    normalizeLoadedShifts(loadShifts(), profile),
+    normalizeLoadedShifts(
+      localShiftRepository.loadAll(),
+      profile,
+    ),
   );
 
   const [shiftTemplates, setShiftTemplates] = useState<ShiftTemplates>(() =>
-    loadShiftTemplates(),
+    localShiftTemplateRepository.load(),
   );
 
   const [selectedMonthState, setSelectedMonthState] = useState<SelectedMonth>({
@@ -221,15 +219,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
-    saveProfile(profile);
+    localProfileRepository.save(profile);
   }, [profile]);
 
   useEffect(() => {
-    saveShifts(shifts);
+    localShiftRepository.saveAll(shifts);
   }, [shifts]);
 
   useEffect(() => {
-    saveShiftTemplates(shiftTemplates);
+    localShiftTemplateRepository.save(
+      shiftTemplates,
+    );
   }, [shiftTemplates]);
 
   function sortShifts(shiftsToSort: Shift[]): Shift[] {
@@ -239,10 +239,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function setProfile(nextProfile: UserProfile) {
-    markSyncEntityChanged(
-      "profile",
-      "current",
-    );
+    localProfileRepository.markChanged();
 
     setProfileState(nextProfile);
 
@@ -254,8 +251,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function addShift(shift: Shift) {
-    markSyncEntityChanged(
-      "shifts",
+    localShiftRepository.markChanged(
       shift.id,
     );
 
@@ -285,8 +281,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function updateShift(updatedShift: Shift) {
-    markSyncEntityChanged(
-      "shifts",
+    localShiftRepository.markChanged(
       updatedShift.id,
     );
 
@@ -331,17 +326,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function deleteShift(id: string) {
-    markSyncEntityDeleted(
-      "shifts",
-      id,
-    );
+    localShiftRepository.markDeleted(id);
 
     setShifts((current) => current.filter((shift) => shift.id !== id));
   }
 
   function updateShiftTemplate(type: ShiftType, template: ShiftTemplate) {
-    markSyncEntityChanged(
-      "shiftTemplates",
+    localShiftTemplateRepository.markChanged(
       type,
     );
 
@@ -352,8 +343,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function resetShiftTemplates() {
-    markSyncEntityChanged(
-      "shiftTemplates",
+    localShiftTemplateRepository.markChanged(
       "all",
     );
 

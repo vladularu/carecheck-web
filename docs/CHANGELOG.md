@@ -9,6 +9,8 @@
 - Datenschutz- und Loeschkonzept inklusive Backup-Entscheidung dokumentiert.
 - Profil-UI zum vollstaendigen lokalen Loeschen mit zweistufiger Bestaetigung ergaenzt.
 - Separaten Portabilitaets-Export fuer Profil, Dienste, Vorlagen, Planung und Fairness ergaenzt.
+- Repository-Interfaces und lokale Adapter fuer die erste Persistenzabstraktion ergaenzt.
+- AppContext, Planer, Fairness und Profil-Datenkarte von konkreten Storage-Imports entkoppelt.
 - Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert gelassen.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 

@@ -11,14 +11,7 @@ import {
   type PlanningConflict,
   type PlanningTemplate,
 } from "../../services/planning/planningComfortService";
-import {
-  loadPlanningTemplates,
-  savePlanningTemplates,
-} from "../../services/storage/planningTemplateStorage";
-import {
-  markSyncEntityChanged,
-  markSyncEntityDeleted,
-} from "../../services/storage/syncMetadataStorage";
+import { localPlanningTemplateRepository } from "../../services/repositories/localCareCheckRepositories";
 import type {
   Shift,
   ShiftTemplates,
@@ -186,7 +179,7 @@ export default function PlanningComfortPanel({
 
   const [templates, setTemplates] =
     useState<PlanningTemplate[]>(() =>
-      loadPlanningTemplates(),
+      localPlanningTemplateRepository.loadAll(),
     );
   const [
     sequenceStartDateState,
@@ -226,7 +219,9 @@ export default function PlanningComfortPanel({
     useState("");
 
   useEffect(() => {
-    savePlanningTemplates(templates);
+    localPlanningTemplateRepository.saveAll(
+      templates,
+    );
   }, [templates]);
 
   const sequenceStartDate =
@@ -405,8 +400,7 @@ export default function PlanningComfortPanel({
       template,
       ...current,
     ]);
-    markSyncEntityChanged(
-      "planningTemplates",
+    localPlanningTemplateRepository.markChanged(
       template.id,
     );
     setSelectedTemplateId(template.id);
@@ -431,8 +425,7 @@ export default function PlanningComfortPanel({
       return;
     }
 
-    markSyncEntityDeleted(
-      "planningTemplates",
+    localPlanningTemplateRepository.markDeleted(
       selectedTemplateId,
     );
 

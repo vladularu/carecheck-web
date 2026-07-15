@@ -9,9 +9,11 @@ import {
   restoreCareCheckBackup,
 } from "../../services/backup/backupService";
 import { downloadCareCheckPortabilityExport } from "../../services/export/portabilityExportService";
-import { clearCareCheckLocalData } from "../../services/storage/appDataStorage";
-import { loadFairnessTeamMembers } from "../../services/storage/fairnessTeamStorage";
-import { loadPlanningTemplates } from "../../services/storage/planningTemplateStorage";
+import {
+  localAppDataRepository,
+  localFairnessTeamRepository,
+  localPlanningTemplateRepository,
+} from "../../services/repositories/localCareCheckRepositories";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 
@@ -48,9 +50,9 @@ export default function DataBackupCard() {
       shifts,
       shiftTemplates,
       planningTemplates:
-        loadPlanningTemplates(),
+        localPlanningTemplateRepository.loadAll(),
       fairnessTeamMembers:
-        loadFairnessTeamMembers(),
+        localFairnessTeamRepository.loadAll(),
     });
 
     setMessage(
@@ -85,7 +87,7 @@ export default function DataBackupCard() {
       return;
     }
 
-    clearCareCheckLocalData();
+    localAppDataRepository.clearAllLocalData();
 
     setMessage(
       "Alle lokalen CareCheck-Daten wurden gelöscht. Die App wird neu geladen.",

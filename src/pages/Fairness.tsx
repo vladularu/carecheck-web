@@ -12,15 +12,8 @@ import {
   type FairnessMetricResult,
   type WeekendFairnessStatus,
 } from "../services/fairness/fairnessAnalysisService";
-import {
-  loadFairnessTeamMembers,
-  saveFairnessTeamMembers,
-  type FairnessTeamMemberDraft,
-} from "../services/storage/fairnessTeamStorage";
-import {
-  markSyncEntityChanged,
-  markSyncEntityDeleted,
-} from "../services/storage/syncMetadataStorage";
+import type { FairnessTeamMemberDraft } from "../services/repositories/careCheckRepositories";
+import { localFairnessTeamRepository } from "../services/repositories/localCareCheckRepositories";
 
 const monthNames = [
   "Januar",
@@ -157,14 +150,17 @@ export default function Fairness() {
 
   const [teamMembers, setTeamMembers] =
     useState<FairnessTeamMemberDraft[]>(
-      () => loadFairnessTeamMembers(),
+      () =>
+        localFairnessTeamRepository.loadAll(),
     );
 
   const [anonymized, setAnonymized] =
     useState(false);
 
   useEffect(() => {
-    saveFairnessTeamMembers(teamMembers);
+    localFairnessTeamRepository.saveAll(
+      teamMembers,
+    );
   }, [teamMembers]);
 
   const currentUser = useMemo(
@@ -208,8 +204,7 @@ export default function Fairness() {
   function addTeamMember() {
     const member = createEmptyMember();
 
-    markSyncEntityChanged(
-      "fairnessTeam",
+    localFairnessTeamRepository.markChanged(
       member.id,
     );
 
@@ -220,10 +215,7 @@ export default function Fairness() {
   }
 
   function removeTeamMember(id: string) {
-    markSyncEntityDeleted(
-      "fairnessTeam",
-      id,
-    );
+    localFairnessTeamRepository.markDeleted(id);
 
     setTeamMembers((current) =>
       current.filter((member) => member.id !== id),
@@ -235,10 +227,7 @@ export default function Fairness() {
     field: keyof FairnessTeamMemberDraft,
     value: string,
   ) {
-    markSyncEntityChanged(
-      "fairnessTeam",
-      id,
-    );
+    localFairnessTeamRepository.markChanged(id);
 
     setTeamMembers((current) =>
       current.map((member) => {

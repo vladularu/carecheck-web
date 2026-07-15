@@ -102,7 +102,7 @@
 - [x] v1.8.0 nach `main` uebernehmen.
 - [x] Release-Tag und GitHub Release fuer `v1.8.0` erstellen.
 
-## v1.9.0 - Sync-Vorbereitung und Datenmodell
+## v1.9.0 - Domain-Modell und Persistenzabstraktion
 
 - [x] v1.9.0-Branch fuer Sync-Vorbereitung anlegen.
 - [x] Bestehende Storage-, Backup- und ID-Struktur pruefen.
@@ -116,5 +116,34 @@
 - [x] Datenschutz- und Loeschkonzept fachlich ausarbeiten.
 - [x] UI fuer vollstaendiges lokales Loeschen entwerfen und umsetzen.
 - [x] Vollstaendigen Portabilitaets-Export fuer alle lokalen Daten entwerfen.
+- [x] Repository-Interfaces fuer lokale Persistenzgrenzen einfuehren.
+- [x] Local-Storage-Adapter hinter Repository-Schicht kapseln.
+- [x] AppContext, Planer, Fairness und Profil-Datenkarte von konkreten Storage-Imports entkoppeln.
+- [ ] Einheitliches technisches Domain-Grundmodell je relevanter Entitaet definieren.
+- [ ] Migration vorhandener lokaler Daten deterministisch vorbereiten.
+- [ ] Backup-Version 3 vorbereiten und Rueckwaertskompatibilitaet zu Backup v1/v2 erhalten.
+- [ ] Beschaedigte Datensaetze beim Import isolieren statt gesamten Import abzubrechen.
+- [ ] Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen und wiederholte Migration ergaenzen.
 - [ ] v1.9.0 nach `main` uebernehmen.
 - [ ] Release-Tag und GitHub Release fuer `v1.9.0` erstellen.
+
+## v1.9.1 - Lokale Datenintegritaet und IndexedDB
+
+- [ ] IndexedDB-Adapter hinter Repository-Schicht entwerfen.
+- [ ] lokale Aenderungswarteschlange vorbereiten.
+- [ ] Integritaetscheck und automatische Sicherung vor Migrationen entwerfen.
+- [ ] Fallback bei nicht verfuegbarer IndexedDB definieren.
+
+## v1.9.2 - Datenschutz- und Sicherheitsgrundlage
+
+- [ ] Dateninventar und Datenklassen final pruefen.
+- [ ] Aufbewahrungsregeln und Bedrohungsmodell dokumentieren.
+- [ ] Schutz vor unbeabsichtigtem Export sensibler Daten pruefen.
+- [ ] Datenschutztexte als technische Vorlage vorbereiten.
+
+## v1.9.3 - Synchronisationsprotokoll und Mock-Sync
+
+- [ ] Sync-Protokoll mit Push, Pull, Cursor, Tombstones und Outbox definieren.
+- [ ] deterministische Konfliktregeln je Datentyp festlegen.
+- [ ] Mock-Sync-Adapter fuer mehrere simulierte Geraete ergaenzen.
+- [ ] Contract Tests fuer Client und spaeteres Backend vorbereiten.

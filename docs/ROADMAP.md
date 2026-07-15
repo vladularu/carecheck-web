@@ -165,7 +165,7 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 
 ## In Entwicklung
 
-### v1.9.0: Sync-Vorbereitung und Datenmodell
+### v1.9.0: Domain-Modell und Persistenzabstraktion
 
 - Branch `feature/v1.9.0-sync-prep-data-model` angelegt
 - persistente Datenstruktur fuer spaetere Synchronisierung pruefen
@@ -178,10 +178,74 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - Sync-Metadaten bleiben in v1.9.0 geraete-lokal und ausserhalb von Backup-Version 2
 - vollstaendiges lokales Loeschen in der Profil-UI absichern
 - vollstaendigen lokalen Portabilitaets-Export bereitstellen
+- Repository-Interfaces fuer Profil, Dienste, Dienstvorlagen, Planungsvorlagen, Fairness-Team und App-Daten einfuehren
+- bestehenden Local-Storage-Adapter hinter Repository-Schicht kapseln
+- AppContext und UI-Komponenten von konkreten Storage-Imports entkoppeln
+- einheitliches technisches Domain-Grundmodell je relevanter Entitaet definieren
+- Migration vorhandener lokaler Daten deterministisch vorbereiten
+- Backup-Version 3 vorbereiten, mit Rueckwaertskompatibilitaet zu Backup v1 und v2
+- beschaedigte Datensaetze isolieren statt ganze Importe abzubrechen
+
+### v1.9.1: Lokale Datenintegritaet und IndexedDB
+
+- IndexedDB-Adapter hinter der Repository-Schicht vorbereiten
+- Local Storage nur noch als Uebergang und fuer kleine Einstellungen nutzen
+- atomare Speicheroperationen und Wiederherstellung nach unterbrochenen Schreibvorgaengen pruefen
+- lokale Aenderungswarteschlange vorbereiten
+- Validierung vor jedem Speichern staerken
+- Datenintegritaetscheck und automatische Sicherung vor Migrationen konzipieren
+- Fallback bei nicht verfuegbarer IndexedDB definieren
+
+### v1.9.2: Datenschutz- und Sicherheitsgrundlage
+
+- Dateninventar aller gespeicherten Informationen pflegen
+- Datenklassen fuer Profil, Dienstplan, gesundheitsbezogene Abwesenheiten, Tarifdaten und technische Metadaten trennen
+- Export und vollstaendige lokale Loeschung pruefbar halten
+- Aufbewahrungsregeln und Bedrohungsmodell dokumentieren
+- keine Secrets oder Backend-Schluessel im Frontend zulassen
+- optionale verschluesselte Backup-Dateien pruefen
+- Datenschutztexte als technische Vorlage vorbereiten
+
+### v1.9.3: Synchronisationsprotokoll und Mock-Sync
+
+- Sync-Protokoll mit Push, Pull, Cursor, Tombstones und Outbox definieren
+- idempotente Synchronisationsoperationen und Deduplizierung testen
+- deterministische Konfliktregeln je Datentyp festlegen
+- Mock-Sync-Server oder In-Memory-Adapter fuer mehrere simulierte Geraete ergaenzen
+- Contract Tests fuer Client und spaeteres Backend vorbereiten
 
 ## Langfristige Produktreife
 
-### v2.0: Synchronisierung und Mehrgeraetebetrieb
+### v2.0.0-alpha.1: Backend und Benutzerkonten
+
+- Backend-Varianten vor Implementierung vergleichen
+- Registrierung, Anmeldung, Abmeldung und sichere Sitzung
+- benutzerbezogene Datentrennung und serverseitige Zugriffsregeln
+- lokaler Modus ohne Konto
+- Uebernahme lokaler Daten in ein Konto ohne Berechnungsaenderung
+
+### v2.0.0-alpha.2: Reale Synchronisationsengine
+
+- lokale Outbox und serverseitiger Aenderungs-Cursor
+- automatische Wiederholungsversuche und Offline-Warteschlange
+- Synchronisation nach App-Start, lokalen Aenderungen und manuell
+- Konflikterkennung, Deduplizierung und Wiederaufnahme nach Verbindungsabbruch
+
+### v2.0.0-beta.1: Mehrgeraete-UX
+
+- sichtbarer Synchronisationsstatus und Zeitpunkt der letzten Synchronisation
+- ausstehende Aenderungen, Offline-Anzeige und Wiederholung
+- Konfliktansicht und Geraeteverwaltung
+- iPhone-first Sync-Oberflaeche mit vollstaendiger Desktop-Unterstuetzung
+
+### v2.0.0-rc.1: Sicherheits-, Migrations- und Release-Audit
+
+- Authentifizierung, Benutzertrennung, Sync, Migration, Backup und Restore pruefen
+- Konto-Uebernahme, Konto-Loeschung, Offline-Betrieb und Konfliktbehandlung pruefen
+- Monatswechsel, Jahreswechsel, Nachtdienste, Urlaub, Krankheit, Tarif und Compliance regressionspruefen
+- Lint, Tests, Build, Release-Dokumentation und Datenschutzfunktionen als Release-Gates
+
+### v2.0.0: Synchronisierung und Mehrgeraetebetrieb
 
 - Benutzerkonten
 - sichere Datensynchronisierung
