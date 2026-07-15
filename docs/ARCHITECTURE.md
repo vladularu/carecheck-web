@@ -57,11 +57,23 @@ Abgedeckte Domaenen:
 
 Das Modell ist noch keine Migration. Bestehende Fachdaten bleiben unveraendert gespeichert, bis der deterministische Migrationsschritt und Backup-Version 3 umgesetzt sind.
 
+## Migrationsvorbereitung
+
+`domainMigrationService.ts` bereitet die Migration vorhandener lokaler Daten deterministisch vor:
+
+- vorhandene IDs bleiben erhalten
+- fehlende IDs werden aus einem stabilen Seed erzeugt
+- doppelte IDs werden fuer nachfolgende Datensaetze deterministisch ersetzt
+- Migrationswarnungen dokumentieren fehlende oder doppelte IDs
+- der Service schreibt keine Daten zurueck
+
+Damit kann Backup-Version 3 spaeter auf einem pruefbaren Domain-Snapshot aufbauen, ohne die aktuelle lokale Speicherung sofort umzubauen.
+
 ## Abgrenzung
 
 Noch nicht umgesetzt:
 
-- Migration vorhandener lokaler Daten in dieses Modell
+- produktive Migration vorhandener lokaler Daten in dieses Modell
 - Backup-Version 3
 - IndexedDB-Adapter
 - Mock-Sync oder Cloud-Sync
