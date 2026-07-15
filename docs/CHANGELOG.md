@@ -8,6 +8,7 @@
 - Planungsvorlagen und Fairness-Teamdaten in die lokale Revisionierung aufgenommen.
 - Datenschutz- und Loeschkonzept inklusive Backup-Entscheidung dokumentiert.
 - Profil-UI zum vollstaendigen lokalen Loeschen mit zweistufiger Bestaetigung ergaenzt.
+- Separaten Portabilitaets-Export fuer Profil, Dienste, Vorlagen, Planung und Fairness ergaenzt.
 - Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert gelassen.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 

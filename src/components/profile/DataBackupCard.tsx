@@ -8,7 +8,10 @@ import {
   readBackupFile,
   restoreCareCheckBackup,
 } from "../../services/backup/backupService";
+import { downloadCareCheckPortabilityExport } from "../../services/export/portabilityExportService";
 import { clearCareCheckLocalData } from "../../services/storage/appDataStorage";
+import { loadFairnessTeamMembers } from "../../services/storage/fairnessTeamStorage";
+import { loadPlanningTemplates } from "../../services/storage/planningTemplateStorage";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 
@@ -36,6 +39,22 @@ export default function DataBackupCard() {
 
     setMessage(
       "Backup wurde erstellt.",
+    );
+  }
+
+  function handleExportPortabilityData() {
+    downloadCareCheckPortabilityExport({
+      profile,
+      shifts,
+      shiftTemplates,
+      planningTemplates:
+        loadPlanningTemplates(),
+      fairnessTeamMembers:
+        loadFairnessTeamMembers(),
+    });
+
+    setMessage(
+      "Datenexport wurde erstellt.",
     );
   }
 
@@ -133,13 +152,15 @@ export default function DataBackupCard() {
         </span>
 
         <strong>
-          Backup & Wiederherstellung
+          Backup, Restore & Datenexport
         </strong>
 
         <p>
           Sichere Profil, Dienste,
           Zeitgutschriften und Dienstvorlagen als
-          JSON-Datei. Alte CareCheck-Backups der
+          Backup-Datei. Der Datenexport enthaelt
+          zusaetzlich Planungsvorlagen und
+          Fairness-Teamdaten. Alte Backups der
           Version 1 können weiterhin importiert
           werden.
         </p>
@@ -170,6 +191,14 @@ export default function DataBackupCard() {
           onClick={handleExportBackup}
         >
           Backup exportieren
+        </Button>
+
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={handleExportPortabilityData}
+        >
+          Datenexport
         </Button>
 
         <Button
@@ -222,6 +251,12 @@ export default function DataBackupCard() {
           {message}
         </p>
       )}
+
+      <p className="profile-helper">
+        Datenexport ist maschinenlesbar und
+        schliesst geraetespezifische
+        Sync-Metadaten aus.
+      </p>
 
       <p className="profile-helper">
         Hinweis: Die Wiederherstellung

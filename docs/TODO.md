@@ -115,6 +115,6 @@
 - [x] Regressionstests fuer Sync-Metadaten ergaenzen.
 - [x] Datenschutz- und Loeschkonzept fachlich ausarbeiten.
 - [x] UI fuer vollstaendiges lokales Loeschen entwerfen und umsetzen.
-- [ ] Vollstaendigen Portabilitaets-Export fuer alle lokalen Daten entwerfen.
+- [x] Vollstaendigen Portabilitaets-Export fuer alle lokalen Daten entwerfen.
 - [ ] v1.9.0 nach `main` uebernehmen.
 - [ ] Release-Tag und GitHub Release fuer `v1.9.0` erstellen.
