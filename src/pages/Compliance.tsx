@@ -1,5 +1,6 @@
 import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
+import { Link } from "react-router-dom";
 import { useAppContext } from "../context/useAppContext";
 import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
 import {
@@ -138,6 +139,24 @@ export default function Compliance() {
           nicht als Arbeitsdienste geprüft.
           Fortbildungen bleiben compliance-relevant.
         </p>
+      </Card>
+
+      <Card className="analysis-hub-card">
+        <div className="compliance-section-header">
+          <span className="card-label">Auswertung</span>
+          <strong>Berichte und Kennzahlen</strong>
+          <p>
+            Die wichtigsten Monats-, Jahres- und Fairnessansichten sind hier
+            zusammengefasst.
+          </p>
+        </div>
+
+        <div className="analysis-hub-links">
+          <Link to="/bericht">Monatsbericht</Link>
+          <Link to="/gehalt">Gehalt</Link>
+          <Link to="/jahr">Jahr</Link>
+          <Link to="/fairness">Fairness</Link>
+        </div>
       </Card>
 
       <Card className="compliance-rule-profile-card">

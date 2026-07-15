@@ -84,6 +84,34 @@ function getCockpitStatusClassName(
   return "cockpit-status cockpit-status-ok";
 }
 
+function formatShiftDate(dateKey: string): string {
+  const [, month, day] = dateKey.split("-");
+
+  return `${day}.${month}.`;
+}
+
+function getNextRelevantShift(
+  shiftsInSelectedMonth: ReturnType<
+    typeof filterShiftsByMonth
+  >,
+) {
+  const todayKey =
+    new Date().toISOString().slice(0, 10);
+  const sortedShifts = [
+    ...shiftsInSelectedMonth,
+  ].sort((first, second) =>
+    `${first.date}T${first.startTime}`.localeCompare(
+      `${second.date}T${second.startTime}`,
+    ),
+  );
+
+  return (
+    sortedShifts.find(
+      (shift) => shift.date >= todayKey,
+    ) ?? sortedShifts[0] ?? null
+  );
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -204,6 +232,10 @@ export default function Dashboard() {
       monthlyPremiums,
       complianceIssues,
     });
+  const nextRelevantShift =
+    getNextRelevantShift(
+      shiftsInSelectedMonth,
+    );
 
   function handleExportCsv() {
     downloadMonthlyReportCsv({
@@ -347,12 +379,6 @@ async function handleExportXlsx(): Promise<void> {
       </section>
 
       <section className="dashboard-page premium-month-cockpit dashboard-mobile-cockpit">
-        <DashboardHero
-          monthLabel={monthLabel}
-          profileLabel={profileLabel}
-          absenceLabel={absenceLabel}
-        />
-
         <section
           className="cockpit-overview-card"
           aria-label="Monatsübersicht"
@@ -383,7 +409,7 @@ async function handleExportXlsx(): Promise<void> {
 
           <div className="cockpit-main-values">
             <div>
-              <span>Iststunden</span>
+              <span>Ist</span>
 
               <strong>
                 {formatHours(
@@ -393,7 +419,7 @@ async function handleExportXlsx(): Promise<void> {
             </div>
 
             <div>
-              <span>Sollstunden</span>
+              <span>Soll</span>
 
               <strong>
                 {formatHours(
@@ -413,10 +439,22 @@ async function handleExportXlsx(): Promise<void> {
             </div>
           </div>
 
+          <div className="cockpit-next-shift">
+            <span>Naechster Dienst</span>
+
+            <strong>
+              {nextRelevantShift
+                ? `${formatShiftDate(
+                    nextRelevantShift.date,
+                  )} ${nextRelevantShift.startTime}-${nextRelevantShift.endTime}`
+                : "Noch kein Dienst"}
+            </strong>
+          </div>
+
           <div className="cockpit-progress-area">
             <div className="cockpit-progress-label">
               <span>
-                Monatsfortschritt
+                Fortschritt
               </span>
 
               <strong>
@@ -433,16 +471,13 @@ async function handleExportXlsx(): Promise<void> {
             </div>
           </div>
 
-          <div className="cockpit-mini-grid">
-            <article>
-              <span>Reststunden</span>
-
-              <strong>
-                {formatHours(
-                  remainingHours,
-                )}
-              </strong>
-            </article>
+          <div className="cockpit-primary-actions">
+            <button
+              type="button"
+              onClick={() => navigate("/kalender")}
+            >
+              Kalender
+            </button>
 
             <article>
               <span>Überstunden</span>
@@ -472,6 +507,12 @@ async function handleExportXlsx(): Promise<void> {
                 {checkedShiftCount}
               </strong>
             </article>
+            <button
+              type="button"
+              onClick={() => navigate("/pruefung")}
+            >
+              Auswertung
+            </button>
           </div>
         </section>
 

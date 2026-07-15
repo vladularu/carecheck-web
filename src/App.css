@@ -9887,3 +9887,490 @@ button[type="submit"] {
     font-size: 0.78rem !important;
   }
 }
+
+/* =========================================================
+   CareCheck mobile app refinement - v1.9.x roadmap follow-up
+   ========================================================= */
+
+.shift-form-compact-note {
+  display: none;
+}
+
+.analysis-hub-card {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.analysis-hub-links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.analysis-hub-links a {
+  align-items: center;
+  background: rgba(8, 116, 110, 0.08);
+  border: 1px solid rgba(8, 116, 110, 0.16);
+  border-radius: 14px;
+  color: var(--cc-ink, #0d1f2f);
+  display: flex;
+  font-weight: 750;
+  justify-content: center;
+  min-height: 3.15rem;
+  padding: 0.65rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.analysis-hub-links a:hover,
+.analysis-hub-links a:focus-visible {
+  background: rgba(8, 116, 110, 0.14);
+  outline: 2px solid rgba(8, 116, 110, 0.35);
+  outline-offset: 2px;
+}
+
+.primary-add-shift-button {
+  align-items: center;
+  background: linear-gradient(135deg, #079c91, #0e4b78);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  bottom: calc(5.45rem + env(safe-area-inset-bottom));
+  box-shadow: 0 18px 34px rgba(8, 44, 68, 0.24);
+  color: #ffffff;
+  display: inline-flex;
+  gap: 0.45rem;
+  left: 50%;
+  min-height: 3rem;
+  padding: 0.15rem 1rem 0.15rem 0.25rem;
+  position: fixed;
+  text-decoration: none;
+  transform: translateX(-50%);
+  z-index: 80;
+}
+
+.primary-add-shift-button span {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 1.45rem;
+  font-weight: 750;
+  height: 2.45rem;
+  justify-content: center;
+  line-height: 1;
+  width: 2.45rem;
+}
+
+.primary-add-shift-button strong {
+  font-size: 0.92rem;
+  letter-spacing: 0;
+}
+
+.bottom-nav-icon {
+  align-items: center;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+  display: inline-flex;
+  height: 1.3rem;
+  justify-content: center;
+  position: relative;
+  width: 1.3rem;
+}
+
+.bottom-nav-icon::before,
+.bottom-nav-icon::after {
+  content: "";
+  position: absolute;
+}
+
+.bottom-nav-icon-overview::before {
+  background: currentColor;
+  border-radius: 999px;
+  height: 0.42rem;
+  width: 0.42rem;
+}
+
+.bottom-nav-icon-calendar {
+  border-radius: 0.32rem;
+}
+
+.bottom-nav-icon-calendar::before {
+  border-top: 2px solid currentColor;
+  left: 0.22rem;
+  right: 0.22rem;
+  top: 0.42rem;
+}
+
+.bottom-nav-icon-calendar::after {
+  background: currentColor;
+  border-radius: 999px;
+  bottom: 0.28rem;
+  height: 0.28rem;
+  width: 0.28rem;
+}
+
+.bottom-nav-icon-analytics::before {
+  border-bottom: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+  height: 0.52rem;
+  transform: rotate(-45deg);
+  width: 0.72rem;
+}
+
+.bottom-nav-icon-profile::before {
+  background: currentColor;
+  border-radius: 999px;
+  height: 0.38rem;
+  top: 0.28rem;
+  width: 0.38rem;
+}
+
+.bottom-nav-icon-profile::after {
+  border: 2px solid currentColor;
+  border-radius: 999px 999px 0 0;
+  border-bottom: 0;
+  bottom: 0.22rem;
+  height: 0.42rem;
+  width: 0.74rem;
+}
+
+@media (min-width: 901px) {
+  .primary-add-shift-button {
+    display: none;
+  }
+
+  nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-primary {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body .app-shell {
+    padding: 0.65rem 0.7rem calc(128px + env(safe-area-inset-bottom)) !important;
+  }
+
+  body .dashboard-mobile-cockpit {
+    gap: 0.7rem !important;
+  }
+
+  body .dashboard-mobile-cockpit .cockpit-overview-card {
+    border-radius: 22px !important;
+    gap: 0.75rem !important;
+    padding: 0.95rem !important;
+  }
+
+  body .cockpit-overview-header {
+    gap: 0.22rem !important;
+  }
+
+  body .cockpit-overview-header p {
+    display: none !important;
+  }
+
+  body .dashboard-mobile-cockpit .cockpit-main-values {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.45rem !important;
+  }
+
+  body .dashboard-mobile-cockpit .cockpit-main-values div {
+    border-radius: 14px !important;
+    min-width: 0 !important;
+    padding: 0.62rem 0.45rem !important;
+  }
+
+  body .dashboard-mobile-cockpit .cockpit-main-values span,
+  body .dashboard-mobile-cockpit .cockpit-next-shift span {
+    font-size: 0.68rem !important;
+    line-height: 1.1 !important;
+  }
+
+  body .dashboard-mobile-cockpit .cockpit-main-values strong {
+    font-size: 1rem !important;
+    line-height: 1.12 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body .cockpit-next-shift {
+    align-items: center;
+    background: rgba(8, 116, 110, 0.08);
+    border: 1px solid rgba(8, 116, 110, 0.12);
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    min-height: 3.1rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  body .cockpit-next-shift strong {
+    color: var(--cc-ink, #0d1f2f);
+    font-size: 0.94rem;
+    text-align: right;
+  }
+
+  body .cockpit-primary-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  body .cockpit-primary-actions article {
+    display: none !important;
+  }
+
+  body .cockpit-primary-actions button {
+    background: #ffffff;
+    border: 1px solid rgba(7, 121, 113, 0.18);
+    border-radius: 14px;
+    box-shadow: 0 10px 22px rgba(8, 44, 68, 0.08);
+    color: var(--cc-ink, #0d1f2f);
+    font: inherit;
+    font-weight: 750;
+    min-height: 3rem;
+  }
+
+  body .cockpit-primary-actions button:focus-visible {
+    outline: 2px solid rgba(7, 121, 113, 0.45);
+    outline-offset: 2px;
+  }
+
+  body .cockpit-content-grid,
+  body .cockpit-wide-card,
+  body .dashboard-mobile-cockpit > .export-card {
+    margin-top: 0.35rem !important;
+  }
+
+  body .calendar-page {
+    gap: 0.65rem !important;
+  }
+
+  body .calendar-header {
+    align-items: center !important;
+    display: grid !important;
+    grid-template-columns: 2.65rem minmax(0, 1fr) 2.65rem !important;
+    gap: 0.45rem !important;
+  }
+
+  body .calendar-header h2 {
+    font-size: 1.15rem !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+  }
+
+  body .calendar-nav-button {
+    min-height: 2.65rem !important;
+    min-width: 2.65rem !important;
+    padding: 0 !important;
+  }
+
+  body .calendar {
+    border-radius: 18px !important;
+    padding: 0.55rem !important;
+  }
+
+  body .calendar-weekdays {
+    gap: 0.22rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  body .calendar-grid {
+    gap: 0.25rem !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  }
+
+  body .calendar-day {
+    aspect-ratio: 0.82 !important;
+    border-radius: 12px !important;
+    min-height: 3.25rem !important;
+    min-width: 0 !important;
+    padding: 0.32rem !important;
+  }
+
+  body .calendar-day-number {
+    font-size: 0.82rem !important;
+    line-height: 1 !important;
+  }
+
+  body .calendar-day-body {
+    gap: 0.15rem !important;
+  }
+
+  body .calendar-shift-chip {
+    border-radius: 999px !important;
+    min-height: 1rem !important;
+    padding: 0.08rem 0.2rem !important;
+  }
+
+  body .calendar-shift-chip strong {
+    font-size: 0.56rem !important;
+    line-height: 1 !important;
+  }
+
+  body .calendar-shift-chip-dot {
+    height: 0.34rem !important;
+    width: 0.34rem !important;
+  }
+
+  body .calendar-shift-dot-row {
+    gap: 0.1rem !important;
+  }
+
+  body .calendar-shift-mini-dot,
+  body .calendar-shift-more-compact {
+    font-size: 0.5rem !important;
+    height: 0.82rem !important;
+    min-width: 0.82rem !important;
+  }
+
+  body .day-details {
+    bottom: calc(5.65rem + env(safe-area-inset-bottom));
+    border-radius: 22px 22px 16px 16px !important;
+    box-shadow: 0 18px 36px rgba(8, 44, 68, 0.16) !important;
+    max-height: min(72vh, 620px);
+    overflow: auto;
+    position: sticky;
+    z-index: 20;
+  }
+
+  body .day-details-header {
+    grid-template-columns: 1fr !important;
+    gap: 0.2rem !important;
+  }
+
+  body .day-details-header > span {
+    font-size: 0.72rem !important;
+  }
+
+  body .day-details-header > strong {
+    font-size: 1.08rem !important;
+  }
+
+  body .day-details-actions {
+    display: grid !important;
+    gap: 0.45rem !important;
+  }
+
+  body .day-details-actions button,
+  body .day-details-shift-actions button {
+    min-height: 2.9rem !important;
+  }
+
+  body .day-details-delete-button {
+    background: transparent !important;
+    border: 1px solid rgba(181, 44, 63, 0.24) !important;
+    box-shadow: none !important;
+    color: #b52c3f !important;
+  }
+
+  body .day-details-form,
+  body .day-details-edit-form {
+    margin-top: 0.65rem !important;
+  }
+
+  body .planner-page .ui-page-header p {
+    display: none !important;
+  }
+
+  body .planner-entry-card {
+    border-radius: 22px !important;
+    margin-inline: -0.05rem !important;
+  }
+
+  body .shift-form-premium {
+    border-radius: 20px !important;
+    gap: 0.75rem !important;
+    padding: 0.75rem !important;
+  }
+
+  body .shift-form-header {
+    border-radius: 16px !important;
+    gap: 0.25rem !important;
+    padding: 0.72rem !important;
+  }
+
+  body .shift-form-header > p:not(.shift-form-compact-note) {
+    display: none !important;
+  }
+
+  body .shift-form-compact-note {
+    display: block !important;
+  }
+
+  body .shift-type-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  body .shift-time-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.45rem !important;
+  }
+
+  body .shift-form-submit {
+    min-height: 3.2rem !important;
+  }
+
+  body .analysis-hub-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] {
+    backdrop-filter: blur(18px);
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 1px solid rgba(8, 44, 68, 0.12) !important;
+    box-shadow: 0 16px 34px rgba(8, 44, 68, 0.18) !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-primary {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link,
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link.active,
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link[aria-current="page"] {
+    flex-direction: column !important;
+    gap: 0.18rem !important;
+    min-height: 3.4rem !important;
+    padding: 0.22rem 0.1rem !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link.active,
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link[aria-current="page"] {
+    background: rgba(7, 121, 113, 0.12) !important;
+    color: #08746e !important;
+  }
+
+  body nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-link > span:not(.bottom-nav-icon) {
+    font-size: 0.66rem !important;
+    font-weight: 750 !important;
+  }
+}
+
+@media (max-width: 390px) {
+  body .dashboard-mobile-cockpit .cockpit-main-values strong {
+    font-size: 0.92rem !important;
+  }
+
+  body .calendar {
+    padding: 0.45rem !important;
+  }
+
+  body .calendar-grid {
+    gap: 0.18rem !important;
+  }
+
+  body .calendar-day {
+    min-height: 3rem !important;
+    padding: 0.24rem !important;
+  }
+
+  body .calendar-shift-chip strong {
+    display: none !important;
+  }
+
+  body .shift-time-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body .analysis-hub-links {
+    grid-template-columns: 1fr;
+  }
+}

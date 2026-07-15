@@ -335,6 +335,11 @@ export default function ShiftForm({
 
         <strong>{selectedShiftOption?.label ?? "Dienst"}</strong>
 
+        <p className="shift-form-compact-note">
+          Dienstart waehlen. Zeiten kommen aus den Vorlagen und koennen
+          angepasst werden.
+        </p>
+
         <p>
           Wähle zuerst die Dienstart. Reguläre Dienstzeiten werden aus deinen
           Vorlagen übernommen. Abwesenheitsstunden werden automatisch berechnet.
