@@ -7,6 +7,7 @@
 - Profil-, Dienst- und Dienstvorlagen-Aenderungen markieren kuenftig lokale Revisionen.
 - Planungsvorlagen und Fairness-Teamdaten in die lokale Revisionierung aufgenommen.
 - Datenschutz- und Loeschkonzept inklusive Backup-Entscheidung dokumentiert.
+- Profil-UI zum vollstaendigen lokalen Loeschen mit zweistufiger Bestaetigung ergaenzt.
 - Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert gelassen.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 

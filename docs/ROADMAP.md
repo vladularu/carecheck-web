@@ -176,6 +176,7 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - Backup-/Restore-Kompatibilitaet bewahren
 - Datenschutz- und Loeschkonzept fachlich vorbereiten
 - Sync-Metadaten bleiben in v1.9.0 geraete-lokal und ausserhalb von Backup-Version 2
+- vollstaendiges lokales Loeschen in der Profil-UI absichern
 
 ## Langfristige Produktreife
 

@@ -8,6 +8,7 @@ import {
   readBackupFile,
   restoreCareCheckBackup,
 } from "../../services/backup/backupService";
+import { clearCareCheckLocalData } from "../../services/storage/appDataStorage";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 
@@ -36,6 +37,44 @@ export default function DataBackupCard() {
     setMessage(
       "Backup wurde erstellt.",
     );
+  }
+
+  function handleDeleteAllLocalData() {
+    const shouldDelete =
+      window.confirm(
+        "Alle lokal gespeicherten CareCheck-Daten werden gelöscht: Profil, Dienste, Vorlagen, Planung, Fairness-Team und Sync-Metadaten. Jetzt wirklich lokal löschen?",
+      );
+
+    if (!shouldDelete) {
+      setMessage(
+        "Lokales Löschen abgebrochen.",
+      );
+
+      return;
+    }
+
+    const confirmation =
+      window.prompt(
+        "Zum endgültigen Löschen bitte LOESCHEN eingeben.",
+      );
+
+    if (confirmation !== "LOESCHEN") {
+      setMessage(
+        "Lokales Löschen wurde nicht bestätigt.",
+      );
+
+      return;
+    }
+
+    clearCareCheckLocalData();
+
+    setMessage(
+      "Alle lokalen CareCheck-Daten wurden gelöscht. Die App wird neu geladen.",
+    );
+
+    window.setTimeout(() => {
+      window.location.reload();
+    }, 600);
   }
 
   async function handleImportBackup(
@@ -154,6 +193,28 @@ export default function DataBackupCard() {
             )
           }
         />
+      </div>
+
+      <div className="data-delete-zone">
+        <div>
+          <strong>
+            Alle lokalen Daten löschen
+          </strong>
+
+          <p>
+            Entfernt CareCheck-Daten aus diesem
+            Browser. Exportierte Backup-Dateien
+            bleiben außerhalb der App erhalten.
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          variant="danger"
+          onClick={handleDeleteAllLocalData}
+        >
+          Lokal löschen
+        </Button>
       </div>
 
       {message && (
