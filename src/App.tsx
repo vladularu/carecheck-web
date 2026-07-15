@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import BottomNavigation from "./components/Navigation/BottomNavigation";
-import PrimaryAddShiftButton from "./components/Navigation/PrimaryAddShiftButton";
 import { AppProvider } from "./context/AppContext";
 import Dashboard from "./pages/Dashboard";
 import Planner from "./pages/Planner";
@@ -30,7 +29,6 @@ export default function App() {
           </Routes>
         </main>
 
-        <PrimaryAddShiftButton />
         <BottomNavigation />
       </BrowserRouter>
     </AppProvider>
