@@ -17,6 +17,7 @@
 - Backup-Version 3 mit Planungsvorlagen, Fairness-Teamdaten und Domain-Snapshot vorbereitet.
 - Backup v1/v2 bleiben importierbar und ueberschreiben keine v3-Datenbereiche.
 - Beschaedigte Backup-Eintraege werden beim Import isoliert und als Warnungen ausgewiesen.
+- Migrationstests fuer alte Profile, alte Dienste, fehlende und doppelte IDs, Revisionswerte und wiederholte Migration ergaenzt.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 
 ## v1.8.0

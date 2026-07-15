@@ -15,6 +15,7 @@ import {
   migrateLegacyCareCheckData,
   type LegacyCareCheckDataSnapshot,
 } from "./domainMigrationService";
+import { isDomainMetadata } from "./domainModel";
 
 const migratedAt =
   "2026-07-15T10:00:00.000Z";
@@ -166,6 +167,127 @@ describe("domainMigrationService", () => {
     ]);
   });
 
+  it("migriert alte Profile und alte Dienste ohne neue optionale Felder", () => {
+    const oldProfile: UserProfile = {
+      federalState: "HE",
+      weeklyHours: 38.5,
+      payGroup: "P8",
+      payLevel: 4,
+    };
+    const oldVacationShift: Shift = {
+      id: "legacy-vacation-1",
+      date: "2026-07-16",
+      startTime: "08:00",
+      endTime: "16:00",
+      breakMinutes: 30,
+      type: "VACATION",
+    };
+
+    const result =
+      migrateLegacyCareCheckData(
+        createSnapshot({
+          profile: oldProfile,
+          shifts: [oldVacationShift],
+          planningTemplates: [],
+          fairnessTeamMembers: [],
+        }),
+        {
+          migratedAt,
+        },
+      );
+
+    expect(result.issues).toEqual([]);
+    expect(
+      result.entities.profile?.data,
+    ).toEqual(oldProfile);
+    expect(
+      result.entities.shifts[0].data,
+    ).toEqual(oldVacationShift);
+  });
+
+  it("erzeugt fehlende IDs fuer mehrere Domaenen deterministisch", () => {
+    const shiftWithoutId = {
+      ...shift,
+      id: undefined,
+    };
+    const templateWithoutId = {
+      ...planningTemplate,
+      id: undefined,
+    };
+    const memberWithoutId = {
+      ...fairnessMember,
+      id: undefined,
+    };
+
+    const first =
+      migrateLegacyCareCheckData(
+        createSnapshot({
+          shifts: [shiftWithoutId],
+          planningTemplates: [
+            templateWithoutId,
+          ],
+          fairnessTeamMembers: [
+            memberWithoutId,
+          ],
+        }),
+        {
+          migratedAt,
+        },
+      );
+    const second =
+      migrateLegacyCareCheckData(
+        createSnapshot({
+          shifts: [shiftWithoutId],
+          planningTemplates: [
+            templateWithoutId,
+          ],
+          fairnessTeamMembers: [
+            memberWithoutId,
+          ],
+        }),
+        {
+          migratedAt,
+        },
+      );
+
+    expect(first.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "missing-id",
+          entityType: "shifts",
+        }),
+        expect.objectContaining({
+          code: "missing-id",
+          entityType:
+            "planningTemplates",
+        }),
+        expect.objectContaining({
+          code: "missing-id",
+          entityType: "fairnessTeam",
+        }),
+      ]),
+    );
+    expect(
+      first.entities.shifts[0].metadata.id,
+    ).toBe(
+      second.entities.shifts[0].metadata.id,
+    );
+    expect(
+      first.entities.planningTemplates[0]
+        .metadata.id,
+    ).toBe(
+      second.entities.planningTemplates[0]
+        .metadata.id,
+    );
+    expect(
+      first.entities.fairnessTeam[0]
+        .metadata.id,
+    ).toBe(
+      second.entities.fairnessTeam[0]
+        .metadata.id,
+    );
+  });
+
   it("trennt doppelte IDs deterministisch ohne den ersten Datensatz umzuschreiben", () => {
     const duplicateShift = {
       ...shift,
@@ -204,6 +326,121 @@ describe("domainMigrationService", () => {
         sourceIndex: 1,
       }),
     );
+  });
+
+  it("trennt doppelte IDs in Planung und Fairness deterministisch", () => {
+    const duplicateTemplate = {
+      ...planningTemplate,
+      name: "Nachtdienstfolge Kopie",
+    };
+    const duplicateMember = {
+      ...fairnessMember,
+      name: "Teammitglied Kopie",
+    };
+
+    const result =
+      migrateLegacyCareCheckData(
+        createSnapshot({
+          planningTemplates: [
+            planningTemplate,
+            duplicateTemplate,
+          ],
+          fairnessTeamMembers: [
+            fairnessMember,
+            duplicateMember,
+          ],
+        }),
+        {
+          migratedAt,
+        },
+      );
+
+    expect(
+      result.entities.planningTemplates[0]
+        .metadata.id,
+    ).toBe("template-1");
+    expect(
+      result.entities.planningTemplates[1]
+        .metadata.id,
+    ).not.toBe("template-1");
+    expect(
+      result.entities.fairnessTeam[0]
+        .metadata.id,
+    ).toBe("member-1");
+    expect(
+      result.entities.fairnessTeam[1]
+        .metadata.id,
+    ).not.toBe("member-1");
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "duplicate-id",
+          entityType:
+            "planningTemplates",
+          sourceIndex: 1,
+        }),
+        expect.objectContaining({
+          code: "duplicate-id",
+          entityType: "fairnessTeam",
+          sourceIndex: 1,
+        }),
+      ]),
+    );
+  });
+
+  it("liefert bei wiederholter Migration denselben Domain-Snapshot", () => {
+    const first =
+      migrateLegacyCareCheckData(
+        createSnapshot(),
+        {
+          migratedAt,
+        },
+      );
+    const second =
+      migrateLegacyCareCheckData(
+        createSnapshot(),
+        {
+          migratedAt,
+        },
+      );
+
+    expect(second).toEqual(first);
+  });
+
+  it("erzeugt gueltige Revisionen und erkennt korrupte Revisionswerte", () => {
+    const result =
+      migrateLegacyCareCheckData(
+        createSnapshot(),
+        {
+          migratedAt,
+        },
+      );
+
+    expect(
+      isDomainMetadata(
+        result.entities.profile?.metadata,
+      ),
+    ).toBe(true);
+    expect(
+      isDomainMetadata(
+        result.entities.shifts[0].metadata,
+      ),
+    ).toBe(true);
+    expect(
+      result.entities.shifts[0].metadata
+        .revision,
+    ).toBe(1);
+    expect(
+      result.entities.shifts[0].metadata
+        .deletedAt,
+    ).toBeUndefined();
+    expect(
+      isDomainMetadata({
+        ...result.entities.shifts[0]
+          .metadata,
+        revision: 0,
+      }),
+    ).toBe(false);
   });
 
   it("nutzt fuer denselben Seed dieselbe deterministische Migrations-ID", () => {

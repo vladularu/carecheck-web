@@ -123,7 +123,7 @@
 - [x] Migration vorhandener lokaler Daten deterministisch vorbereiten.
 - [x] Backup-Version 3 vorbereiten und Rueckwaertskompatibilitaet zu Backup v1/v2 erhalten.
 - [x] Beschaedigte Datensaetze beim Import isolieren statt gesamten Import abzubrechen.
-- [ ] Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen und wiederholte Migration ergaenzen.
+- [x] Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen und wiederholte Migration ergaenzen.
 - [ ] Empfehlung: `v1.9.0-alpha.1` erst nach Domain-Grundmodell, Migration und Backup-v3-Vorbereitung erstellen.
 - [ ] Empfehlung: `v1.9.0-beta.1` erst nach gruenem Backup-v1/v2/v3-Roundtrip und Migrationstests erstellen.
 - [ ] v1.9.0 nach `main` uebernehmen.
