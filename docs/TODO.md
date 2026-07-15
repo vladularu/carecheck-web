@@ -131,11 +131,11 @@
 
 ## v1.9.1 - Lokale Datenintegritaet und IndexedDB
 
-- [ ] IndexedDB-Adapter hinter Repository-Schicht entwerfen.
-- [ ] lokale Aenderungswarteschlange vorbereiten.
-- [ ] Integritaetscheck und automatische Sicherung vor Migrationen entwerfen.
-- [ ] Fallback bei nicht verfuegbarer IndexedDB definieren.
-- [ ] Empfehlung: `v1.9.1-beta` erst nach Persistenz-Haertung und Adapter-unabhaengigem Backup/Restore erstellen.
+- [x] IndexedDB-Adapter hinter Repository-Schicht entwerfen.
+- [x] lokale Aenderungswarteschlange vorbereiten.
+- [x] Integritaetscheck und automatische Sicherung vor Migrationen entwerfen.
+- [x] Fallback bei nicht verfuegbarer IndexedDB definieren.
+- [x] Empfehlung: `v1.9.1-beta` erst nach Persistenz-Haertung und Adapter-unabhaengigem Backup/Restore erstellen.
 
 ## v1.9.2 - Datenschutz- und Sicherheitsgrundlage
 

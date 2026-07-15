@@ -1,10 +1,10 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release-Tag `v1.9.0`
+Stand: waehrend Entwicklung `v1.9.1`
 
 Aktuell stabil: `v1.9.0 - Domain-Modell und Persistenzabstraktion`
 
-Aktiver Entwicklungszweig: keiner; naechster Vorschlag `feature/v1.9.1-local-integrity-indexeddb`
+Aktiver Entwicklungszweig: `feature/v1.9.1-local-integrity-indexeddb`
 
 ## Abgeschlossen
 
@@ -163,8 +163,6 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - Release-Tag `v1.8.0` erstellt
 - GitHub Release `v1.8.0` erstellt
 
-## In Entwicklung
-
 ### v1.9.0: Domain-Modell und Persistenzabstraktion
 
 - Branch `feature/v1.9.0-sync-prep-data-model` angelegt
@@ -186,15 +184,19 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - Backup-Version 3 vorbereiten, mit Rueckwaertskompatibilitaet zu Backup v1 und v2
 - beschaedigte Datensaetze isolieren statt ganze Importe abzubrechen
 
+## In Entwicklung
+
 ### v1.9.1: Lokale Datenintegritaet und IndexedDB
 
-- IndexedDB-Adapter hinter der Repository-Schicht vorbereiten
-- Local Storage nur noch als Uebergang und fuer kleine Einstellungen nutzen
-- atomare Speicheroperationen und Wiederherstellung nach unterbrochenen Schreibvorgaengen pruefen
-- lokale Aenderungswarteschlange vorbereiten
-- Validierung vor jedem Speichern staerken
-- Datenintegritaetscheck und automatische Sicherung vor Migrationen konzipieren
-- Fallback bei nicht verfuegbarer IndexedDB definieren
+- IndexedDB-Adapter hinter der Repository-Schicht vorbereitet
+- async Repository-Grenze fuer spaetere IndexedDB-Umschaltung ergaenzt
+- Local Storage als Fallback bei nicht verfuegbarer IndexedDB definiert
+- lokale Aenderungswarteschlange fuer spaetere Sync-Outbox vorbereitet
+- Validierung vor dem Speichern ueber Repository-Adapter gestaerkt
+- Datenintegritaetscheck fuer lokale CareCheck-Datenbereiche ergaenzt
+- automatische Sicherung vor spaeteren Migrationen vorbereitet
+- adapterunabhaengige Persistenz- und Repository-Tests ergaenzt
+- Statistik-, Tarif-, Export- und Compliance-Logik unveraendert gelassen
 
 ### v1.9.2: Datenschutz- und Sicherheitsgrundlage
 

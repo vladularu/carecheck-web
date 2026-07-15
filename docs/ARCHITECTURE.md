@@ -13,6 +13,8 @@ Die Persistenz wird schrittweise in drei Ebenen getrennt:
 Aktueller Adapter:
 
 - `localCareCheckRepositories.ts` nutzt die bestehenden Local-Storage-Services.
+- `indexedDbCareCheckRepositories.ts` bereitet dieselben Domaenen ueber eine async Repository-Schicht fuer IndexedDB vor.
+- `persistenceAdapter.ts` kapselt IndexedDB, Local Storage, Memory-Testspeicher und Fallback-Kombinationen.
 - Direkte `localStorage`-Zugriffe bleiben in `src/services/storage`.
 - UI-Komponenten importieren keine konkreten Storage-Services mehr.
 
@@ -28,6 +30,8 @@ Die erste Repository-Grenze umfasst:
 - `AppDataRepository`
 
 Diese Schicht ist bewusst klein gehalten. Sie veraendert keine Fachberechnung und keine Backup-Version. Spaetere Schritte koennen hier Domain-Metadaten, Migration, IndexedDB und Mock-Sync anhaengen.
+
+Ab v1.9.1 existiert zusaetzlich eine async Repository-Grenze mit denselben Domaenen. Sie ist fuer IndexedDB, adapterunabhaengiges Backup/Restore und spaetere Synchronisation vorbereitet, wird aber noch nicht als produktiver AppContext-Speicher erzwungen.
 
 ## Technisches Domain-Grundmodell
 
@@ -86,10 +90,23 @@ Geraetespezifische Sync-Metadaten bleiben bewusst ausserhalb des Backups. Beim R
 
 Beim Import werden beschaedigte Eintraege in Diensten, Dienstvorlagen, Planungsvorlagen und Fairness-Teamdaten isoliert. Gueltige Eintraege bleiben importierbar; uebersprungene Eintraege werden als Import-Warnungen am Backup-Ergebnis ausgewiesen.
 
+## Lokale Datenintegritaet und IndexedDB-Vorbereitung
+
+v1.9.1 ergaenzt technische Persistenzbausteine, ohne die bestehende UI-Laufzeit oder Fachberechnung auf ein neues Speichermedium umzuschalten:
+
+- IndexedDB-Adapter mit Key-Value-Store `carecheck-local-data`
+- Local-Storage-Fallback, falls IndexedDB nicht verfuegbar ist oder eine Operation fehlschlaegt
+- lokale Aenderungswarteschlange unter `carecheck.localChangeQueue.v1`
+- Integritaetscheck fuer Profil, Dienste, Dienstvorlagen, Planungsvorlagen, Fairness-Teamdaten, Sync-Metadaten und lokale Queue
+- technische Pre-Migration-Backups unter `carecheck.preMigrationBackups.v1`
+- Helper fuer kuenftige Migrationen, die vor dem Migrationsschritt automatisch ein Backup erstellt
+
+Die neuen Bausteine sind additiv. Die bestehende synchrone Local-Storage-Repository-Schicht bleibt fuer die aktuelle App-Oberflaeche erhalten.
+
 ## Abgrenzung
 
 Noch nicht umgesetzt:
 
 - produktive Migration vorhandener lokaler Daten in dieses Modell
-- IndexedDB-Adapter
+- produktive Umschaltung des AppContext auf IndexedDB
 - Mock-Sync oder Cloud-Sync

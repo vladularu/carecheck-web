@@ -51,3 +51,75 @@ export interface FairnessTeamRepository {
 export interface AppDataRepository {
   clearAllLocalData: () => void;
 }
+
+export interface AsyncProfileRepository {
+  load: () => Promise<UserProfile | null>;
+  save: (profile: UserProfile) => Promise<void>;
+  markChanged: () => Promise<void>;
+}
+
+export interface AsyncShiftRepository {
+  loadAll: () => Promise<Shift[]>;
+  saveAll: (
+    shifts: Shift[],
+  ) => Promise<void>;
+  markChanged: (
+    id: string,
+  ) => Promise<void>;
+  markDeleted: (
+    id: string,
+  ) => Promise<void>;
+}
+
+export interface AsyncShiftTemplateRepository {
+  load: () => Promise<ShiftTemplates>;
+  save: (
+    templates: ShiftTemplates,
+  ) => Promise<void>;
+  markChanged: (
+    type: ShiftType | "all",
+  ) => Promise<void>;
+}
+
+export interface AsyncPlanningTemplateRepository {
+  loadAll: () => Promise<
+    PlanningTemplate[]
+  >;
+  saveAll: (
+    templates: PlanningTemplate[],
+  ) => Promise<void>;
+  markChanged: (
+    id: string,
+  ) => Promise<void>;
+  markDeleted: (
+    id: string,
+  ) => Promise<void>;
+}
+
+export interface AsyncFairnessTeamRepository {
+  loadAll: () => Promise<
+    FairnessTeamMemberDraft[]
+  >;
+  saveAll: (
+    members: FairnessTeamMemberDraft[],
+  ) => Promise<void>;
+  markChanged: (
+    id: string,
+  ) => Promise<void>;
+  markDeleted: (
+    id: string,
+  ) => Promise<void>;
+}
+
+export interface AsyncAppDataRepository {
+  clearAllLocalData: () => Promise<void>;
+}
+
+export interface AsyncCareCheckRepositories {
+  profile: AsyncProfileRepository;
+  shifts: AsyncShiftRepository;
+  shiftTemplates: AsyncShiftTemplateRepository;
+  planningTemplates: AsyncPlanningTemplateRepository;
+  fairnessTeam: AsyncFairnessTeamRepository;
+  appData: AsyncAppDataRepository;
+}

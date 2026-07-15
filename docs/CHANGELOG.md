@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.9.1 - in Entwicklung
+
+- IndexedDB-Adapter hinter einer async Repository-Schicht vorbereitet.
+- Local-Storage-Fallback fuer Browser ohne verfuegbare IndexedDB definiert.
+- Lokale Aenderungswarteschlange fuer spaetere Sync-Outbox vorbereitet.
+- Datenintegritaetscheck fuer lokale CareCheck-Datenbereiche ergaenzt.
+- Automatische technische Sicherung vor spaeteren Migrationen vorbereitet.
+- Adapterunabhaengige Tests fuer Persistenz, Queue, Integritaet und async Repository-Grenze ergaenzt.
+- Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
+
 ## v1.9.0
 
 - Sync-Vorbereitung als lokales Datenmodell ohne Cloud-Anbindung gestartet.

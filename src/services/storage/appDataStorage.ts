@@ -5,6 +5,8 @@ export const CARECHECK_LOCAL_STORAGE_KEYS = [
   "carecheck.planningTemplates.v1",
   "carecheck.fairnessTeam.v1",
   "carecheck.syncMetadata.v1",
+  "carecheck.localChangeQueue.v1",
+  "carecheck.preMigrationBackups.v1",
 ] as const;
 
 export function clearCareCheckLocalData(): void {
