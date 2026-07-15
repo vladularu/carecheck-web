@@ -3,6 +3,7 @@ import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
 import ExportPreviewSummary from "../components/report/ExportPreviewSummary";
 import { useAppContext } from "../context/useAppContext";
+import { createCalendar } from "../services/calendar/calendarService";
 import {
   calculateMonthlyHours,
   filterShiftsByMonth,
@@ -11,9 +12,7 @@ import { calculateMonthlyPremiums } from "../services/calculation/monthlyPremium
 import { calculateMonthlyCompliance } from "../services/compliance/monthlyComplianceService";
 import {
   getReportBreakLabel,
-  getReportHourSourceLabel,
   getReportNetHours,
-  getReportTimeLabel,
 } from "../services/export/monthlyReportEntryFormatter";
 import { createMonthlyReportExportPreview } from "../services/export/monthlyReportExportPreview";
 import {
@@ -25,7 +24,9 @@ import {
 import {
   formatDateGerman,
 } from "../services/format/dateTimeFormat";
+import { getHolidaysForState } from "../services/holiday/holidayService";
 import { getTvoedPPremiumHourlyRate } from "../services/tariff/tvoedPTariffService";
+import type { ComplianceIssue, Shift } from "../types/index";
 
 const monthNames = [
   "Januar",
@@ -68,6 +69,57 @@ function formatReportDate(): string {
   }).format(new Date());
 }
 
+function formatWeekday(dateKey: string): string {
+  return new Intl.DateTimeFormat("de-DE", {
+    weekday: "short",
+  }).format(new Date(`${dateKey}T00:00:00`));
+}
+
+function getPrintableTimeLabel(shift: Shift, field: "startTime" | "endTime") {
+  if (
+    shift.type === "VACATION" ||
+    shift.type === "SICK" ||
+    shift.type === "FREE"
+  ) {
+    return "—";
+  }
+
+  return shift[field];
+}
+
+function groupShiftsByDate(shifts: Shift[]): Map<string, Shift[]> {
+  const grouped = new Map<string, Shift[]>();
+
+  for (const shift of shifts) {
+    const current = grouped.get(shift.date) ?? [];
+
+    grouped.set(shift.date, [...current, shift]);
+  }
+
+  return grouped;
+}
+
+function sortShiftsByDateAndStart(shifts: Shift[]): Shift[] {
+  return [...shifts].sort((first, second) =>
+    `${first.date}T${first.startTime}`.localeCompare(
+      `${second.date}T${second.startTime}`,
+    ),
+  );
+}
+
+function getIssueDateLabel(
+  issue: ComplianceIssue,
+  shiftsById: Map<string, Shift>,
+): string {
+  if (!issue.relatedShiftId) {
+    return "Monat";
+  }
+
+  const shift = shiftsById.get(issue.relatedShiftId);
+
+  return shift ? formatDateGerman(shift.date) : "Monat";
+}
+
 export default function MonthlyReport() {
   const {
     profile,
@@ -87,6 +139,32 @@ export default function MonthlyReport() {
     selectedYear,
     selectedMonth,
   );
+
+  const reportShifts = sortShiftsByDateAndStart(
+    shiftsInSelectedMonth,
+  );
+
+  const shiftsByDate = groupShiftsByDate(reportShifts);
+
+  const shiftsById = new Map(
+    reportShifts.map((shift) => [shift.id, shift]),
+  );
+
+  const holidaysByDate = new Map(
+    getHolidaysForState(
+      selectedYear,
+      profile.federalState,
+    ).map((holiday) => [holiday.date, holiday]),
+  );
+
+  const calendarWeeks = createCalendar(
+    selectedYear,
+    selectedMonth,
+  );
+
+  const nightShiftCount = reportShifts.filter(
+    (shift) => shift.type === "NIGHT",
+  ).length;
 
   const monthlyHours = calculateMonthlyHours(
     shifts,
@@ -280,7 +358,7 @@ export default function MonthlyReport() {
       <article className="print-report">
         <header className="print-report-header">
           <div>
-            <span>CareCheck TVöD</span>
+            <span>CareCheck</span>
             <h1>Monatsbericht</h1>
             <p>{monthLabel}</p>
           </div>
@@ -292,7 +370,7 @@ export default function MonthlyReport() {
 
             <p>
               {profile.federalState} ·{" "}
-              {profile.weeklyHours} h/Woche
+              {profile.weeklyHours} h/Woche · 5-Tage-Woche
             </p>
 
             <p>Erstellt am {formatReportDate()}</p>
@@ -463,12 +541,71 @@ export default function MonthlyReport() {
                 )}
               </strong>
             </div>
+
+            <div>
+              <span>Nachtdienste</span>
+              <strong>{nightShiftCount}</strong>
+            </div>
           </div>
         </section>
 
         <section className="print-report-section">
           <div className="print-report-section-title">
             <span>02</span>
+            <h2>Monatskalender</h2>
+          </div>
+
+          <div
+            className="print-report-calendar"
+            aria-label={`Monatskalender ${monthLabel}`}
+          >
+            {["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map((day) => (
+              <div className="print-report-calendar-weekday" key={day}>
+                {day}
+              </div>
+            ))}
+
+            {calendarWeeks.flat().map((day) => {
+              const dayShifts = shiftsByDate.get(day.dateKey) ?? [];
+              const holiday = holidaysByDate.get(day.dateKey);
+
+              return (
+                <div
+                  className={[
+                    "print-report-calendar-day",
+                    day.currentMonth ? "" : "outside-month",
+                    day.weekend ? "weekend" : "",
+                    holiday ? "holiday" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  key={day.dateKey}
+                >
+                  <div className="print-report-calendar-day-header">
+                    <strong>{day.dayNumber}</strong>
+                    {holiday && <span>FT</span>}
+                  </div>
+
+                  <div className="print-report-calendar-day-entries">
+                    {dayShifts.slice(0, 2).map((shift) => (
+                      <span key={shift.id}>
+                        {monthlyReportShiftLabels[shift.type]}
+                      </span>
+                    ))}
+
+                    {dayShifts.length > 2 && (
+                      <span>+{dayShifts.length - 2} weitere</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="print-report-section">
+          <div className="print-report-section-title">
+            <span>03</span>
             <h2>
               {
                 monthlyReportLabels.sections
@@ -635,7 +772,7 @@ export default function MonthlyReport() {
 
         <section className="print-report-section">
           <div className="print-report-section-title">
-            <span>03</span>
+            <span>04</span>
             <h2>
               {
                 monthlyReportLabels.sections
@@ -695,7 +832,7 @@ export default function MonthlyReport() {
 
         <section className="print-report-section">
           <div className="print-report-section-title">
-            <span>04</span>
+            <span>05</span>
             <h2>
               {
                 monthlyReportLabels.sections
@@ -745,6 +882,10 @@ export default function MonthlyReport() {
                       <strong>{issue.title}</strong>
                     </div>
 
+                    <span className="print-report-compliance-date">
+                      {getIssueDateLabel(issue, shiftsById)}
+                    </span>
+
                     <p>{issue.description}</p>
 
                     <small>
@@ -763,7 +904,7 @@ export default function MonthlyReport() {
 
         <section className="print-report-section">
           <div className="print-report-section-title">
-            <span>05</span>
+            <span>06</span>
             <h2>
               {monthlyReportLabels.sections.calculationBasis}
             </h2>
@@ -784,7 +925,7 @@ export default function MonthlyReport() {
 
         <section className="print-report-section">
           <div className="print-report-section-title">
-            <span>06</span>
+            <span>07</span>
             <h2>
               {
                 monthlyReportLabels.sections
@@ -793,7 +934,7 @@ export default function MonthlyReport() {
             </h2>
           </div>
 
-          {shiftsInSelectedMonth.length === 0 ? (
+          {reportShifts.length === 0 ? (
             <p className="print-report-empty">
               {
                 monthlyReportLabels.emptyStates
@@ -804,19 +945,25 @@ export default function MonthlyReport() {
             <table className="print-report-table print-report-shift-table">
               <thead>
                 <tr>
-                  {monthlyReportLabels.tables.calendarEntries.map(
-                    (label) => (
-                      <th key={label}>{label}</th>
-                    ),
-                  )}
+                  <th>Datum</th>
+                  <th>Tag</th>
+                  <th>Diensttyp</th>
+                  <th>Beginn</th>
+                  <th>Ende</th>
+                  <th>Pause</th>
+                  <th>Netto</th>
+                  <th>Hinweis</th>
                 </tr>
               </thead>
 
               <tbody>
-                {shiftsInSelectedMonth.map((shift) => (
+                {reportShifts.map((shift) => (
                   <tr key={shift.id}>
                     <td>
                       {formatDateGerman(shift.date)}
+                    </td>
+                    <td>
+                      {formatWeekday(shift.date)}
                     </td>
                     <td>
                       {
@@ -826,7 +973,10 @@ export default function MonthlyReport() {
                       }
                     </td>
                     <td>
-                      {getReportTimeLabel(shift)}
+                      {getPrintableTimeLabel(shift, "startTime")}
+                    </td>
+                    <td>
+                      {getPrintableTimeLabel(shift, "endTime")}
                     </td>
                     <td>
                       {getReportBreakLabel(shift)}
@@ -839,9 +989,6 @@ export default function MonthlyReport() {
                         ),
                       )}
                     </td>
-                    <td>
-                      {getReportHourSourceLabel(shift)}
-                    </td>
                     <td>{shift.note ?? ""}</td>
                   </tr>
                 ))}
@@ -852,10 +999,7 @@ export default function MonthlyReport() {
 
         <footer className="print-report-footer">
           <p>
-            Dieser Bericht wurde lokal mit CareCheck
-            TVöD erstellt. Die Werte dienen der
-            persönlichen Dienstplan- und
-            Arbeitszeitkontrolle.
+            Erstellt mit CareCheck · {formatReportDate()}
           </p>
         </footer>
       </article>

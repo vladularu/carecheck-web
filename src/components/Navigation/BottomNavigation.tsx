@@ -73,7 +73,7 @@ export default function BottomNavigation() {
 
   return (
     <nav
-      className="bottom-nav"
+      className="bottom-nav no-print"
       aria-label="Hauptnavigation"
     >
       <div className="bottom-nav-primary">
