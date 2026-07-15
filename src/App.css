@@ -9929,43 +9929,6 @@ button[type="submit"] {
   outline-offset: 2px;
 }
 
-.primary-add-shift-button {
-  align-items: center;
-  background: linear-gradient(135deg, #079c91, #0e4b78);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 999px;
-  bottom: calc(5.45rem + env(safe-area-inset-bottom));
-  box-shadow: 0 18px 34px rgba(8, 44, 68, 0.24);
-  color: #ffffff;
-  display: inline-flex;
-  gap: 0.45rem;
-  left: 50%;
-  min-height: 3rem;
-  padding: 0.15rem 1rem 0.15rem 0.25rem;
-  position: fixed;
-  text-decoration: none;
-  transform: translateX(-50%);
-  z-index: 80;
-}
-
-.primary-add-shift-button span {
-  align-items: center;
-  background: rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  display: inline-flex;
-  font-size: 1.45rem;
-  font-weight: 750;
-  height: 2.45rem;
-  justify-content: center;
-  line-height: 1;
-  width: 2.45rem;
-}
-
-.primary-add-shift-button strong {
-  font-size: 0.92rem;
-  letter-spacing: 0;
-}
-
 .bottom-nav-icon {
   align-items: center;
   border-radius: 999px;
@@ -10035,10 +9998,6 @@ button[type="submit"] {
 }
 
 @media (min-width: 901px) {
-  .primary-add-shift-button {
-    display: none;
-  }
-
   nav.bottom-nav[aria-label="Hauptnavigation"] .bottom-nav-primary {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
@@ -10372,5 +10331,98 @@ button[type="submit"] {
 
   body .analysis-hub-links {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Calendar-first shift creation refinement */
+
+.shift-form-date-block {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.shift-form-date-summary {
+  align-items: center;
+  background: rgba(8, 116, 110, 0.08);
+  border: 1px solid rgba(8, 116, 110, 0.16);
+  border-radius: 14px;
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 3.25rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.shift-form-date-summary span {
+  color: var(--cc-muted, #667085);
+  font-size: 0.76rem;
+  font-weight: 750;
+  grid-column: 1 / -1;
+  text-transform: uppercase;
+}
+
+.shift-form-date-summary strong {
+  color: var(--cc-ink, #0d1f2f);
+  font-size: 1rem;
+}
+
+.shift-form-date-summary button {
+  background: transparent;
+  border: 0;
+  color: #08746e;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  padding: 0.2rem 0;
+}
+
+.shift-form-date-summary button:focus-visible {
+  outline: 2px solid rgba(8, 116, 110, 0.35);
+  outline-offset: 3px;
+}
+
+.day-details-hours {
+  align-items: center;
+  background: rgba(8, 44, 68, 0.04);
+  border: 1px solid rgba(8, 44, 68, 0.08);
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.72rem 0.82rem;
+}
+
+.day-details-hours span {
+  color: var(--cc-muted, #667085);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.day-details-hours strong {
+  color: var(--cc-ink, #0d1f2f);
+  font-size: 0.96rem;
+}
+
+.day-details-add-button {
+  width: 100%;
+}
+
+.day-details-form > .ui-button-secondary {
+  width: 100%;
+}
+
+@media (max-width: 760px) {
+  body .day-details-hours {
+    padding: 0.68rem 0.75rem;
+  }
+
+  body .shift-form-date-summary {
+    border-radius: 16px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body .shift-form-date-summary button {
+    justify-self: start;
   }
 }

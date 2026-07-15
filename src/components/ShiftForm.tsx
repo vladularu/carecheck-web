@@ -111,6 +111,20 @@ function formatHours(hours: number): string {
   });
 }
 
+function formatDateLabel(dateKey: string): string {
+  if (!dateKey) {
+    return "Kein Datum gewählt";
+  }
+
+  const [year, month, day] = dateKey.split("-");
+
+  if (!year || !month || !day) {
+    return dateKey;
+  }
+
+  return `${day}.${month}.${year}`;
+}
+
 export default function ShiftForm({
   onAddShift,
   onUpdateShift,
@@ -127,6 +141,11 @@ export default function ShiftForm({
   const initialTemplate = shiftTemplates[initialType];
 
   const [date, setDate] = useState(initialShift?.date ?? initialDate ?? "");
+
+  const usesCalendarDate = Boolean(initialDate) && !initialShift;
+
+  const [isDateInputVisible, setIsDateInputVisible] =
+    useState(!usesCalendarDate);
 
   const [startTime, setStartTime] = useState(
     initialShift?.startTime ?? initialTemplate.startTime,
@@ -197,6 +216,8 @@ export default function ShiftForm({
     const template = shiftTemplates.EARLY;
 
     setDate(initialDate ?? "");
+
+    setIsDateInputVisible(!usesCalendarDate);
 
     setStartTime(template.startTime);
 
@@ -369,17 +390,40 @@ export default function ShiftForm({
       </fieldset>
 
       <div className="shift-form-section">
-        <label className="field shift-form-field-full">
-          <span>Datum</span>
+        <div className="shift-form-field-full shift-form-date-block">
+          {usesCalendarDate && (
+            <div className="shift-form-date-summary">
+              <span>Datum</span>
 
-          <input
-            type="date"
-            lang="de-DE"
-            value={date}
-            onChange={(event) => setDate(event.target.value)}
-            required
-          />
-        </label>
+              <strong>{formatDateLabel(date)}</strong>
+
+              {!isDateInputVisible && (
+                <button
+                  type="button"
+                  onClick={() => setIsDateInputVisible(true)}
+                >
+                  Datum ändern
+                </button>
+              )}
+            </div>
+          )}
+
+          {isDateInputVisible && (
+            <label className="field">
+              <span>
+                {usesCalendarDate ? "Neues Datum" : "Datum"}
+              </span>
+
+              <input
+                type="date"
+                lang="de-DE"
+                value={date}
+                onChange={(event) => setDate(event.target.value)}
+                required
+              />
+            </label>
+          )}
+        </div>
 
         {isAbsenceType(type) ? (
           <div className="shift-form-field-full">

@@ -93,6 +93,16 @@ export default function DayDetails({
 
   const [editingShiftId, setEditingShiftId] = useState<string | null>(null);
 
+  const dayNetHours = shifts.reduce(
+    (total, shift) => total + calculateNetHours(shift),
+    0,
+  );
+
+  const addShiftLabel =
+    shifts.length === 0
+      ? "+ Dienst hinzufügen"
+      : "+ Weiteren Dienst hinzufügen";
+
   return (
     <Card className="day-details">
       <div className="day-details-header">
@@ -126,7 +136,7 @@ export default function DayDetails({
 
       {shifts.length === 0 ? (
         <p className="day-details-empty">
-          Für diesen Tag ist noch kein Dienst erfasst.
+          Noch kein Dienst eingetragen.
         </p>
       ) : (
         <div className="day-details-list">
@@ -228,21 +238,30 @@ export default function DayDetails({
         </div>
       )}
 
-      <div className="day-details-actions">
-        <Button
-          type="button"
-          variant="secondary"
-          className="day-details-add-button"
-          aria-label={showForm ? "Formular schliessen" : "Dienst hinzufuegen"}
-          onClick={() => {
-            setEditingShiftId(null);
+      {shifts.length > 0 && (
+        <div className="day-details-hours">
+          <span>Stunden des Tages</span>
 
-            setShowForm((current) => !current);
-          }}
-        >
-          {showForm ? "Formular schließen" : "Dienst für diesen Tag hinzufügen"}
-        </Button>
-      </div>
+          <strong>{formatHours(dayNetHours)} h netto</strong>
+        </div>
+      )}
+
+      {!showForm && (
+        <div className="day-details-actions">
+          <Button
+            type="button"
+            className="day-details-add-button"
+            aria-label={addShiftLabel}
+            onClick={() => {
+              setEditingShiftId(null);
+
+              setShowForm(true);
+            }}
+          >
+            {addShiftLabel}
+          </Button>
+        </div>
+      )}
 
       {showForm && (
         <div className="day-details-form">
@@ -251,6 +270,14 @@ export default function DayDetails({
             initialDate={dateKey}
             onDone={() => setShowForm(false)}
           />
+
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => setShowForm(false)}
+          >
+            Abbrechen
+          </Button>
         </div>
       )}
     </Card>
