@@ -126,8 +126,8 @@
 - [x] Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen und wiederholte Migration ergaenzen.
 - [x] Empfehlung: `v1.9.0-alpha.1` erst nach Domain-Grundmodell, Migration und Backup-v3-Vorbereitung erstellen.
 - [x] Empfehlung: `v1.9.0-beta.1` erst nach gruenem Backup-v1/v2/v3-Roundtrip und Migrationstests erstellen.
-- [ ] v1.9.0 nach `main` uebernehmen.
-- [ ] Release-Tag und GitHub Release fuer `v1.9.0` erstellen.
+- [x] v1.9.0 nach `main` uebernehmen.
+- [x] Release-Tag und GitHub Release fuer `v1.9.0` erstellen.
 
 ## v1.9.1 - Lokale Datenintegritaet und IndexedDB
 

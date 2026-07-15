@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.9.0 - in Entwicklung
+## v1.9.0
 
 - Sync-Vorbereitung als lokales Datenmodell ohne Cloud-Anbindung gestartet.
 - Separate Sync-Metadaten mit Schema-Version, Device-ID, lokalen Revisionen, Soft-Delete- und Konfliktfeldern ergaenzt.

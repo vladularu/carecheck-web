@@ -1,10 +1,10 @@
 # CareCheck - Master-Roadmap
 
-Stand: nach Release-Tag `v1.8.0`
+Stand: nach Release-Tag `v1.9.0`
 
-Aktuell stabil: `v1.8.0 - Product UI Refresh`
+Aktuell stabil: `v1.9.0 - Domain-Modell und Persistenzabstraktion`
 
-Aktiver Entwicklungszweig: `feature/v1.9.0-sync-prep-data-model`
+Aktiver Entwicklungszweig: keiner; naechster Vorschlag `feature/v1.9.1-local-integrity-indexeddb`
 
 ## Abgeschlossen
 
