@@ -1,6 +1,16 @@
 # Changelog
 
-## v1.9.1 - in Entwicklung
+## v1.9.2 - in Entwicklung
+
+- Zentrales Datenschutz-Dateninventar fuer lokale CareCheck-Speicherbereiche ergaenzt.
+- Datenklassen fuer Profil, Dienste, Abwesenheiten, Vorlagen, Fairness und technische Metadaten dokumentiert.
+- Export-Scope-Guard fuer Backup und Portabilitaetsexport ergaenzt.
+- Technische Sync-Metadaten, lokale Aenderungswarteschlange und Pre-Migration-Backups bleiben aus Nutzerexporten ausgeschlossen.
+- Aufbewahrungsregeln, Bedrohungsmodell und Datenschutztext-Vorlage dokumentiert.
+- Regressionstests fuer Dateninventar und Export-Scope ergaenzt.
+- Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
+
+## v1.9.1
 
 - IndexedDB-Adapter hinter einer async Repository-Schicht vorbereitet.
 - Local-Storage-Fallback fuer Browser ohne verfuegbare IndexedDB definiert.

@@ -103,10 +103,35 @@ v1.9.1 ergaenzt technische Persistenzbausteine, ohne die bestehende UI-Laufzeit 
 
 Die neuen Bausteine sind additiv. Die bestehende synchrone Local-Storage-Repository-Schicht bleibt fuer die aktuelle App-Oberflaeche erhalten.
 
+## Datenschutz- und Sicherheitsgrundlage
+
+v1.9.2 ergaenzt eine technische Datenschutz-Registry unter `src/services/security/dataProtectionRegistry.ts`.
+
+Die Registry dokumentiert und prueft:
+
+- alle bekannten lokalen CareCheck-Speicherschluessel
+- Datenklasse und Sensitivitaet je Datenbereich
+- lokalen Zweck und Aufbewahrung
+- Loeschpfad ueber die zentrale lokale Loeschfunktion
+- Backup- und Portabilitaetsumfang
+- technische Datenbereiche, die aus Nutzerexporten ausgeschlossen bleiben
+
+Der Portabilitaetsexport nutzt die Registry fuer `includedLocalData` und `excludedLocalData`. Backup und Portabilitaetsexport werden ueber Export-Scope-Tests gegen unbeabsichtigte technische Datenfelder abgesichert.
+
+Aus Nutzerexporten ausgeschlossen:
+
+- `carecheck.syncMetadata.v1`
+- `carecheck.localChangeQueue.v1`
+- `carecheck.preMigrationBackups.v1`
+
+Die Datenschutztext-Vorlage in `docs/V1.9.2_PRIVACY_TEXT_TEMPLATE.md` ist eine technische Vorlage und ersetzt keine fachliche oder rechtliche Pruefung.
+
 ## Abgrenzung
 
 Noch nicht umgesetzt:
 
 - produktive Migration vorhandener lokaler Daten in dieses Modell
 - produktive Umschaltung des AppContext auf IndexedDB
+- finale Datenschutzerklaerung oder Rechtspruefung
+- verschluesselte Backup-Dateien
 - Mock-Sync oder Cloud-Sync

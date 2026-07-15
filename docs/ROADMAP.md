@@ -1,10 +1,10 @@
 # CareCheck - Master-Roadmap
 
-Stand: waehrend Entwicklung `v1.9.1`
+Stand: waehrend Entwicklung `v1.9.2`
 
-Aktuell stabil: `v1.9.0 - Domain-Modell und Persistenzabstraktion`
+Aktuell stabil: `v1.9.1 - Lokale Datenintegritaet und IndexedDB`
 
-Aktiver Entwicklungszweig: `feature/v1.9.1-local-integrity-indexeddb`
+Aktiver Entwicklungszweig: `feature/v1.9.2-privacy-security-foundation`
 
 ## Abgeschlossen
 
@@ -184,8 +184,6 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - Backup-Version 3 vorbereiten, mit Rueckwaertskompatibilitaet zu Backup v1 und v2
 - beschaedigte Datensaetze isolieren statt ganze Importe abzubrechen
 
-## In Entwicklung
-
 ### v1.9.1: Lokale Datenintegritaet und IndexedDB
 
 - IndexedDB-Adapter hinter der Repository-Schicht vorbereitet
@@ -197,16 +195,22 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - automatische Sicherung vor spaeteren Migrationen vorbereitet
 - adapterunabhaengige Persistenz- und Repository-Tests ergaenzt
 - Statistik-, Tarif-, Export- und Compliance-Logik unveraendert gelassen
+- Release-Tag und GitHub Release `v1.9.1` erstellt
+
+## In Entwicklung
 
 ### v1.9.2: Datenschutz- und Sicherheitsgrundlage
 
-- Dateninventar aller gespeicherten Informationen pflegen
-- Datenklassen fuer Profil, Dienstplan, gesundheitsbezogene Abwesenheiten, Tarifdaten und technische Metadaten trennen
-- Export und vollstaendige lokale Loeschung pruefbar halten
-- Aufbewahrungsregeln und Bedrohungsmodell dokumentieren
-- keine Secrets oder Backend-Schluessel im Frontend zulassen
-- optionale verschluesselte Backup-Dateien pruefen
-- Datenschutztexte als technische Vorlage vorbereiten
+- Dateninventar aller gespeicherten Informationen als technische Registry ergaenzt
+- Datenklassen fuer Profil, Dienstplan, gesundheitsbezogene Abwesenheiten, Vorlagen, Fairness, Reports und technische Metadaten getrennt
+- Export-Scope fuer Backup und Portabilitaetsexport pruefbar gemacht
+- technische Sync-Metadaten, lokale Aenderungswarteschlange und Pre-Migration-Backups aus Nutzerexporten ausgeschlossen
+- vollstaendige lokale Loeschung gegen alle bekannten CareCheck-Speicherschluessel abgeglichen
+- Aufbewahrungsregeln und Bedrohungsmodell dokumentiert
+- keine Secrets oder Backend-Schluessel im Frontend eingefuehrt
+- optionale verschluesselte Backup-Dateien als offene v2.x-Entscheidung dokumentiert
+- Datenschutztexte als technische Vorlage vorbereitet
+- Statistik-, Tarif-, Export- und Compliance-Logik unveraendert gelassen
 
 ### v1.9.3: Synchronisationsprotokoll und Mock-Sync
 

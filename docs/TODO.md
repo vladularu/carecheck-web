@@ -139,11 +139,11 @@
 
 ## v1.9.2 - Datenschutz- und Sicherheitsgrundlage
 
-- [ ] Dateninventar und Datenklassen final pruefen.
-- [ ] Aufbewahrungsregeln und Bedrohungsmodell dokumentieren.
-- [ ] Schutz vor unbeabsichtigtem Export sensibler Daten pruefen.
-- [ ] Datenschutztexte als technische Vorlage vorbereiten.
-- [ ] Empfehlung: `v1.9.2-beta` erst nach Datenschutz- und Sicherheitspruefung erstellen.
+- [x] Dateninventar und Datenklassen final pruefen.
+- [x] Aufbewahrungsregeln und Bedrohungsmodell dokumentieren.
+- [x] Schutz vor unbeabsichtigtem Export sensibler Daten pruefen.
+- [x] Datenschutztexte als technische Vorlage vorbereiten.
+- [x] Empfehlung: `v1.9.2-beta` erst nach Datenschutz- und Sicherheitspruefung erstellen.
 
 ## v1.9.3 - Synchronisationsprotokoll und Mock-Sync
 

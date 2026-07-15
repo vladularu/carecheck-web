@@ -5,18 +5,15 @@ import type {
 } from "../../types/index";
 import type { PlanningTemplate } from "../planning/planningComfortService";
 import type { FairnessTeamMemberDraft } from "../storage/fairnessTeamStorage";
+import {
+  getExcludedLocalDataForPortabilityExport,
+  getIncludedLocalDataForPortabilityExport,
+  type ExcludedLocalDataCategory,
+  type LocalDataCategory,
+} from "../security/dataProtectionRegistry";
 
 const CURRENT_PORTABILITY_EXPORT_VERSION =
   1 as const;
-
-interface LocalDataCategory {
-  key: string;
-  name: string;
-}
-
-interface ExcludedLocalDataCategory extends LocalDataCategory {
-  reason: string;
-}
 
 export interface CareCheckPortabilityExport {
   app: "CareCheck TVoeD";
@@ -46,35 +43,11 @@ interface CreatePortabilityExportInput {
 }
 
 const includedLocalData: LocalDataCategory[] = [
-  {
-    key: "carecheck.profile",
-    name: "Profil",
-  },
-  {
-    key: "carecheck.shifts",
-    name: "Dienste",
-  },
-  {
-    key: "carecheck.shiftTemplates",
-    name: "Dienstvorlagen",
-  },
-  {
-    key: "carecheck.planningTemplates.v1",
-    name: "Planungsvorlagen",
-  },
-  {
-    key: "carecheck.fairnessTeam.v1",
-    name: "Fairness-Teamdaten",
-  },
+  ...getIncludedLocalDataForPortabilityExport(),
 ];
 
 const excludedLocalData: ExcludedLocalDataCategory[] = [
-  {
-    key: "carecheck.syncMetadata.v1",
-    name: "Sync-Metadaten",
-    reason:
-      "Geraetespezifische technische Revisionen; kein fachlicher Portabilitaetsinhalt.",
-  },
+  ...getExcludedLocalDataForPortabilityExport(),
 ];
 
 function createExportFileName(): string {

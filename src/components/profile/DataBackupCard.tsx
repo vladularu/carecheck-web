@@ -67,7 +67,7 @@ export default function DataBackupCard() {
   function handleDeleteAllLocalData() {
     const shouldDelete =
       window.confirm(
-        "Alle lokal gespeicherten CareCheck-Daten werden gelöscht: Profil, Dienste, Vorlagen, Planung, Fairness-Team und Sync-Metadaten. Jetzt wirklich lokal löschen?",
+        "Alle lokal gespeicherten CareCheck-Daten werden gelöscht: Profil, Dienste, Vorlagen, Planung, Fairness-Team, Sync-Metadaten, Änderungswarteschlange und technische Migration-Sicherungen. Jetzt wirklich lokal löschen?",
       );
 
     if (!shouldDelete) {
@@ -265,9 +265,11 @@ export default function DataBackupCard() {
       )}
 
       <p className="profile-helper">
-        Datenexport ist maschinenlesbar und
-        schliesst geraetespezifische
-        Sync-Metadaten aus.
+        Datenexport ist maschinenlesbar, kann
+        sensible Dienst-, Krankheits- und
+        Notizdaten enthalten und schliesst
+        technische Sync-, Queue- und
+        Migration-Daten aus.
       </p>
 
       <p className="profile-helper">
