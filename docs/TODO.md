@@ -119,7 +119,7 @@
 - [x] Repository-Interfaces fuer lokale Persistenzgrenzen einfuehren.
 - [x] Local-Storage-Adapter hinter Repository-Schicht kapseln.
 - [x] AppContext, Planer, Fairness und Profil-Datenkarte von konkreten Storage-Imports entkoppeln.
-- [ ] Einheitliches technisches Domain-Grundmodell je relevanter Entitaet definieren.
+- [x] Einheitliches technisches Domain-Grundmodell je relevanter Entitaet definieren.
 - [ ] Migration vorhandener lokaler Daten deterministisch vorbereiten.
 - [ ] Backup-Version 3 vorbereiten und Rueckwaertskompatibilitaet zu Backup v1/v2 erhalten.
 - [ ] Beschaedigte Datensaetze beim Import isolieren statt gesamten Import abzubrechen.

@@ -29,11 +29,38 @@ Die erste Repository-Grenze umfasst:
 
 Diese Schicht ist bewusst klein gehalten. Sie veraendert keine Fachberechnung und keine Backup-Version. Spaetere Schritte koennen hier Domain-Metadaten, Migration, IndexedDB und Mock-Sync anhaengen.
 
+## Technisches Domain-Grundmodell
+
+`domainModel.ts` definiert eine additive technische Huelle fuer relevante Fachdaten. Sie beschreibt:
+
+- stabile ID
+- Schema-Version
+- Erstellungszeitpunkt
+- Aenderungszeitpunkt
+- Revision
+- Datenherkunft
+- optionalen Loeschzeitpunkt
+- kuenftige Benutzerzuordnung
+- kuenftige Geraetezuordnung
+- Konfliktstatus
+
+Abgedeckte Domaenen:
+
+- Profil
+- Dienste
+- Dienstvorlagen
+- Planungsvorlagen
+- Fairness-Teamdaten
+- Tarifkonfiguration
+- Pruefprofil
+- App-Einstellungen
+
+Das Modell ist noch keine Migration. Bestehende Fachdaten bleiben unveraendert gespeichert, bis der deterministische Migrationsschritt und Backup-Version 3 umgesetzt sind.
+
 ## Abgrenzung
 
 Noch nicht umgesetzt:
 
-- einheitliches technisches Domain-Grundmodell direkt in allen Fachentitaeten
 - Migration vorhandener lokaler Daten in dieses Modell
 - Backup-Version 3
 - IndexedDB-Adapter
