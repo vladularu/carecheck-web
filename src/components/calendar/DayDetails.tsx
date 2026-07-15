@@ -96,7 +96,7 @@ export default function DayDetails({
   return (
     <Card className="day-details">
       <div className="day-details-header">
-        <span>Tagesdetails</span>
+        <span>Tag</span>
 
         <strong>{formatDateGerman(dateKey)}</strong>
 
@@ -214,6 +214,7 @@ export default function DayDetails({
                       <Button
                         type="button"
                         variant="danger"
+                        className="day-details-delete-button"
                         onClick={() => onDeleteShift(shift.id)}
                       >
                         Löschen
@@ -231,6 +232,8 @@ export default function DayDetails({
         <Button
           type="button"
           variant="secondary"
+          className="day-details-add-button"
+          aria-label={showForm ? "Formular schliessen" : "Dienst hinzufuegen"}
           onClick={() => {
             setEditingShiftId(null);
 

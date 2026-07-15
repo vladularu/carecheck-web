@@ -1,38 +1,75 @@
-import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-const primaryItems = [
-  { to: "/", label: "Start", shortLabel: "Start" },
-  { to: "/plan", label: "Plan", shortLabel: "Plan" },
-  { to: "/kalender", label: "Kalender", shortLabel: "Kal." },
-  { to: "/pruefung", label: "Prüfung", shortLabel: "Check" },
+type NavigationIconName =
+  | "overview"
+  | "calendar"
+  | "analytics"
+  | "profile";
+
+interface NavigationItem {
+  to: string;
+  label: string;
+  icon: NavigationIconName;
+  matches: string[];
+}
+
+const primaryItems: NavigationItem[] = [
+  {
+    to: "/",
+    label: "Uebersicht",
+    icon: "overview",
+    matches: ["/"],
+  },
+  {
+    to: "/kalender",
+    label: "Kalender",
+    icon: "calendar",
+    matches: ["/kalender"],
+  },
+  {
+    to: "/pruefung",
+    label: "Auswertung",
+    icon: "analytics",
+    matches: [
+      "/pruefung",
+      "/bericht",
+      "/gehalt",
+      "/jahr",
+      "/fairness",
+    ],
+  },
+  {
+    to: "/profil",
+    label: "Profil",
+    icon: "profile",
+    matches: ["/profil"],
+  },
 ];
 
-const secondaryItems = [
-  { to: "/bericht", label: "Bericht" },
-  { to: "/gehalt", label: "Gehalt" },
-  { to: "/jahr", label: "Jahr" },
-  { to: "/fairness", label: "Fairness" },
-  { to: "/profil", label: "Profil" },
-];
-
-function isCurrentPath(pathname: string, to: string): boolean {
+function isCurrentPath(
+  pathname: string,
+  to: string,
+): boolean {
   return to === "/"
     ? pathname === "/"
     : pathname.startsWith(to);
 }
 
+function NavigationIcon({
+  name,
+}: {
+  name: NavigationIconName;
+}) {
+  return (
+    <span
+      className={`bottom-nav-icon bottom-nav-icon-${name}`}
+      aria-hidden="true"
+    />
+  );
+}
+
 export default function BottomNavigation() {
   const location = useLocation();
-  const [isMoreOpen, setIsMoreOpen] =
-    useState(false);
-  const isSecondaryActive = secondaryItems.some(
-    (item) => isCurrentPath(location.pathname, item.to),
-  );
-
-  function closeMoreMenu() {
-    setIsMoreOpen(false);
-  }
 
   return (
     <nav
@@ -40,62 +77,34 @@ export default function BottomNavigation() {
       aria-label="Hauptnavigation"
     >
       <div className="bottom-nav-primary">
-        {primaryItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === "/"}
-            className={({ isActive }) =>
-              isActive
-                ? "bottom-nav-link active"
-                : "bottom-nav-link"
-            }
-            onClick={closeMoreMenu}
-            aria-label={item.label}
-          >
-            <span>{item.shortLabel}</span>
-          </NavLink>
-        ))}
+        {primaryItems.map((item) => {
+          const isSectionActive =
+            item.matches.some((match) =>
+              isCurrentPath(
+                location.pathname,
+                match,
+              ),
+            );
 
-        <button
-          className={
-            isMoreOpen || isSecondaryActive
-              ? "bottom-nav-link bottom-nav-more-button active"
-              : "bottom-nav-link bottom-nav-more-button"
-          }
-          type="button"
-          aria-expanded={isMoreOpen}
-          aria-controls="bottom-nav-more"
-          onClick={() =>
-            setIsMoreOpen((current) => !current)
-          }
-        >
-          <span>Mehr</span>
-        </button>
-      </div>
-
-      <div
-        className={
-          isMoreOpen
-            ? "bottom-nav-more-panel open"
-            : "bottom-nav-more-panel"
-        }
-        id="bottom-nav-more"
-      >
-        {secondaryItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            className={({ isActive }) =>
-              isActive
-                ? "bottom-nav-link active"
-                : "bottom-nav-link"
-            }
-            onClick={closeMoreMenu}
-          >
-            <span>{item.label}</span>
-          </NavLink>
-        ))}
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === "/"}
+              className={({ isActive }) =>
+                isActive || isSectionActive
+                  ? "bottom-nav-link active"
+                  : "bottom-nav-link"
+              }
+              aria-label={item.label}
+            >
+              <NavigationIcon
+                name={item.icon}
+              />
+              <span>{item.label}</span>
+            </NavLink>
+          );
+        })}
       </div>
     </nav>
   );
