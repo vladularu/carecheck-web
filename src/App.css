@@ -10588,6 +10588,10 @@ button[type="submit"] {
   .no-print,
   nav,
   button,
+  input,
+  select,
+  textarea,
+  [role="tooltip"],
   .bottom-nav,
   .sidebar,
   .mobile-header,
@@ -10616,6 +10620,19 @@ button[type="submit"] {
     overflow: visible !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  .monthly-report-page .print-report,
+  .monthly-report-page .print-report * {
+    max-height: none !important;
+    position: static !important;
+    transform: none !important;
+  }
+
+  .monthly-report-page .print-report *,
+  .monthly-report-page .print-report-table,
+  .monthly-report-page .print-report-calendar {
+    overflow: visible !important;
   }
 
   .print-report-header {
