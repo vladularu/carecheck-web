@@ -264,6 +264,8 @@ Die folgenden Pre-Releases sind Empfehlungen fuer sichere Testfenster. Sie erset
 
 Empfohlen nach Abschluss von Repository-Schicht, Domain-Grundmodell, deterministischer Migration und Backup-v3-Vorbereitung.
 
+Status v1.9.0: Gate erfuellt. Ein Alpha-Release bleibt optional und wurde nicht erstellt.
+
 Ziel:
 
 - lokale Daten bleiben erhalten
@@ -273,7 +275,9 @@ Ziel:
 
 ### v1.9.0-beta.1: Lokale Datenmigration
 
-Empfohlen nach erfolgreichen Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen, geloeschte Datensaetze und wiederholte Migration.
+Empfohlen nach erfolgreichen Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen, aktive Entitaeten ohne Tombstone und wiederholte Migration.
+
+Status v1.9.0: Gate erfuellt. Ein Beta-Release bleibt optional und wurde nicht erstellt.
 
 Ziel:
 

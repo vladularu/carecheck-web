@@ -18,6 +18,7 @@
 - Backup v1/v2 bleiben importierbar und ueberschreiben keine v3-Datenbereiche.
 - Beschaedigte Backup-Eintraege werden beim Import isoliert und als Warnungen ausgewiesen.
 - Migrationstests fuer alte Profile, alte Dienste, fehlende und doppelte IDs, Revisionswerte und wiederholte Migration ergaenzt.
+- Alpha- und Beta-Empfehlungsgates fuer v1.9.0 als erfuellt dokumentiert; es wurde kein Pre-Release erstellt.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 
 ## v1.8.0
