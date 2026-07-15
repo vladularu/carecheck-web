@@ -124,6 +124,8 @@
 - [ ] Backup-Version 3 vorbereiten und Rueckwaertskompatibilitaet zu Backup v1/v2 erhalten.
 - [ ] Beschaedigte Datensaetze beim Import isolieren statt gesamten Import abzubrechen.
 - [ ] Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen und wiederholte Migration ergaenzen.
+- [ ] Empfehlung: `v1.9.0-alpha.1` erst nach Domain-Grundmodell, Migration und Backup-v3-Vorbereitung erstellen.
+- [ ] Empfehlung: `v1.9.0-beta.1` erst nach gruenem Backup-v1/v2/v3-Roundtrip und Migrationstests erstellen.
 - [ ] v1.9.0 nach `main` uebernehmen.
 - [ ] Release-Tag und GitHub Release fuer `v1.9.0` erstellen.
 
@@ -133,6 +135,7 @@
 - [ ] lokale Aenderungswarteschlange vorbereiten.
 - [ ] Integritaetscheck und automatische Sicherung vor Migrationen entwerfen.
 - [ ] Fallback bei nicht verfuegbarer IndexedDB definieren.
+- [ ] Empfehlung: `v1.9.1-beta` erst nach Persistenz-Haertung und Adapter-unabhaengigem Backup/Restore erstellen.
 
 ## v1.9.2 - Datenschutz- und Sicherheitsgrundlage
 
@@ -140,6 +143,7 @@
 - [ ] Aufbewahrungsregeln und Bedrohungsmodell dokumentieren.
 - [ ] Schutz vor unbeabsichtigtem Export sensibler Daten pruefen.
 - [ ] Datenschutztexte als technische Vorlage vorbereiten.
+- [ ] Empfehlung: `v1.9.2-beta` erst nach Datenschutz- und Sicherheitspruefung erstellen.
 
 ## v1.9.3 - Synchronisationsprotokoll und Mock-Sync
 
@@ -147,3 +151,4 @@
 - [ ] deterministische Konfliktregeln je Datentyp festlegen.
 - [ ] Mock-Sync-Adapter fuer mehrere simulierte Geraete ergaenzen.
 - [ ] Contract Tests fuer Client und spaeteres Backend vorbereiten.
+- [ ] Empfehlung: `v1.9.3-beta` erst nach Mock-Sync- und Konflikttests erstellen.

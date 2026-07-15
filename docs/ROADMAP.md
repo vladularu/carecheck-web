@@ -256,6 +256,79 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - Offline-/Online-Konfliktbehandlung
 - moegliche native iOS-/Android-Strategie
 
+## Empfohlene Veroeffentlichungsphase
+
+Die folgenden Pre-Releases sind Empfehlungen fuer sichere Testfenster. Sie ersetzen keine fachlichen Meilensteine und werden erst erstellt, wenn die jeweiligen Release-Gates erfolgreich sind.
+
+### v1.9.0-alpha.1: Technischer Architekturstand
+
+Empfohlen nach Abschluss von Repository-Schicht, Domain-Grundmodell, deterministischer Migration und Backup-v3-Vorbereitung.
+
+Ziel:
+
+- lokale Daten bleiben erhalten
+- alte Backups bleiben importierbar
+- Statistik-, Tarif-, Export- und Compliance-Ergebnisse bleiben unveraendert
+- keine Cloud-, Konto- oder Sync-Abhaengigkeit
+
+### v1.9.0-beta.1: Lokale Datenmigration
+
+Empfohlen nach erfolgreichen Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen, geloeschte Datensaetze und wiederholte Migration.
+
+Ziel:
+
+- echte lokale Testgeraete koennen ohne Datenverlust migrieren
+- Backup-v1/v2/v3-Roundtrip ist gruen
+- beschaedigte Datensaetze werden isoliert statt den gesamten Import abzubrechen
+
+### v1.9.1-beta: Robuste lokale Persistenz
+
+Empfohlen nach IndexedDB-Adapter, Integritaetscheck, automatischer Sicherung vor Migrationen und Fallback bei nicht verfuegbarer IndexedDB.
+
+Ziel:
+
+- groessere Jahresdatenbestaende bleiben performant
+- unterbrochene Schreib- oder Migrationsvorgaenge beschaedigen nicht den gesamten Datenbestand
+- Backup und Restore funktionieren unabhaengig vom Speicheradapter
+
+### v1.9.2-beta: Datenschutz- und Sicherheitspruefung
+
+Empfohlen nach Dateninventar, Aufbewahrungsregeln, Bedrohungsmodell, Export-/Loeschpruefung und Kontrolle, dass keine Secrets oder Backend-Schluessel im Frontend liegen.
+
+Ziel:
+
+- Nutzer koennen Daten vollstaendig exportieren und lokal loeschen
+- sensible Datenklassen sind dokumentiert
+- Datenschutztexte liegen als technische Vorlage vor
+
+### v1.9.3-beta: Mock-Sync und Konfliktverhalten
+
+Empfohlen nach Mock-Sync, Outbox, Tombstones, Deduplizierung und deterministischen Konfliktregeln.
+
+Ziel:
+
+- mehrere simulierte Geraete koennen Daten austauschen
+- wiederholte Uebertragung erzeugt keine Duplikate
+- Konflikte veraendern keine Arbeitszeit- oder Compliance-Ergebnisse unbemerkt
+
+### v2.0.0-alpha.1 bis v2.0.0-rc.1
+
+- `v2.0.0-alpha.1`: Backend und Benutzerkonten fuer interne technische Tests
+- `v2.0.0-alpha.2`: reale Synchronisationsengine fuer kontrollierte Mehrgeraete-Tests
+- `v2.0.0-beta.1`: Mehrgeraete-UX fuer ausgewaehlte Tester
+- `v2.0.0-rc.1`: Sicherheits-, Migrations- und Release-Audit vor stabilem Release
+
+### Release-Gates fuer jede Alpha, Beta und RC
+
+- ESLint erfolgreich
+- alle Unit-, Integrations- und relevanten Contract Tests erfolgreich
+- Produktions-Build erfolgreich
+- Backup, Restore und Migration erfolgreich
+- keine bekannten Datenverlustfehler
+- keine Aenderung an Statistik-, Tarif-, Export- oder Compliance-Ergebnissen ohne dokumentierte fachliche Entscheidung
+- Changelog, Roadmap und Audit-Dokumente aktualisiert
+- GitHub Release als Pre-release markieren, solange es Alpha, Beta oder RC ist
+
 ## Spaetere Vision
 
 - Einrichtungen und Teams

@@ -11,6 +11,7 @@
 - Separaten Portabilitaets-Export fuer Profil, Dienste, Vorlagen, Planung und Fairness ergaenzt.
 - Repository-Interfaces und lokale Adapter fuer die erste Persistenzabstraktion ergaenzt.
 - AppContext, Planer, Fairness und Profil-Datenkarte von konkreten Storage-Imports entkoppelt.
+- Empfohlene Alpha-, Beta- und RC-Veroeffentlichungsphase mit Release-Gates in der Roadmap dokumentiert.
 - Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert gelassen.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 
