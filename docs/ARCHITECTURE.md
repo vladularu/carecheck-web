@@ -55,7 +55,7 @@ Abgedeckte Domaenen:
 - Pruefprofil
 - App-Einstellungen
 
-Das Modell ist noch keine Migration. Bestehende Fachdaten bleiben unveraendert gespeichert, bis der deterministische Migrationsschritt und Backup-Version 3 umgesetzt sind.
+Das Modell ist noch keine produktive Migration. Bestehende Fachdaten bleiben unveraendert gespeichert; die deterministische Migration wird derzeit fuer Export-, Backup- und spaetere Sync-Grenzen vorbereitet.
 
 ## Migrationsvorbereitung
 
@@ -67,13 +67,27 @@ Das Modell ist noch keine Migration. Bestehende Fachdaten bleiben unveraendert g
 - Migrationswarnungen dokumentieren fehlende oder doppelte IDs
 - der Service schreibt keine Daten zurueck
 
-Damit kann Backup-Version 3 spaeter auf einem pruefbaren Domain-Snapshot aufbauen, ohne die aktuelle lokale Speicherung sofort umzubauen.
+Damit kann Backup-Version 3 auf einem pruefbaren Domain-Snapshot aufbauen, ohne die aktuelle lokale Speicherung sofort umzubauen.
+
+## Backup-Version 3
+
+Backup-Version 3 transportiert weiterhin die fachlichen CareCheck-Daten und bleibt rueckwaertskompatibel zu Backup v1 und v2.
+
+Enthalten sind:
+
+- Profil
+- Dienste
+- Dienstvorlagen
+- Planungsvorlagen
+- Fairness-Teamdaten
+- deterministisch erzeugter Domain-Snapshot
+
+Geraetespezifische Sync-Metadaten bleiben bewusst ausserhalb des Backups. Beim Restore alter v1/v2-Backups werden nur die alten Datenbereiche ersetzt; v3-Datenbereiche wie Planungsvorlagen und Fairness-Teamdaten werden dadurch nicht geloescht.
 
 ## Abgrenzung
 
 Noch nicht umgesetzt:
 
 - produktive Migration vorhandener lokaler Daten in dieses Modell
-- Backup-Version 3
 - IndexedDB-Adapter
 - Mock-Sync oder Cloud-Sync

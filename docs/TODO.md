@@ -110,8 +110,8 @@
 - [x] Lokale Revisionen, Soft-Delete- und Konfliktfelder vorbereiten.
 - [x] Profil-, Dienst- und Dienstvorlagen-Aenderungen lokal markieren.
 - [x] Planungsvorlagen und Fairness-Teamdaten lokal markieren.
-- [x] Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert lassen.
-- [x] Sync-Metadaten bewusst aus Backup-Version 2 heraushalten.
+- [x] Backup-Version 2 waehrend der Sync-Metadaten-Vorbereitung unveraendert lassen.
+- [x] Sync-Metadaten bewusst aus Backups heraushalten.
 - [x] Regressionstests fuer Sync-Metadaten ergaenzen.
 - [x] Datenschutz- und Loeschkonzept fachlich ausarbeiten.
 - [x] UI fuer vollstaendiges lokales Loeschen entwerfen und umsetzen.
@@ -121,7 +121,7 @@
 - [x] AppContext, Planer, Fairness und Profil-Datenkarte von konkreten Storage-Imports entkoppeln.
 - [x] Einheitliches technisches Domain-Grundmodell je relevanter Entitaet definieren.
 - [x] Migration vorhandener lokaler Daten deterministisch vorbereiten.
-- [ ] Backup-Version 3 vorbereiten und Rueckwaertskompatibilitaet zu Backup v1/v2 erhalten.
+- [x] Backup-Version 3 vorbereiten und Rueckwaertskompatibilitaet zu Backup v1/v2 erhalten.
 - [ ] Beschaedigte Datensaetze beim Import isolieren statt gesamten Import abzubrechen.
 - [ ] Migrationstests fuer alte Profile, alte Dienste, doppelte IDs, fehlende IDs, ungueltige Revisionen und wiederholte Migration ergaenzen.
 - [ ] Empfehlung: `v1.9.0-alpha.1` erst nach Domain-Grundmodell, Migration und Backup-v3-Vorbereitung erstellen.

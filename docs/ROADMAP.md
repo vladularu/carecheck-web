@@ -175,7 +175,7 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - Planungsvorlagen und Fairness-Teamdaten lokal revisionieren
 - Backup-/Restore-Kompatibilitaet bewahren
 - Datenschutz- und Loeschkonzept fachlich vorbereiten
-- Sync-Metadaten bleiben in v1.9.0 geraete-lokal und ausserhalb von Backup-Version 2
+- Sync-Metadaten bleiben in v1.9.0 geraete-lokal und ausserhalb der Backups
 - vollstaendiges lokales Loeschen in der Profil-UI absichern
 - vollstaendigen lokalen Portabilitaets-Export bereitstellen
 - Repository-Interfaces fuer Profil, Dienste, Dienstvorlagen, Planungsvorlagen, Fairness-Team und App-Daten einfuehren

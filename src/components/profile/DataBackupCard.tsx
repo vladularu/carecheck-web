@@ -37,6 +37,10 @@ export default function DataBackupCard() {
       profile,
       shifts,
       shiftTemplates,
+      planningTemplates:
+        localPlanningTemplateRepository.loadAll(),
+      fairnessTeamMembers:
+        localFairnessTeamRepository.loadAll(),
     });
 
     setMessage(
@@ -111,7 +115,7 @@ export default function DataBackupCard() {
 
       const shouldRestore =
         window.confirm(
-          "Dieses Backup ersetzt dein aktuelles Profil, deine Dienste und deine Dienstvorlagen. Fortfahren?",
+          "Dieses Backup ersetzt dein aktuelles Profil, deine Dienste und deine Dienstvorlagen. Backup v3 ersetzt zusaetzlich Planungsvorlagen und Fairness-Teamdaten. Fortfahren?",
         );
 
       if (!shouldRestore) {
@@ -159,12 +163,11 @@ export default function DataBackupCard() {
 
         <p>
           Sichere Profil, Dienste,
-          Zeitgutschriften und Dienstvorlagen als
-          Backup-Datei. Der Datenexport enthaelt
-          zusaetzlich Planungsvorlagen und
-          Fairness-Teamdaten. Alte Backups der
-          Version 1 können weiterhin importiert
-          werden.
+          Zeitgutschriften, Dienstvorlagen,
+          Planungsvorlagen und Fairness-Teamdaten
+          als Backup v3. Alte Backups der
+          Versionen 1 und 2 koennen weiterhin
+          importiert werden.
         </p>
       </div>
 
@@ -181,8 +184,7 @@ export default function DataBackupCard() {
           <span>Backup enthält</span>
 
           <strong>
-            Profil · Einträge · Gutschriften ·
-            Vorlagen
+            Profil · Eintraege · Vorlagen · Planung
           </strong>
         </div>
       </div>

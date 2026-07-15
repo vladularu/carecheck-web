@@ -1,17 +1,61 @@
 import {
+  afterEach,
+  beforeEach,
   describe,
   expect,
   it,
+  vi,
 } from "vitest";
 import type {
   Shift,
   ShiftTemplates,
   UserProfile,
 } from "../../types/index";
+import type { PlanningTemplate } from "../planning/planningComfortService";
+import {
+  loadFairnessTeamMembers,
+  saveFairnessTeamMembers,
+  type FairnessTeamMemberDraft,
+} from "../storage/fairnessTeamStorage";
+import {
+  loadPlanningTemplates,
+  savePlanningTemplates,
+} from "../storage/planningTemplateStorage";
 import {
   createCareCheckBackup,
   parseCareCheckBackup,
+  restoreCareCheckBackup,
 } from "./backupService";
+
+function createMemoryStorage(): Storage {
+  const values = new Map<string, string>();
+
+  return {
+    get length() {
+      return values.size;
+    },
+
+    clear() {
+      values.clear();
+    },
+
+    getItem(key: string) {
+      return values.get(key) ?? null;
+    },
+
+    key(index: number) {
+      return Array.from(values.keys())[index] ?? null;
+    },
+
+    removeItem(key: string) {
+      values.delete(key);
+    },
+
+    setItem(key: string, value: string) {
+      values.set(key, value);
+    },
+  };
+}
 
 const profile: UserProfile = {
   federalState: "HE",
@@ -36,12 +80,42 @@ const sickShift: Shift = {
   sourceShiftId: "night-1",
 };
 
-function createValidBackup(
+const planningTemplate: PlanningTemplate = {
+  id: "template-1",
+  name: "Nachtdienstfolge",
+  sourceMonthLabel: "Juli 2026",
+  createdAt: "2026-07-15T09:00:00.000Z",
+  entries: [
+    {
+      day: 15,
+      type: "NIGHT",
+      startTime: "21:00",
+      endTime: "06:00",
+      breakMinutes: 30,
+    },
+  ],
+};
+
+const fairnessMember: FairnessTeamMemberDraft = {
+  id: "member-1",
+  name: "Teammitglied",
+  weeklyHours: 38.5,
+  workHours: 154,
+  workShiftCount: 20,
+  nightShiftCount: 3,
+  weekendShiftCount: 4,
+  workedWeekendCount: 2,
+  holidayWorkShiftCount: 1,
+  maxConsecutiveWorkedWeekends: 1,
+};
+
+function createValidLegacyBackup(
+  backupVersion: 1 | 2 = 2,
   overrides: Record<string, unknown> = {},
 ) {
   return {
     app: "CareCheck TVöD",
-    backupVersion: 2,
+    backupVersion,
     exportedAt:
       "2026-07-14T10:00:00.000Z",
     profile,
@@ -51,21 +125,74 @@ function createValidBackup(
   };
 }
 
+function createValidV3Backup(
+  overrides: Record<string, unknown> = {},
+) {
+  return {
+    ...createCareCheckBackup({
+      profile,
+      shifts: [sickShift],
+      shiftTemplates,
+      planningTemplates: [
+        planningTemplate,
+      ],
+      fairnessTeamMembers: [
+        fairnessMember,
+      ],
+    }),
+    exportedAt:
+      "2026-07-14T10:00:00.000Z",
+    ...overrides,
+  };
+}
+
 describe("backupService", () => {
-  it("erstellt Backups der Version 2", () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      "localStorage",
+      createMemoryStorage(),
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("erstellt Backups der Version 3 mit Domain-Snapshot", () => {
     const backup =
       createCareCheckBackup({
         profile,
         shifts: [sickShift],
         shiftTemplates,
+        planningTemplates: [
+          planningTemplate,
+        ],
+        fairnessTeamMembers: [
+          fairnessMember,
+        ],
       });
 
     expect(
       backup.backupVersion,
-    ).toBe(2);
+    ).toBe(3);
+    expect(
+      backup.planningTemplates,
+    ).toEqual([planningTemplate]);
+    expect(
+      backup.fairnessTeamMembers,
+    ).toEqual([fairnessMember]);
+    expect(
+      backup.domainSnapshot.migratedAt,
+    ).toBe(backup.exportedAt);
+    expect(
+      backup.domainSnapshot.entities.shifts,
+    ).toHaveLength(1);
+    expect(
+      backup.domainSnapshot.entities.planningTemplates,
+    ).toHaveLength(1);
   });
 
-  it("erhält Krankstunden und Stundenquelle im Backup", () => {
+  it("erhaelt Krankstunden und Stundenquelle im Backup", () => {
     const backup =
       createCareCheckBackup({
         profile,
@@ -80,41 +207,60 @@ describe("backupService", () => {
 
   it("akzeptiert alte Backups der Version 1", () => {
     const parsed =
-      parseCareCheckBackup({
-        app: "CareCheck TVöD",
-        backupVersion: 1,
-        exportedAt:
-          "2026-07-14T10:00:00.000Z",
-        profile,
-        shifts: [
-          {
-            id: "vacation-1",
-            date: "2026-07-15",
-            startTime: "08:00",
-            endTime: "16:00",
-            breakMinutes: 30,
-            type: "VACATION",
-          },
-        ],
-        shiftTemplates,
-      });
+      parseCareCheckBackup(
+        createValidLegacyBackup(1, {
+          shifts: [
+            {
+              id: "vacation-1",
+              date: "2026-07-15",
+              startTime: "08:00",
+              endTime: "16:00",
+              breakMinutes: 30,
+              type: "VACATION",
+            },
+          ],
+        }),
+      );
 
     expect(
       parsed.backupVersion,
-    ).toBe(2);
-
+    ).toBe(3);
+    expect(
+      parsed.sourceBackupVersion,
+    ).toBe(1);
+    expect(
+      parsed.planningTemplates,
+    ).toEqual([]);
+    expect(
+      parsed.fairnessTeamMembers,
+    ).toEqual([]);
     expect(parsed.shifts).toHaveLength(
       1,
     );
   });
 
-  it("erhält bei einer Migration Profil und Exportdatum", () => {
+  it("akzeptiert Backups der Version 2 ohne v3-Datenbereiche", () => {
     const parsed =
-      parseCareCheckBackup({
-        ...createValidBackup({
-          backupVersion: 1,
-        }),
-      });
+      parseCareCheckBackup(
+        createValidLegacyBackup(2),
+      );
+
+    expect(
+      parsed.backupVersion,
+    ).toBe(3);
+    expect(
+      parsed.sourceBackupVersion,
+    ).toBe(2);
+    expect(
+      parsed.domainSnapshot.entities.planningTemplates,
+    ).toEqual([]);
+  });
+
+  it("erhaelt bei einer Migration Profil und Exportdatum", () => {
+    const parsed =
+      parseCareCheckBackup(
+        createValidLegacyBackup(1),
+      );
 
     expect(parsed.profile).toEqual(
       profile,
@@ -125,11 +271,11 @@ describe("backupService", () => {
     );
   });
 
-  it("weist nicht unterstützte zukünftige Backup-Versionen zurück", () => {
+  it("weist nicht unterstuetzte zukuenftige Backup-Versionen zurueck", () => {
     expect(() =>
       parseCareCheckBackup(
-        createValidBackup({
-          backupVersion: 3,
+        createValidV3Backup({
+          backupVersion: 4,
         }),
       ),
     ).toThrow(
@@ -137,10 +283,10 @@ describe("backupService", () => {
     );
   });
 
-  it("weist Backups mit ungültigem Profil zurück", () => {
+  it("weist Backups mit ungueltigem Profil zurueck", () => {
     expect(() =>
       parseCareCheckBackup(
-        createValidBackup({
+        createValidLegacyBackup(2, {
           profile: {
             federalState: "XX",
             weeklyHours: -5,
@@ -154,10 +300,10 @@ describe("backupService", () => {
     );
   });
 
-  it("weist Backups mit beschädigten Diensten zurück", () => {
+  it("weist Backups mit beschaedigten Diensten zurueck", () => {
     expect(() =>
       parseCareCheckBackup(
-        createValidBackup({
+        createValidLegacyBackup(2, {
           shifts: [
             {
               ...sickShift,
@@ -171,7 +317,75 @@ describe("backupService", () => {
     );
   });
 
-  it("weist fremde JSON-Dateien zurück", () => {
+  it("weist Backups der Version 3 mit ungueltigen Planungsvorlagen zurueck", () => {
+    expect(() =>
+      parseCareCheckBackup(
+        createValidV3Backup({
+          planningTemplates: [
+            {
+              ...planningTemplate,
+              entries: [
+                {
+                  ...planningTemplate.entries[0],
+                  day: 99,
+                },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toThrow(
+      "Die Datei ist kein gültiges CareCheck-Backup.",
+    );
+  });
+
+  it("stellt Backup-v3-Datenbereiche wieder her", () => {
+    const backup =
+      createCareCheckBackup({
+        profile,
+        shifts: [sickShift],
+        shiftTemplates,
+        planningTemplates: [
+          planningTemplate,
+        ],
+        fairnessTeamMembers: [
+          fairnessMember,
+        ],
+      });
+
+    restoreCareCheckBackup(backup);
+
+    expect(loadPlanningTemplates()).toEqual(
+      [planningTemplate],
+    );
+    expect(
+      loadFairnessTeamMembers(),
+    ).toEqual([fairnessMember]);
+  });
+
+  it("ueberschreibt bei altem Backup-v2-Restore keine v3-Datenbereiche", () => {
+    savePlanningTemplates([
+      planningTemplate,
+    ]);
+    saveFairnessTeamMembers([
+      fairnessMember,
+    ]);
+
+    restoreCareCheckBackup(
+      parseCareCheckBackup(
+        createValidLegacyBackup(2),
+      ),
+    );
+
+    expect(loadPlanningTemplates()).toEqual(
+      [planningTemplate],
+    );
+    expect(
+      loadFairnessTeamMembers(),
+    ).toEqual([fairnessMember]);
+  });
+
+  it("weist fremde JSON-Dateien zurueck", () => {
     expect(() =>
       parseCareCheckBackup({
         app: "Andere App",

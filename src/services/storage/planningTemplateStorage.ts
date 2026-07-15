@@ -26,7 +26,7 @@ function isRecord(
   );
 }
 
-function isPlanningTemplate(
+export function isPlanningTemplate(
   value: unknown,
 ): value is PlanningTemplate {
   if (!isRecord(value)) {

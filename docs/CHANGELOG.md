@@ -14,7 +14,8 @@
 - Empfohlene Alpha-, Beta- und RC-Veroeffentlichungsphase mit Release-Gates in der Roadmap dokumentiert.
 - Technisches Domain-Grundmodell fuer relevante Entitaeten definiert.
 - Deterministische Migration lokaler Legacy-Daten in Domain-Entitaeten vorbereitet.
-- Backup-Version 2 und bestehende Restore-Kompatibilitaet unveraendert gelassen.
+- Backup-Version 3 mit Planungsvorlagen, Fairness-Teamdaten und Domain-Snapshot vorbereitet.
+- Backup v1/v2 bleiben importierbar und ueberschreiben keine v3-Datenbereiche.
 - Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
 
 ## v1.8.0

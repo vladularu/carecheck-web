@@ -28,7 +28,7 @@ function isNonNegativeNumber(
   );
 }
 
-function isFairnessTeamMemberDraft(
+export function isFairnessTeamMemberDraft(
   value: unknown,
 ): value is FairnessTeamMemberDraft {
   if (!isRecord(value)) {

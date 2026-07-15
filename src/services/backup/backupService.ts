@@ -4,6 +4,20 @@ import type {
   UserProfile,
 } from "../../types/index";
 import {
+  migrateLegacyCareCheckData,
+  type DomainMigrationResult,
+} from "../domain/domainMigrationService";
+import type { PlanningTemplate } from "../planning/planningComfortService";
+import {
+  isFairnessTeamMemberDraft,
+  saveFairnessTeamMembers,
+  type FairnessTeamMemberDraft,
+} from "../storage/fairnessTeamStorage";
+import {
+  isPlanningTemplate,
+  savePlanningTemplates,
+} from "../storage/planningTemplateStorage";
+import {
   isUserProfile,
   saveProfile,
 } from "../storage/profileStorage";
@@ -13,30 +27,45 @@ import {
 } from "../storage/shiftStorage";
 import { saveShiftTemplates } from "../storage/shiftTemplateStorage";
 
-const CURRENT_BACKUP_VERSION = 2 as const;
+const CURRENT_BACKUP_VERSION = 3 as const;
+
+type SupportedBackupVersion =
+  | 1
+  | 2
+  | typeof CURRENT_BACKUP_VERSION;
 
 interface LegacyCareCheckBackup {
   app: "CareCheck TVöD";
-  backupVersion: 1;
+  backupVersion: 1 | 2;
   exportedAt: string;
   profile: UserProfile;
   shifts: Shift[];
   shiftTemplates: ShiftTemplates;
 }
 
-export interface CareCheckBackup {
+interface CareCheckBackupV3 {
   app: "CareCheck TVöD";
   backupVersion: typeof CURRENT_BACKUP_VERSION;
   exportedAt: string;
   profile: UserProfile;
   shifts: Shift[];
   shiftTemplates: ShiftTemplates;
+  planningTemplates: PlanningTemplate[];
+  fairnessTeamMembers: FairnessTeamMemberDraft[];
+  domainSnapshot: DomainMigrationResult;
+}
+
+export interface CareCheckBackup
+  extends CareCheckBackupV3 {
+  sourceBackupVersion?: SupportedBackupVersion;
 }
 
 interface CreateBackupInput {
   profile: UserProfile;
   shifts: Shift[];
   shiftTemplates: ShiftTemplates;
+  planningTemplates?: PlanningTemplate[];
+  fairnessTeamMembers?: FairnessTeamMemberDraft[];
 }
 
 function createBackupFileName(): string {
@@ -59,20 +88,24 @@ function isRecord(
 
 function isSupportedBackupVersion(
   value: unknown,
-): value is 1 | 2 {
-  return value === 1 || value === 2;
+): value is SupportedBackupVersion {
+  return (
+    value === 1 ||
+    value === 2 ||
+    value === CURRENT_BACKUP_VERSION
+  );
 }
 
 function isBackupStructure(
   value: unknown,
 ): value is
   | LegacyCareCheckBackup
-  | CareCheckBackup {
+  | CareCheckBackupV3 {
   if (!isRecord(value)) {
     return false;
   }
 
-  return (
+  const hasBaseStructure = (
     value.app === "CareCheck TVöD" &&
     isSupportedBackupVersion(
       value.backupVersion,
@@ -82,6 +115,59 @@ function isBackupStructure(
     Array.isArray(value.shifts) &&
     value.shifts.every(isShift) &&
     isRecord(value.shiftTemplates)
+  );
+
+  if (!hasBaseStructure) {
+    return false;
+  }
+
+  if (
+    value.backupVersion !==
+    CURRENT_BACKUP_VERSION
+  ) {
+    return true;
+  }
+
+  return (
+    Array.isArray(
+      value.planningTemplates,
+    ) &&
+    value.planningTemplates.every(
+      isPlanningTemplate,
+    ) &&
+    Array.isArray(
+      value.fairnessTeamMembers,
+    ) &&
+    value.fairnessTeamMembers.every(
+      isFairnessTeamMemberDraft,
+    ) &&
+    isRecord(value.domainSnapshot)
+  );
+}
+
+function createDomainSnapshot({
+  profile,
+  shifts,
+  shiftTemplates,
+  planningTemplates,
+  fairnessTeamMembers,
+  migratedAt,
+}: CreateBackupInput & {
+  migratedAt: string;
+}): DomainMigrationResult {
+  return migrateLegacyCareCheckData(
+    {
+      profile,
+      shifts,
+      shiftTemplates,
+      planningTemplates:
+        planningTemplates ?? [],
+      fairnessTeamMembers:
+        fairnessTeamMembers ?? [],
+    },
+    {
+      migratedAt,
+    },
   );
 }
 
@@ -103,15 +189,42 @@ export function parseCareCheckBackup(
     );
   }
 
+  const sourceBackupVersion =
+    value.backupVersion;
+  const planningTemplates =
+    sourceBackupVersion ===
+    CURRENT_BACKUP_VERSION
+      ? value.planningTemplates
+      : [];
+  const fairnessTeamMembers =
+    sourceBackupVersion ===
+    CURRENT_BACKUP_VERSION
+      ? value.fairnessTeamMembers
+      : [];
+  const domainSnapshot =
+    createDomainSnapshot({
+      profile: value.profile,
+      shifts: value.shifts,
+      shiftTemplates:
+        value.shiftTemplates,
+      planningTemplates,
+      fairnessTeamMembers,
+      migratedAt: value.exportedAt,
+    });
+
   return {
     app: "CareCheck TVöD",
     backupVersion:
       CURRENT_BACKUP_VERSION,
+    sourceBackupVersion,
     exportedAt: value.exportedAt,
     profile: value.profile,
     shifts: value.shifts,
     shiftTemplates:
       value.shiftTemplates,
+    planningTemplates,
+    fairnessTeamMembers,
+    domainSnapshot,
   };
 }
 
@@ -119,16 +232,32 @@ export function createCareCheckBackup({
   profile,
   shifts,
   shiftTemplates,
+  planningTemplates = [],
+  fairnessTeamMembers = [],
 }: CreateBackupInput): CareCheckBackup {
+  const exportedAt =
+    new Date().toISOString();
+  const domainSnapshot =
+    createDomainSnapshot({
+      profile,
+      shifts,
+      shiftTemplates,
+      planningTemplates,
+      fairnessTeamMembers,
+      migratedAt: exportedAt,
+    });
+
   return {
     app: "CareCheck TVöD",
     backupVersion:
       CURRENT_BACKUP_VERSION,
-    exportedAt:
-      new Date().toISOString(),
+    exportedAt,
     profile,
     shifts,
     shiftTemplates,
+    planningTemplates,
+    fairnessTeamMembers,
+    domainSnapshot,
   };
 }
 
@@ -215,4 +344,20 @@ export function restoreCareCheckBackup(
   saveShiftTemplates(
     backup.shiftTemplates,
   );
+
+  const sourceBackupVersion =
+    backup.sourceBackupVersion ??
+    backup.backupVersion;
+
+  if (
+    sourceBackupVersion ===
+    CURRENT_BACKUP_VERSION
+  ) {
+    savePlanningTemplates(
+      backup.planningTemplates,
+    );
+    saveFairnessTeamMembers(
+      backup.fairnessTeamMembers,
+    );
+  }
 }
