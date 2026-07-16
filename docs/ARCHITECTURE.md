@@ -126,6 +126,20 @@ Aus Nutzerexporten ausgeschlossen:
 
 Die Datenschutztext-Vorlage in `docs/V1.9.2_PRIVACY_TEXT_TEMPLATE.md` ist eine technische Vorlage und ersetzt keine fachliche oder rechtliche Pruefung.
 
+## Synchronisationsprotokoll und Mock-Sync
+
+v1.9.3 ergaenzt eine lokale Contract-Schicht fuer spaetere Synchronisierung, ohne bereits ein Backend, Benutzerkonten oder produktiven Cloud-Sync einzufuehren.
+
+Die Sync-Schicht liegt unter `src/services/sync` und umfasst:
+
+- `syncProtocol.ts` fuer Push-/Pull-Requests, Cursor, Remote-Changes, Outbox-Change-IDs und Tombstones
+- `syncConflictRules.ts` fuer deterministische Konfliktregeln je syncbarer Domaene
+- `mockSyncAdapter.ts` fuer einen In-Memory-Mock-Sync-Server mit mehreren simulierten Geraeten
+
+Das Protokoll nutzt monotone Cursor-Revisionen und stabile Change-IDs aus Device-ID und Outbox-Eintrag. Wiederholte Pushes werden dedupliziert. Delete-Changes werden als Tombstones transportiert. Stale Pushes gegen eine neuere Remote-Revision werden als `remote-newer` zurueckgewiesen.
+
+Die Mock-Schicht ist ein Test- und Vertragswerkzeug. Sie schreibt keine App-Daten produktiv um und aendert keine Statistik-, Tarif-, Export- oder Compliance-Berechnung.
+
 ## Abgrenzung
 
 Noch nicht umgesetzt:
@@ -134,4 +148,5 @@ Noch nicht umgesetzt:
 - produktive Umschaltung des AppContext auf IndexedDB
 - finale Datenschutzerklaerung oder Rechtspruefung
 - verschluesselte Backup-Dateien
-- Mock-Sync oder Cloud-Sync
+- produktive Cloud-Synchronisierung
+- Benutzerkonten, Backend und echte Mehrgeraete-Sitzungen

@@ -1,10 +1,10 @@
 # CareCheck - Master-Roadmap
 
-Stand: waehrend Entwicklung `v1.9.2`
+Stand: waehrend Entwicklung `v1.9.3`
 
-Aktuell stabil: `v1.9.1 - Lokale Datenintegritaet und IndexedDB`
+Aktuell stabil: `v1.9.2 - Datenschutz- und Sicherheitsgrundlage`
 
-Aktiver Entwicklungszweig: `feature/v1.9.2-privacy-security-foundation`
+Aktiver Entwicklungszweig: `feature/v1.9.3-mock-sync-protocol`
 
 ## Abgeschlossen
 
@@ -197,8 +197,6 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - Statistik-, Tarif-, Export- und Compliance-Logik unveraendert gelassen
 - Release-Tag und GitHub Release `v1.9.1` erstellt
 
-## In Entwicklung
-
 ### v1.9.2: Datenschutz- und Sicherheitsgrundlage
 
 - Dateninventar aller gespeicherten Informationen als technische Registry ergaenzt
@@ -211,14 +209,20 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - optionale verschluesselte Backup-Dateien als offene v2.x-Entscheidung dokumentiert
 - Datenschutztexte als technische Vorlage vorbereitet
 - Statistik-, Tarif-, Export- und Compliance-Logik unveraendert gelassen
+- Release-Tag und GitHub Release `v1.9.2` erstellt
+
+## In Entwicklung
 
 ### v1.9.3: Synchronisationsprotokoll und Mock-Sync
 
-- Sync-Protokoll mit Push, Pull, Cursor, Tombstones und Outbox definieren
-- idempotente Synchronisationsoperationen und Deduplizierung testen
-- deterministische Konfliktregeln je Datentyp festlegen
-- Mock-Sync-Server oder In-Memory-Adapter fuer mehrere simulierte Geraete ergaenzen
-- Contract Tests fuer Client und spaeteres Backend vorbereiten
+- versioniertes Sync-Protokoll mit Push, Pull, Cursor, Tombstones und Outbox definiert
+- idempotente Synchronisationsoperationen und Change-ID-Deduplizierung getestet
+- deterministische Konfliktregeln je Datentyp festgelegt
+- In-Memory-Mock-Sync-Server fuer mehrere simulierte Geraete ergaenzt
+- Contract Tests fuer Client und spaeteres Backend vorbereitet
+- keine Benutzerkonten, kein Backend und keine Cloud-Synchronisierung eingefuehrt
+- Statistik-, Tarif-, Export- und Compliance-Logik unveraendert gelassen
+- Empfehlung: `v1.9.3-beta` erst nach gruenem Mock-Sync-, Konflikt- und Contract-Testfenster erstellen
 
 ## Langfristige Produktreife
 

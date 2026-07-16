@@ -16,19 +16,17 @@ The app focuses on practical month-by-month workflows:
 
 ## Current Release
 
-Latest tagged release: `v1.7.0`
+Latest tagged release: `v1.9.2`
+
+Active development: `v1.9.3 - Synchronisationsprotokoll und Mock-Sync`
 
 Release focus:
 
-- comfort planning directly in the shift planner
-- recurring shift sequences based on existing shift templates
-- local monthly templates that can be applied to other months
-- day-level copy and move workflow
-- optional CSV import for existing schedules
-- conflict preview for occupied days, duplicates, and time overlaps
-- shift-list search and type filtering
-- iPhone-first planning tools while preserving the classic desktop overview
-- statistics, tariff, and compliance calculation logic unchanged
+- local privacy and security foundation
+- explicit local data inventory and export scope guards
+- technical sync metadata and local queue excluded from user exports
+- v1.9.3 prepares protocol contracts for later multi-device sync without accounts, backend, or cloud sync
+- statistics, tariff, export, and compliance calculation logic unchanged
 
 ## Tech Stack
 
@@ -110,7 +108,7 @@ src/
   context/        App-wide state and persistence wiring
   data/           Demo data and default shift templates
   pages/          Route-level views
-  services/       Calculation, compliance, export, storage, tariff, holiday logic
+  services/       Calculation, compliance, export, storage, sync, tariff, holiday logic
   styles/         Responsive foundation
   types/          Shared domain types
 docs/
@@ -118,6 +116,10 @@ docs/
   CARECHECK_DESIGN_GUIDE.md
   ROADMAP.md
   TODO.md
+  V1.9.3_MOCK_SYNC_PROTOCOL_AUDIT.md
+  V1.9.2_PRIVACY_SECURITY_FOUNDATION.md
+  V1.9.1_LOCAL_INTEGRITY_INDEXEDDB_AUDIT.md
+  V1.9.0_SYNC_PREP_AUDIT.md
   V1.7.0_PLANNING_COMFORT_AUDIT.md
   V1.6.0_FAIRNESS_AUDIT.md
   V1.5.0_RULE_TRANSPARENCY_AUDIT.md
@@ -153,17 +155,17 @@ npm.cmd run build
 6. Tag the release, for example:
 
 ```powershell
-git tag -a v1.7.0 -m "Release v1.7.0 Planung und Komfort"
-git push origin v1.7.0
+git tag -a v1.9.3 -m "Release v1.9.3 Mock-Sync Protocol"
+git push origin v1.9.3
 ```
 
 7. Create a GitHub Release from the tag.
 
-For the current release, use:
+For a future v1.9.3 release after validation, use:
 
 ```powershell
-git tag -a v1.7.0 -m "Release v1.7.0 Planung und Komfort"
-git push origin v1.7.0
+git tag -a v1.9.3 -m "Release v1.9.3 Mock-Sync Protocol"
+git push origin v1.9.3
 ```
 
 ## Deployment
