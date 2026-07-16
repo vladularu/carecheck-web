@@ -1,6 +1,17 @@
 # Changelog
 
-## v1.9.2 - in Entwicklung
+## v1.9.3 - in Entwicklung
+
+- Versioniertes Sync-Protokoll mit Push, Pull, Cursor, Outbox-Changes und Tombstones definiert.
+- Deterministische Konfliktregeln fuer Profil, Dienste, Dienstvorlagen, Planungsvorlagen und Fairness-Teamdaten ergaenzt.
+- In-Memory-Mock-Sync-Server fuer mehrere simulierte Geraete vorbereitet.
+- Idempotente Push-Operationen mit Change-ID-Deduplizierung getestet.
+- Stale-Write-Konflikte gegen neuere Remote-Revisionen als Contract-Verhalten abgesichert.
+- Contract Tests fuer Protokoll, Konfliktregeln und Mock-Sync ergaenzt.
+- Keine Benutzerkonten, kein Backend und keine Cloud-Synchronisierung eingefuehrt.
+- Statistik-, Tarif-, Export- und Compliance-Berechnungslogik unveraendert gelassen.
+
+## v1.9.2
 
 - Zentrales Datenschutz-Dateninventar fuer lokale CareCheck-Speicherbereiche ergaenzt.
 - Datenklassen fuer Profil, Dienste, Abwesenheiten, Vorlagen, Fairness und technische Metadaten dokumentiert.

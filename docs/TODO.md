@@ -147,8 +147,8 @@
 
 ## v1.9.3 - Synchronisationsprotokoll und Mock-Sync
 
-- [ ] Sync-Protokoll mit Push, Pull, Cursor, Tombstones und Outbox definieren.
-- [ ] deterministische Konfliktregeln je Datentyp festlegen.
-- [ ] Mock-Sync-Adapter fuer mehrere simulierte Geraete ergaenzen.
-- [ ] Contract Tests fuer Client und spaeteres Backend vorbereiten.
-- [ ] Empfehlung: `v1.9.3-beta` erst nach Mock-Sync- und Konflikttests erstellen.
+- [x] Sync-Protokoll mit Push, Pull, Cursor, Tombstones und Outbox definieren.
+- [x] deterministische Konfliktregeln je Datentyp festlegen.
+- [x] Mock-Sync-Adapter fuer mehrere simulierte Geraete ergaenzen.
+- [x] Contract Tests fuer Client und spaeteres Backend vorbereiten.
+- [x] Empfehlung: `v1.9.3-beta` erst nach Mock-Sync- und Konflikttests erstellen.
