@@ -14,8 +14,8 @@ CareCheck TVoeD ist eine lokale React-App fuer Dienstplanung, Arbeitszeitpruefun
 
 ## Aktueller Stand
 
-- Stabiler Release-Stand: `v1.9.2 - Datenschutz- und Sicherheitsgrundlage`
-- Aktiver Entwicklungszweig: `feature/v1.9.3-mock-sync-protocol`
+- Stabiler Release-Stand: `v1.9.3 - Synchronisationsprotokoll und Mock-Sync`
+- Naechster geplanter Meilenstein: `v2.0.0-alpha.1 - Backend und Benutzerkonten`
 
 ## Fachliche Leitplanken
 

@@ -16,16 +16,16 @@ The app focuses on practical month-by-month workflows:
 
 ## Current Release
 
-Latest tagged release: `v1.9.2`
+Latest tagged release: `v1.9.3`
 
-Active development: `v1.9.3 - Synchronisationsprotokoll und Mock-Sync`
+Next planned milestone: `v2.0.0-alpha.1 - Backend und Benutzerkonten`
 
 Release focus:
 
 - local privacy and security foundation
 - explicit local data inventory and export scope guards
 - technical sync metadata and local queue excluded from user exports
-- v1.9.3 prepares protocol contracts for later multi-device sync without accounts, backend, or cloud sync
+- protocol contracts for later multi-device sync without accounts, backend, or cloud sync
 - statistics, tariff, export, and compliance calculation logic unchanged
 
 ## Tech Stack
@@ -161,7 +161,7 @@ git push origin v1.9.3
 
 7. Create a GitHub Release from the tag.
 
-For a future v1.9.3 release after validation, use:
+For this release, use:
 
 ```powershell
 git tag -a v1.9.3 -m "Release v1.9.3 Mock-Sync Protocol"

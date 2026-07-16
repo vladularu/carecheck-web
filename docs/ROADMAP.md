@@ -1,10 +1,10 @@
 # CareCheck - Master-Roadmap
 
-Stand: waehrend Entwicklung `v1.9.3`
+Stand: nach Release `v1.9.3`
 
-Aktuell stabil: `v1.9.2 - Datenschutz- und Sicherheitsgrundlage`
+Aktuell stabil: `v1.9.3 - Synchronisationsprotokoll und Mock-Sync`
 
-Aktiver Entwicklungszweig: `feature/v1.9.3-mock-sync-protocol`
+Naechster geplanter Meilenstein: `v2.0.0-alpha.1 - Backend und Benutzerkonten`
 
 ## Abgeschlossen
 
@@ -223,6 +223,7 @@ Ziel: eine sauberere, demo-taugliche und primaer iPhone-orientierte Produktoberf
 - keine Benutzerkonten, kein Backend und keine Cloud-Synchronisierung eingefuehrt
 - Statistik-, Tarif-, Export- und Compliance-Logik unveraendert gelassen
 - Empfehlung: `v1.9.3-beta` erst nach gruenem Mock-Sync-, Konflikt- und Contract-Testfenster erstellen
+- Release-Tag und GitHub Release `v1.9.3` erstellt
 
 ## Langfristige Produktreife
 

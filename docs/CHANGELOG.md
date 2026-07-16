@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.9.3 - in Entwicklung
+## v1.9.3
 
 - Versioniertes Sync-Protokoll mit Push, Pull, Cursor, Outbox-Changes und Tombstones definiert.
 - Deterministische Konfliktregeln fuer Profil, Dienste, Dienstvorlagen, Planungsvorlagen und Fairness-Teamdaten ergaenzt.

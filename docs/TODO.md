@@ -152,3 +152,5 @@
 - [x] Mock-Sync-Adapter fuer mehrere simulierte Geraete ergaenzen.
 - [x] Contract Tests fuer Client und spaeteres Backend vorbereiten.
 - [x] Empfehlung: `v1.9.3-beta` erst nach Mock-Sync- und Konflikttests erstellen.
+- [x] v1.9.3 nach `main` uebernehmen.
+- [x] Release-Tag und GitHub Release fuer `v1.9.3` erstellen.
